@@ -10,6 +10,7 @@ module SimpleDeploy
                                     :name        => args[:name]
       @sr = SimpleDeploy::StackReader.new :environment => args[:environment],
                                           :name        => args[:name]
+      @region = 'us-west-1'
     end
 
     def create(args)
@@ -23,14 +24,14 @@ module SimpleDeploy
                             :user => 'ec2-user',
                             :instances => instances
 
-        cookbooks = Artifact.new :class => 'cookbooks',
-                                 :sha => attributes['cookbooks']
-        live_community_chef_repo = Artifact.new :class => 'live_community_chef_repo',
-                                                :sha => attributes['live_community_chef_repo']
-        raise cookbooks.s3_url('us-west-1')
+      cookbooks = Artifact.new :class => 'cookbooks',
+                               :sha => attributes['cookbooks']
 
-      connect.set_deploy_command :chef_repo_url => 's3://intu-lc-us-west-1/live_community_chef_repo/5ed15da9b4a11272dc661170bfa3ec66b1fc9045.tar.gz',
-                                 :cookbooks_url => 'http://s3-us-west-1.amazonaws.com/intu-artifacts-us-west-1/cookbooks/0ea7de4d64505774d6c1668127c95a45140615b4.tar.gz',
+      live_community_chef_repo = Artifact.new :class => 'live_community_chef_repo',
+                                              :sha => attributes['live_community_chef_repo']
+
+      connect.set_deploy_command :chef_repo_url => live_community_chef_repo.s3_url(@region),
+                                 :cookbooks_url => cookbooks.http_url(@region),
                                  :script => '/opt/intu/admin/bin/configure.sh'
       connect.execute
     end

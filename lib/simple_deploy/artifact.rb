@@ -2,8 +2,10 @@ require 'heirloom'
 
 module SimpleDeploy
   class Artifact
+
     def initialize(args)
-      @info = Heirloom::Heirloom.info(args)[args[:sha]]
+      artifact = Heirloom::Heirloom.info(args)
+      @info = artifact[args[:sha]]
     end
 
     def s3_url(region)
@@ -11,11 +13,11 @@ module SimpleDeploy
     end
 
     def http_url(region)
-      @info["#{region}-http-url"]
+      @info["#{region}-http-url"].first
     end
 
     def https_url(region)
-      @info["#{region}-https-url"]
+      @info["#{region}-https-url"].first
     end
   end
 end
