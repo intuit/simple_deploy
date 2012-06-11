@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'simple_deploy'
+require 'simple_deploy/cli'
+
+SimpleDeploy::CLI.start
