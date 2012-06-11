@@ -49,5 +49,9 @@ module SimpleDeploy
       @sr.attributes 
     end
 
+    def template
+      JSON.parse @sr.template
+    end
+
   end
 end

@@ -1,3 +1,4 @@
+require 'json'
 module SimpleDeploy
   class StackReader
 
@@ -28,6 +29,10 @@ module SimpleDeploy
 
     def resources
       @sr.resources
+    end
+
+    def template
+      @sr.template
     end
 
   end

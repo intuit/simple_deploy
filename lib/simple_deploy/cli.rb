@@ -19,7 +19,7 @@ EOS
       case @cmd
       when 'create', 'delete', 'deploy', 'destroy', 'instances',
            'status', 'attributes', 'instances', 'events', 'resources',
-           'outputs'
+           'outputs', 'template'
         @stack = Stack.new :environment => @opts[:environment],
                            :name        => @opts[:name]
       end
@@ -42,6 +42,8 @@ EOS
         puts "#{@opts[:name]} destroyed."
       when 'instances'
         @stack.instances.each { |s| puts s }
+      when 'template'
+        jj @stack.template
       when 'events', 'outputs', 'resources', 'status'
         puts (@stack.send @cmd.to_sym).to_yaml
       when 'attributes'
