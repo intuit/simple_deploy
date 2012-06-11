@@ -27,27 +27,27 @@ EOS
       read_attributes
 
       case @cmd
+      when 'attributes'
+        @stack.attributes.each_pair { |k, v| puts "#{k}: #{v}" }
       when 'create'
         @stack.create :attributes => attributes,
                       :template => @opts[:template]
         puts "#{@opts[:name]} created."
-      when 'deploy'
-        @stack.deploy :attributes => attributes
-        puts "#{@opts[:name]} deployed."
-      when 'list'
-        s = StackLister.new @opts[:environment]
-        puts s.all
       when 'delete', 'destroy'
         @stack.destroy
         puts "#{@opts[:name]} destroyed."
+      when 'deploy'
+        @stack.deploy :attributes => attributes
+        puts "#{@opts[:name]} deployed."
       when 'instances'
         @stack.instances.each { |s| puts s }
+      when 'list'
+        s = StackLister.new @opts[:environment]
+        puts s.all
       when 'template'
         jj @stack.template
       when 'events', 'outputs', 'resources', 'status'
         puts (@stack.send @cmd.to_sym).to_yaml
-      when 'attributes'
-        @stack.attributes.each_pair { |k, v| puts "#{k}: #{v}" }
       end
     end
 
