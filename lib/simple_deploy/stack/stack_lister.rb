@@ -1,8 +1,12 @@
 module SimpleDeploy
   class StackLister
 
-    def self.list
-      Stackster::StackLister.all
+    def initialize(environment)
+      @sl = Stackster::StackLister.new environment
+    end
+    
+    def all
+      @sl.all
     end
 
   end

@@ -22,4 +22,5 @@ Gem::Specification.new do |s|
   # s.add_development_dependency "rspec"
   s.add_runtime_dependency "heirloom"
   s.add_runtime_dependency "stackster"
+  s.add_runtime_dependency "trollop"
 end
