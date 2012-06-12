@@ -12,5 +12,10 @@ module SimpleDeploy
     def self.read_attributes
       @opts[:attributes].nil? ? [] :  @opts[:attributes].split(',')
     end                                         
+
+    def self.environment_provided?
+      @opts[:environment].nil? != true
+    end
+
   end
 end

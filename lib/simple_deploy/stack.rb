@@ -10,7 +10,7 @@ module SimpleDeploy
                                     :name        => args[:name]
       @sr = SimpleDeploy::StackReader.new :environment => args[:environment],
                                           :name        => args[:name]
-      @config = Config.new
+      @config = Config.new args[:role]
     end
 
     def create(args)

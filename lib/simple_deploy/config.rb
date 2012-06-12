@@ -9,7 +9,7 @@ module SimpleDeploy
 
     def load_config_file
       config_file = "#{ENV['HOME']}/.simpledeploy.yml"
-      self.config = YAML::load( File.open( config_file ) )
+      c = YAML::load( File.open( config_file ) )
     end
 
     def keys

@@ -32,6 +32,13 @@ EOS
 
       @cmd = ARGV.shift
 
+      read_attributes
+      
+      unless environment_provided?
+        puts "Please specify an environment."
+        exit 1
+      end
+
       case @cmd
       when 'create', 'delete', 'deploy', 'destroy', 'instances',
            'status', 'attributes', 'events', 'resources',
@@ -39,8 +46,6 @@ EOS
         @stack = Stack.new :environment => @opts[:environment],
                            :name        => @opts[:name]
       end
-
-      read_attributes
 
       case @cmd
       when 'attributes'
@@ -72,17 +77,5 @@ EOS
       end
     end
 
-    #def self.attributes
-    #  attrs = []
-    #  read_attributes.each do |attribs|
-    #    a = attribs.split('=')
-    #    attrs << { a.first => a.last }
-    #  end
-    #  attrs
-    #end
-#
-#    def self.read_attributes
-#      @opts[:attributes].nil? ? [] :  @opts[:attributes].split(',')
-#    end                                         
   end
 end
