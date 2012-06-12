@@ -3,21 +3,25 @@ require 'heirloom'
 module SimpleDeploy
   class Artifact
 
+    attr_accessor :metadata
+
     def initialize(args)
-      artifact = Heirloom::Heirloom.info(args)
-      @info = artifact[args[:sha]]
+      self.metadata = Heirloom::Heirloom.info(args)
     end
 
     def s3_url(region)
-      @info["#{region}-s3-url"]
+      key = "#{region}-s3-url"
+      metadata[key] ? metadata[key].first : nil
     end
 
     def http_url(region)
-      @info["#{region}-http-url"].first
+      key = "#{region}-http-url"
+      metadata[key] ? metadata[key].first : nil
     end
 
     def https_url(region)
-      @info["#{region}-https-url"].first
+      key = "#{region}-https-url"
+      metadata[key] ? metadata[key].first : nil
     end
   end
 end

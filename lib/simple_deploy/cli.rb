@@ -5,7 +5,22 @@ module SimpleDeploy
     def self.start
       @opts = Trollop::options do
         banner <<-EOS
-deploy and manage stacks
+
+Deploy and manage resources in AWS
+
+simple_deploy list -e ENVIRONMENT
+simple_deploy create -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES -t TEMPLATE_PATH
+simple_deploy update -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES
+simple_deploy deploy -n STACK_NAME -e ENVIRONMENT
+simple_deploy destroy -n STACK_NAME -e ENVIRONMENT
+simple_deploy instances -n STACK_NAME -e ENVIRONMENT
+simple_deploy status -n STACK_NAME -e ENVIRONMENT
+simple_deploy attributes -n STACK_NAME -e ENVIRONMENT
+simple_deploy events -n STACK_NAME -e ENVIRONMENT
+simple_deploy resources -n STACK_NAME -e ENVIRONMENT
+simple_deploy outputs -n STACK_NAME -e ENVIRONMENT
+simple_deploy template -n STACK_NAME -e ENVIRONMENT
+
 EOS
         opt :help, "Display Help"
         opt :attributes, "CSV list of updates attributes", :type => :string
@@ -18,8 +33,8 @@ EOS
 
       case @cmd
       when 'create', 'delete', 'deploy', 'destroy', 'instances',
-           'status', 'attributes', 'instances', 'events', 'resources',
-           'outputs', 'template'
+           'status', 'attributes', 'events', 'resources',
+           'outputs', 'template', 'update'
         @stack = Stack.new :environment => @opts[:environment],
                            :name        => @opts[:name]
       end
@@ -37,8 +52,11 @@ EOS
         @stack.destroy
         puts "#{@opts[:name]} destroyed."
       when 'deploy'
-        @stack.deploy :attributes => attributes
+        @stack.deploy
         puts "#{@opts[:name]} deployed."
+      when 'update'
+        @stack.update :attributes => attributes
+        puts "#{@opts[:name]} updated."
       when 'instances'
         @stack.instances.each { |s| puts s }
       when 'list'
@@ -48,6 +66,8 @@ EOS
         jj @stack.template
       when 'events', 'outputs', 'resources', 'status'
         puts (@stack.send @cmd.to_sym).to_yaml
+      else
+        puts "Unknown command.  Use -h for help."
       end
     end
 
