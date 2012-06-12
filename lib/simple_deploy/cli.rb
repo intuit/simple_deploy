@@ -38,6 +38,7 @@ EOS
       end
 
       read_attributes
+      @config = Config.new
       
       unless @cmd == 'artifacts'
         unless environment_provided?
@@ -51,7 +52,8 @@ EOS
            'status', 'attributes', 'events', 'resources',
            'outputs', 'template', 'update'
         @stack = Stack.new :environment => @opts[:environment],
-                           :name        => @opts[:name]
+                           :name        => @opts[:name],
+                           :config      => @config.environment(@opts[:environment])
       end
 
       case @cmd
@@ -76,7 +78,7 @@ EOS
       when 'instances'
         @stack.instances.each { |s| puts s }
       when 'list'
-        s = StackLister.new @opts[:environment]
+        s = StackLister.new :config => @config.environment(@opts[:environment])
         puts s.all
       when 'template'
         jj @stack.template

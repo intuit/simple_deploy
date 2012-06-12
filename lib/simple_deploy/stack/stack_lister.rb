@@ -1,12 +1,12 @@
 module SimpleDeploy
   class StackLister
 
-    def initialize(environment)
-      @sl = Stackster::StackLister.new environment
+    def initialize(args)
+      @stack_lister = Stackster::StackLister.new :config => args[:config]
     end
     
     def all
-      @sl.all
+      @stack_lister.all
     end
 
   end

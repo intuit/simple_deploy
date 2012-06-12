@@ -6,20 +6,18 @@ module SimpleDeploy
   class Stack
 
     def initialize(args)
-      @stack = Stackster::Stack.new :environment => args[:environment],
-                                    :name        => args[:name]
-      @sr = SimpleDeploy::StackReader.new :environment => args[:environment],
-                                          :name        => args[:name]
-      @config = Config.new args[:role]
+      @config = Config.new
+      @environment = args[:environment]
+      @name = args[:name]
     end
 
     def create(args)
-      @stack.create :attributes => args[:attributes],
+      stack.create :attributes => args[:attributes],
                     :template => args[:template]
     end
 
     def update(args)
-      @stack.update :attributes => args[:attributes]
+      stack.update :attributes => args[:attributes]
     end
 
     def deploy
@@ -40,35 +38,42 @@ module SimpleDeploy
     end
 
     def destroy
-      @stack.destroy
+      stack.destroy
     end
 
     def events
-      @sr.events
+      stack.events
     end
 
     def outputs
-      @sr.outputs
+      stack.outputs
     end
 
     def resources
-      @sr.resources
+      stack.resources
     end
 
     def instances
-      @sr.instances
+      stack.instances_public_ip_addresses
     end
 
     def status
-      @sr.status
+      stack.status
     end
 
     def attributes
-      @sr.attributes 
+      stack.attributes 
     end
 
     def template
-      JSON.parse @sr.template
+      JSON.parse stack.template
+    end
+    
+    private
+
+    def stack
+      @stack ||= Stackster::Stack.new :environment => @environment,
+                                      :name        => @name
     end
 
   end
