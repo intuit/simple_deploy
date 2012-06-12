@@ -58,7 +58,8 @@ EOS
       when 'attributes'
         @stack.attributes.each_pair { |k, v| puts "#{k}: #{v}" }
       when 'artifacts'
-        puts Artifact.list.to_yaml
+        a = ArtifactLister.new
+        puts a.summary
       when 'create'
         @stack.create :attributes => attributes,
                       :template => @opts[:template]

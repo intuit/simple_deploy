@@ -1,11 +1,8 @@
 require 'heirloom'
+require 'simple_deploy/artifact/artifact_lister'
 
 module SimpleDeploy
   class Artifact
-
-    def self.list
-      Heirloom::Heirloom.list
-    end
 
     attr_accessor :metadata
 
