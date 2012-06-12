@@ -3,6 +3,10 @@ require 'heirloom'
 module SimpleDeploy
   class Artifact
 
+    def self.list
+      Heirloom::Heirloom.list
+    end
+
     attr_accessor :metadata
 
     def initialize(args)

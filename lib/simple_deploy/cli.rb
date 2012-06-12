@@ -32,11 +32,18 @@ EOS
 
       @cmd = ARGV.shift
 
+      unless @cmd
+        puts "Please specify a command."
+        exit 1
+      end
+
       read_attributes
       
-      unless environment_provided?
-        puts "Please specify an environment."
-        exit 1
+      unless @cmd == 'artifacts'
+        unless environment_provided?
+          puts "Please specify an environment."
+          exit 1
+        end
       end
 
       case @cmd
@@ -50,6 +57,8 @@ EOS
       case @cmd
       when 'attributes'
         @stack.attributes.each_pair { |k, v| puts "#{k}: #{v}" }
+      when 'artifacts'
+        puts Artifact.list.to_yaml
       when 'create'
         @stack.create :attributes => attributes,
                       :template => @opts[:template]
