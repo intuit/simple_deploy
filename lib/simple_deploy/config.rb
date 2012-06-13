@@ -16,10 +16,6 @@ module SimpleDeploy
       config['keys']
     end
 
-    def artifacts
-      config['artifacts']
-    end
-
     def user
       config['user']
     end
