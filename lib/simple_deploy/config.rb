@@ -12,6 +12,10 @@ module SimpleDeploy
       self.config = YAML::load( File.open( config_file ) )
     end
 
+    def artifacts
+      config['roles']['default']['artifacts']
+    end
+
     def keys
       config['keys']
     end
@@ -20,8 +24,8 @@ module SimpleDeploy
       config['user']
     end
 
-    def script
-      config['script']
+    def deploy_script
+      config['roles']['default']['deploy_script']
     end
 
     def environments
@@ -29,7 +33,11 @@ module SimpleDeploy
     end
 
     def environment(name)
-      environments[name] ||= nil
+      environments[name]
+    end
+
+    def region(name)
+      environment[name]['region']
     end
 
   end
