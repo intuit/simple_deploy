@@ -6,9 +6,17 @@ module SimpleDeploy
   class Stack
 
     def initialize(args)
-      @config = Config.new
       @environment = args[:environment]
       @name = args[:name]
+      @config = Config.new
+      @region = @config.environment(@environment)['region']
+      @keys = @config.keys
+      @user = @config.user
+      @script = @config.script
+    end
+
+    def self.list(args)
+      StackLister.new(:config => args[:config]).all
     end
 
     def create(args)
@@ -21,8 +29,8 @@ module SimpleDeploy
     end
 
     def deploy
-      connect = Connect.new :keys => @config.keys,
-                            :user => @config.user,
+      connect = Connect.new :keys => @keys,
+                            :user => @user,
                             :instances => instances
 
       cookbooks = Artifact.new :class => 'cookbooks',
@@ -31,9 +39,9 @@ module SimpleDeploy
       live_community_chef_repo = Artifact.new :class => 'live_community_chef_repo',
                                               :sha => attributes['live_community_chef_repo']
 
-      connect.set_deploy_command :chef_repo_url => live_community_chef_repo.s3_url(@config.region),
-                                 :cookbooks_url => cookbooks.http_url(@config.region),
-                                 :script => @config.script
+      connect.set_deploy_command :chef_repo_url => live_community_chef_repo.s3_url(@region),
+                                 :cookbooks_url => cookbooks.http_url(@region),
+                                 :script => @script
       connect.execute
     end
 
@@ -73,7 +81,8 @@ module SimpleDeploy
 
     def stack
       @stack ||= Stackster::Stack.new :environment => @environment,
-                                      :name        => @name
+                                      :name        => @name,
+                                      :config      => @config.environment(@environment)
     end
 
   end

@@ -2,11 +2,11 @@ module SimpleDeploy
   class StackLister
 
     def initialize(args)
-      @stack_lister = Stackster::StackLister.new :config => args[:config]
+      @config = args[:config]
     end
     
     def all
-      @stack_lister.all
+      Stackster::Stack.list :config => @config
     end
 
   end

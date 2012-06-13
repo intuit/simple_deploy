@@ -9,6 +9,7 @@ module SimpleDeploy
 
 Deploy and manage resources in AWS
 
+simple_deploy environments
 simple_deploy list -e ENVIRONMENT
 simple_deploy create -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES -t TEMPLATE_PATH
 simple_deploy update -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES
@@ -38,9 +39,9 @@ EOS
       end
 
       read_attributes
-      @config = Config.new
       
-      unless @cmd == 'artifacts'
+      unless @cmd == 'artifacts' || @cmd == 'environments'
+        @config = Config.new.environment(@opts[:environment])
         unless environment_provided?
           puts "Please specify an environment."
           exit 1
@@ -53,7 +54,7 @@ EOS
            'outputs', 'template', 'update'
         @stack = Stack.new :environment => @opts[:environment],
                            :name        => @opts[:name],
-                           :config      => @config.environment(@opts[:environment])
+                           :config      => @config
       end
 
       case @cmd
@@ -72,14 +73,15 @@ EOS
       when 'deploy'
         @stack.deploy
         puts "#{@opts[:name]} deployed."
+      when 'environments'
+        Config.new.environments.keys.each { |e| puts e }
       when 'update'
         @stack.update :attributes => attributes
         puts "#{@opts[:name]} updated."
       when 'instances'
         @stack.instances.each { |s| puts s }
       when 'list'
-        s = StackLister.new :config => @config.environment(@opts[:environment])
-        puts s.all
+        puts Stack.list(:config => @config)
       when 'template'
         jj @stack.template
       when 'events', 'outputs', 'resources', 'status'

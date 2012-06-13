@@ -16,12 +16,12 @@ module SimpleDeploy
       config['keys']
     end
 
-    def user
-      config['user']
+    def artifacts
+      config['artifacts']
     end
 
-    def region
-      config['region']
+    def user
+      config['user']
     end
 
     def script
