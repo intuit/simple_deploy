@@ -10,16 +10,21 @@ module SimpleDeploy
       @attributes = args[:attributes]
 
       @region = @config.region(@environment)
-      @artifacts = get_artifacts_endpoints @config.artifacts
       @deploy_script = @config.deploy_script
 
       create_deployment
       set_deploy_command
     end
 
+    def execute
+      @deployment.simpledeploy
+    end
+
+    private
+
     def set_deploy_command
       cmd = ""
-      @artifacts.each_pair do |k,v|
+      get_artifact_endpoints.each_pair do |k,v|
         cmd += "env #{k}=#{v} "
       end
       cmd += @deploy_script
@@ -29,25 +34,27 @@ module SimpleDeploy
       end"
     end
 
-    def get_artifacts_endpoints(artifacts)
+    def get_artifact_endpoints
       h = {}
       @config.artifacts.each do |a|
-        h[a['name']] = Artifact.new(:class => a['name'],
-                            :sha => @attributes[a['name']],
-                            :region => @region).all_endpoints[a['endpoint']]
+        name = a['name']
+        endpoint = a['endpoint']
+        artifact = Artifact.new :class => name,
+                                :sha => @attributes[name],
+                                :region => @region
+        h[name] = artifact.all_endpoints[endpoint]
       end
       h
     end
 
-    def execute
-      @deployment.simpledeploy
+    def ssh_options
+      { 
+        :keys => @config.keys,
+        :paranoid => false
+      }
     end
 
     def create_deployment 
-      ssh_options = {}
-      ssh_options[:keys] = @config.keys
-      ssh_options[:paranoid] = false
-
       @deployment = Capistrano::Configuration.new
       @deployment.set :user, @config.user
       @deployment.variables[:ssh_options] = ssh_options
