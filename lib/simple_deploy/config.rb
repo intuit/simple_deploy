@@ -37,7 +37,7 @@ module SimpleDeploy
     end
 
     def region(name)
-      environment[name]['region']
+      environment(name)['region']
     end
 
   end

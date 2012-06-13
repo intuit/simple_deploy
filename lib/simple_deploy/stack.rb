@@ -17,7 +17,7 @@ module SimpleDeploy
 
     def create(args)
       stack.create :attributes => args[:attributes],
-                    :template => args[:template]
+                   :template => args[:template]
     end
 
     def update(args)
@@ -25,23 +25,11 @@ module SimpleDeploy
     end
 
     def deploy
-      connect = Connect.new :config => @config,
-                            :environment => @environment,
-                            :instances => instances,
-                            :attributes => attributes
-
-      #cookbooks = Artifact.new :class => 'cookbooks',
-      #                         :sha => attributes['cookbooks']
-
-      #live_community_chef_repo = Artifact.new :class => 'live_community_chef_repo',
-      #                                        :sha => attributes['live_community_chef_repo']
-      #connect.set_deploy_command :chef_repo_url => live_community_chef_repo.s3_url(@region),
-      #                           :cookbooks_url => cookbooks.http_url(@region),
-      #                           :script => @script
-
-      connect.set_deploy_command :artifacts => @artifacts,
-                                 :script => @script
-      connect.execute
+      deployment = Deployment.new :config => @config,
+                                  :environment => @environment,
+                                  :instances => instances,
+                                  :attributes => attributes
+      deployment.execute
     end
 
     def destroy
