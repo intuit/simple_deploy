@@ -8,7 +8,11 @@ module SimpleDeploy
 
     def initialize(args)
       @region = args[:region]
-      self.metadata = Heirloom::Heirloom.info(args)
+      @config = args[:config]
+      @artifact = Heirloom::Artifact.new :config => @config.heirloom
+
+      self.metadata = @artifact.show :name => args[:name],
+                                     :id   => args[:id]
     end
 
     def all_endpoints

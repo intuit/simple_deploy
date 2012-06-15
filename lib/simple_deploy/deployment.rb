@@ -40,9 +40,10 @@ module SimpleDeploy
         name = a['name']
         endpoint = a['endpoint']
         variable = a['variable']
-        artifact = Artifact.new :class => name,
-                                :sha => @attributes[name],
-                                :region => @region
+        artifact = Artifact.new :name => name,
+                                :id => @attributes[name],
+                                :region => @region,
+                                :config => @config
         h[variable] = artifact.all_endpoints[endpoint]
       end
       h

@@ -40,5 +40,9 @@ module SimpleDeploy
       environment(name)['region']
     end
 
+    def heirloom
+      config['heirloom']
+    end
+
   end
 end

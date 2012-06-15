@@ -40,8 +40,8 @@ EOS
 
       read_attributes
       
-      unless @cmd == 'artifacts' || @cmd == 'environments'
-        @config = Config.new.environment(@opts[:environment])
+      unless @cmd == 'environments'
+        @config = Config.new.environment @opts[:environment]
         unless environment_provided?
           puts "Please specify an environment."
           exit 1
@@ -60,9 +60,6 @@ EOS
       case @cmd
       when 'attributes'
         @stack.attributes.each_pair { |k, v| puts "#{k}: #{v}" }
-      when 'artifacts'
-        a = ArtifactLister.new
-        puts a.summary
       when 'create'
         @stack.create :attributes => attributes,
                       :template => @opts[:template]
