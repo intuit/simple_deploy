@@ -23,9 +23,9 @@ module SimpleDeploy
     private
 
     def set_deploy_command
-      cmd = ""
+      cmd = get_artifact_endpoints.any? ? "env " : ""
       get_artifact_endpoints.each_pair do |k,v|
-        cmd += "env #{k}=#{v} "
+        cmd += "#{k}=#{v} "
       end
       cmd += @deploy_script
 
@@ -39,10 +39,11 @@ module SimpleDeploy
       @config.artifacts.each do |a|
         name = a['name']
         endpoint = a['endpoint']
+        variable = a['variable']
         artifact = Artifact.new :class => name,
                                 :sha => @attributes[name],
                                 :region => @region
-        h[name] = artifact.all_endpoints[endpoint]
+        h[variable] = artifact.all_endpoints[endpoint]
       end
       h
     end
