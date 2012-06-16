@@ -42,6 +42,7 @@ EOS
       
       unless @cmd == 'environments'
         @config = Config.new.environment @opts[:environment]
+
         unless environment_provided?
           puts "Please specify an environment."
           exit 1

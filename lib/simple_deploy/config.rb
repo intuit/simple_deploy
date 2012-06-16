@@ -40,8 +40,8 @@ module SimpleDeploy
       environment(name)['region']
     end
 
-    def heirloom
-      config['heirloom']
+    def artifact_repository
+      config['artifact_repository']
     end
 
   end

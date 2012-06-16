@@ -1,5 +1,4 @@
 require 'heirloom'
-require 'simple_deploy/artifact/artifact_lister'
 
 module SimpleDeploy
   class Artifact
@@ -9,7 +8,7 @@ module SimpleDeploy
     def initialize(args)
       @region = args[:region]
       @config = args[:config]
-      @artifact = Heirloom::Artifact.new :config => @config.heirloom
+      @artifact = Heirloom::Artifact.new :config => @config.artifact_repository
 
       self.metadata = @artifact.show :name => args[:name],
                                      :id   => args[:id]
