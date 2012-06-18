@@ -13,19 +13,19 @@ module SimpleDeploy
     end
 
     def artifacts
-      config['roles']['default']['artifacts']
+      config['deploy']['artifacts']
     end
 
     def keys
-      config['keys']
+      config['deploy']['keys']
     end
 
     def user
-      config['user']
+      config['deploy']['user']
     end
 
     def deploy_script
-      config['roles']['default']['deploy_script']
+      config['deploy']['script']
     end
 
     def environments
