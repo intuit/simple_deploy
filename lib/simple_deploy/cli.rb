@@ -45,6 +45,7 @@ EOS
 
         unless environment_provided?
           puts "Please specify an environment."
+          Config.new.environments.keys.each { |e| puts e }
           exit 1
         end
       end

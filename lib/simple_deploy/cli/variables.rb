@@ -4,7 +4,7 @@ module SimpleDeploy
       attrs = []
       read_attributes.each do |attribs|
         a = attribs.split('=')
-        attrs << { a.first => a.last }
+        attrs << { a.first.gsub(/\s+/, "") => a.last }
       end
       attrs
     end
