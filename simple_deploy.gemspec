@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.email       = ["brett@weav.net"]
   s.homepage    = ""
   s.summary     = %q{I help with deployments}
-  s.description = %q{Its what I do}
+  s.description = %q{I am designed to deploy artifacts uploaded by Heirloom}
 
   s.rubyforge_project = "simple_deploy"
 
