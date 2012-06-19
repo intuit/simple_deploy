@@ -21,7 +21,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
 
   s.add_runtime_dependency "capistrano"
-  s.add_runtime_dependency "heirloom", '= 0.1.2'
   s.add_runtime_dependency "stackster", '= 0.1.1'
   s.add_runtime_dependency "trollop"
 end

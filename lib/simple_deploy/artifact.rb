@@ -1,20 +1,18 @@
-require 'heirloom'
-
 module SimpleDeploy
   class Artifact
 
-    attr_accessor :metadata
-
     def initialize(args)
-      @region = args[:region]
+      @bucket_prefix = args[:bucket_prefix]
       @config = args[:config]
-      @artifact = Heirloom::Artifact.new :config => @config.artifact_repository
+      @id = args[:id]
+      @name = args[:name]
+      @region = args[:region]
 
-      self.metadata = @artifact.show :name => args[:name],
-                                     :id   => args[:id]
+      @bucket = "#{@bucket_prefix}-#{@region}"
+      @key = "#{@id}.tar.gz"
     end
 
-    def all_endpoints
+    def endpoints
       {
         's3' => s3_url,
         'http' => http_url,
@@ -22,19 +20,26 @@ module SimpleDeploy
       }
     end
 
+    private
+
     def s3_url
-      key = "#{@region}-s3-url"
-      metadata[key] ? metadata[key].first : nil
+      "s3://#{@bucket}/#{@name}/#{@key}"
     end
 
     def http_url
-      key = "#{@region}-http-url"
-      metadata[key] ? metadata[key].first : nil
+      "http://#{s3_endpoints[@region]}/#{@bucket}/#{@name}/#{@key}"
     end
 
     def https_url
-      key = "#{@region}-https-url"
-      metadata[key] ? metadata[key].first : nil
+      "https://#{s3_endpoints[@region]}/#{@bucket}/#{@name}/#{@key}"
+    end
+
+    def s3_endpoints
+      {
+        'us-east-1' => 's3.amazonaws.com',
+        'us-west-1' => 's3-us-west-1.amazonaws.com',
+        'us-west-2' => 's3-us-west-2.amazonaws.com'
+      }
     end
   end
 end
