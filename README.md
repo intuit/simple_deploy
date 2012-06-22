@@ -13,32 +13,27 @@ Create a file **~/.simple_deploy.yml** and include within it:
 
 ```
 deploy:
-  keys: PATH_TO_PRIVATE_KEY
-  user: ec2-user
+  gateway: GATEWAY_TO_YOUR_VPC
   artifacts: 
+    - name: live_community_chef_repo
+      bucket_prefix: intu-lc
+      variable: CHEF_REPO_URL
+      cloud_formation_url: ChefRepoURL
+    - name: live_community
+      bucket_prefix: intu-lc
+      variable: APP_URL
+      cloud_formation_url: AppArtifactURL
     - name: cookbooks
-      bucket_prefix: artifacts
-      endpoint: http
+      bucket_prefix: intu-artifacts
       variable: COOKBOOKS_URL
-  script: /opt/admin/bin/deploy.sh
+      cloud_formation_url: CookbooksURL
+  script: /opt/intu/admin/bin/configure.sh
 
 environments:
-  preprod_us_west_1:
+  preprod_shared_us_west_1:
     access_key: XXX
-    secret_key: XXX
+    secret_key: yyy
     region: us-west-1
-  prod_us_west_1:
-    access_key: YYY
-    secret_key: YYY
-    region: us-west-1
-  preprod_us_east_1:
-    access_key: XXX
-    secret_key: XXX
-    region: us-east-1
-  prod_us_east_1:
-    access_key: YYY
-    secret_key: YYY
-    region: us-east-1
 ```
 
 Commands

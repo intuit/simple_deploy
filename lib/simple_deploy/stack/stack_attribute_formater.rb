@@ -1,11 +1,12 @@
 module SimpleDeploy
-  class StackUpdateFormater
+  class StackAttributeFormater
 
     def initialize(args)
       @attributes = args[:attributes]
       @config = args[:config]
       @environment = args[:environment]
       @region = @config.region @environment
+      @logger = @config.logger
     end
 
     def updated_attributes
@@ -14,6 +15,7 @@ module SimpleDeploy
         key = attribute.keys.first
         if artifact_names.include? key
           updates << cloud_formation_url(attribute)
+          @logger.info "Adding artifact attribute: #{cloud_formation_url(attribute)}"
         end
       end
       @attributes + updates

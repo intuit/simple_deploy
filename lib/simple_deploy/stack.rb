@@ -18,7 +18,10 @@ module SimpleDeploy
     end
 
     def create(args)
-      stack.create :attributes => args[:attributes],
+      saf = StackAttributeFormater.new(:attributes  => args[:attributes],
+                                       :config      => @config,
+                                       :environment => @environment)
+      stack.create :attributes => saf.updated_attributes,
                    :template => args[:template]
     end
 
