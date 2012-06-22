@@ -56,9 +56,9 @@ module SimpleDeploy
     end
 
     def ssh_options
-      @logger.info "Setting key to #{@config.keys}." if @config.keys
+      @logger.info "Setting key to #{@config.key}." if @config.key
       { 
-        :keys => @config.keys,
+        :keys => @config.key,
         :paranoid => false
       }
     end

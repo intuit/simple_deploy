@@ -44,7 +44,7 @@ EOS
         @config = Config.new.environment @opts[:environment]
 
         unless environment_provided?
-          puts "Please specify an environment."
+          puts "\nPlease specify an environment.\n"
           Config.new.environments.keys.each { |e| puts e }
           exit 1
         end

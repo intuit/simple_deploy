@@ -16,8 +16,8 @@ module SimpleDeploy
       config['deploy']['artifacts']
     end
 
-    def keys
-      config['deploy']['keys'] ||= "#{env_home}/.ssh/id_rsa"
+    def key
+      config['deploy']['key'] ||= "#{env_home}/.ssh/id_rsa"
     end
 
     def gateway

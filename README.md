@@ -14,6 +14,8 @@ Create a file **~/.simple_deploy.yml** and include within it:
 ```
 deploy:
   gateway: ADMIN_IP_TO_YOUR_VPC
+  user: SSH_USER_TO_GATEWAY_AND_INSTANCES
+  key: PRIVATE_SSH_KEYFILE_FOR_USER
   artifacts: 
     - name: live_community_chef_repo
       bucket_prefix: intu-lc
@@ -35,6 +37,13 @@ environments:
     secret_key: yyy
     region: us-west-1
 ```
+
+Configuration File
+------------------
+
+The configuration file supports additional optional deployment parameters.  Artifacts can have an **endpoint** specified to be passed in (by default they pass in the s3 url).
+
+Deploy can have a ssh **user** and **key** set.  These will be used to connect to both the gateway and tunnel through to instances.
 
 Commands
 --------
