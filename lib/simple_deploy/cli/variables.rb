@@ -3,8 +3,10 @@ module SimpleDeploy
     def self.attributes
       attrs = []
       read_attributes.each do |attribs|
-        a = attribs.split('=')
-        attrs << { a.first.gsub(/\s+/, "") => a.last }
+        key = attribs.split('=').first.gsub(/\s+/, "")
+        value = attribs.gsub(/^.+?=/, '')
+        puts "#{key} : #{value}"
+        attrs << { key => value }
       end
       attrs
     end

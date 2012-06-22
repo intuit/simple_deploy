@@ -1,7 +1,7 @@
 module SimpleDeploy
   class Config
 
-    attr_accessor :config
+    attr_accessor :config, :logger
 
     def initialize
       load_config_file
@@ -17,11 +17,15 @@ module SimpleDeploy
     end
 
     def keys
-      config['deploy']['keys']
+      config['deploy']['keys'] ||= "#{env_home}/.ssh/id_rsa"
+    end
+
+    def gateway
+      config['deploy']['gateway']
     end
 
     def user
-      config['deploy']['user']
+      config['deploy']['user'] ||= "#{env_user}"
     end
 
     def deploy_script
@@ -42,6 +46,16 @@ module SimpleDeploy
 
     def artifact_repository
       config['artifact_repository']
+    end
+
+    private
+
+    def env_home
+      ENV['HOME']
+    end
+
+    def env_user
+      ENV['USER']
     end
 
   end

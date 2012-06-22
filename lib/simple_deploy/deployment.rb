@@ -8,6 +8,7 @@ module SimpleDeploy
       @instances = args[:instances]
       @environment = args[:environment]
       @attributes = args[:attributes]
+      @logger = @config.logger
 
       @region = @config.region(@environment)
       @deploy_script = @config.deploy_script
@@ -17,6 +18,7 @@ module SimpleDeploy
     end
 
     def execute
+      @logger.info 'Starting Deployment.'
       @deployment.simpledeploy
     end
 
@@ -29,6 +31,7 @@ module SimpleDeploy
       end
       cmd += @deploy_script
 
+      @logger.info "Executing '#{cmd}.'"
       @deployment.load :string => "task :simpledeploy do
       sudo '#{cmd}'
       end"
@@ -38,7 +41,7 @@ module SimpleDeploy
       h = {}
       @config.artifacts.each do |a|
         name = a['name']
-        endpoint = a['endpoint']
+        endpoint = a['endpoint'] ||= 's3'
         variable = a['variable']
         bucket_prefix = a['bucket_prefix']
 
@@ -53,6 +56,7 @@ module SimpleDeploy
     end
 
     def ssh_options
+      @logger.info "Setting key to #{@config.keys}." if @config.keys
       { 
         :keys => @config.keys,
         :paranoid => false
@@ -61,9 +65,18 @@ module SimpleDeploy
 
     def create_deployment 
       @deployment = Capistrano::Configuration.new
-      @deployment.set :user, @config.user
+      if @config.user
+        @logger.info "Setting user to #{@config.user}."
+        @deployment.set :user, @config.user
+      end
+      @deployment.set :gateway, @config.gateway if @config.gateway
       @deployment.variables[:ssh_options] = ssh_options
-      @instances.each { |i| @deployment.server i, :instances }
+      @logger.info "Proxying via gateway #{@config.gateway}."
+      
+      @instances.each do |i| 
+        @logger.info "Adding instance #{i}."
+        @deployment.server i, :instances
+      end
     end
   end
 end

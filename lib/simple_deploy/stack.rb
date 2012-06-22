@@ -1,6 +1,7 @@
 require 'stackster'
 require 'simple_deploy/stack/stack_reader'
 require 'simple_deploy/stack/stack_lister'
+require 'simple_deploy/stack/stack_attribute_formater'
 
 module SimpleDeploy
   class Stack
@@ -9,6 +10,7 @@ module SimpleDeploy
       @environment = args[:environment]
       @name = args[:name]
       @config = Config.new
+      @config.logger = SimpleDeployLogger.new
     end
 
     def self.list(args)
@@ -21,7 +23,10 @@ module SimpleDeploy
     end
 
     def update(args)
-      stack.update :attributes => args[:attributes]
+      saf = StackAttributeFormater.new(:attributes  => args[:attributes],
+                                       :config      => @config,
+                                       :environment => @environment)
+      stack.update :attributes => saf.updated_attributes
     end
 
     def deploy
@@ -49,7 +54,7 @@ module SimpleDeploy
     end
 
     def instances
-      stack.instances_public_ip_addresses
+      stack.instances_private_ip_addresses
     end
 
     def status
