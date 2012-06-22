@@ -13,7 +13,7 @@ Create a file **~/.simple_deploy.yml** and include within it:
 
 ```
 deploy:
-  gateway: GATEWAY_TO_YOUR_VPC
+  gateway: ADMIN_IP_TO_YOUR_VPC
   artifacts: 
     - name: live_community_chef_repo
       bucket_prefix: intu-lc
