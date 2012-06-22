@@ -34,7 +34,7 @@ EOS
       @cmd = ARGV.shift
 
       unless @cmd
-        puts "Please specify a command."
+        puts "\nPlease specify a command.\n"
         exit 1
       end
 
@@ -44,7 +44,7 @@ EOS
         @config = Config.new.environment @opts[:environment]
 
         unless environment_provided?
-          puts "\nPlease specify an environment.\n"
+          puts "\nPlease specify an environment.\n\n"
           Config.new.environments.keys.each { |e| puts e }
           exit 1
         end
