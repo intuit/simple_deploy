@@ -57,7 +57,11 @@ module SimpleDeploy
     end
 
     def instances
-      stack.instances_private_ip_addresses
+      stack.instances.map do |i| 
+        if i['instancesSet'].first['privateIpAddress']
+          i['instancesSet'].first['privateIpAddress']
+        end
+      end
     end
 
     def status
@@ -66,6 +70,10 @@ module SimpleDeploy
 
     def attributes
       stack.attributes 
+    end
+
+    def parameters
+      stack.parameters 
     end
 
     def template

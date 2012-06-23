@@ -22,6 +22,7 @@ simple_deploy events -n STACK_NAME -e ENVIRONMENT
 simple_deploy resources -n STACK_NAME -e ENVIRONMENT
 simple_deploy outputs -n STACK_NAME -e ENVIRONMENT
 simple_deploy template -n STACK_NAME -e ENVIRONMENT
+simple_deploy parameters -n STACK_NAME -e ENVIRONMENT
 
 EOS
         opt :help, "Display Help"
@@ -53,7 +54,7 @@ EOS
       case @cmd
       when 'create', 'delete', 'deploy', 'destroy', 'instances',
            'status', 'attributes', 'events', 'resources',
-           'outputs', 'template', 'update'
+           'outputs', 'template', 'update', 'parameters'
         @stack = Stack.new :environment => @opts[:environment],
                            :name        => @opts[:name],
                            :config      => @config
@@ -80,10 +81,10 @@ EOS
       when 'instances'
         @stack.instances.each { |s| puts s }
       when 'list'
-        puts Stack.list(:config => @config)
+        puts Stackster::StackLister.new.all
       when 'template'
         jj @stack.template
-      when 'events', 'outputs', 'resources', 'status'
+      when 'events', 'outputs', 'resources', 'status', 'parameters'
         puts (@stack.send @cmd.to_sym).to_yaml
       else
         puts "Unknown command.  Use -h for help."
