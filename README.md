@@ -67,7 +67,7 @@ simple_deploy template -n STACK_NAME -e ENVIRONMENT
 
 Attribute pairs are = seperated key value pairs.  Multiple can be specified.  For example:
 
-simple_deploy create  -t ~/my-template.json -e my-env -n test-stack -a arg1=val1 arg2=vol2
+simple_deploy create -t ~/my-template.json -e my-env -n test-stack -a arg1=val1 -a arg2=vol2
 ```
 
 For more information, run simple_deploy -h.

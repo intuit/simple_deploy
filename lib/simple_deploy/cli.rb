@@ -26,11 +26,12 @@ simple_deploy parameters -n STACK_NAME -e ENVIRONMENT
 
 Attributes are specified as '=' seperated key value pairs.  Multiple can be specified.  For example:
 
-simple_deploy create  -t ~/my-template.json -e my-env -n test-stack -a arg1=val1 arg2=vol2
+simple_deploy create -t ~/my-template.json -e my-env -n test-stack -a arg1=val1 -a arg2=vol2
 
 EOS
         opt :help, "Display Help"
-        opt :attributes, "CSV list of updates attributes", :type => :strings
+        opt :attributes, "CSV list of updates attributes", :type  => :string,
+                                                           :multi => true
         opt :environment, "Set the target environment", :type => :string
         opt :name, "Stack name to manage", :type => :string
         opt :template, "Path to the template file", :type => :string
