@@ -30,8 +30,8 @@ simple_deploy create -t ~/my-template.json -e my-env -n test-stack -a arg1=val1 
 
 EOS
         opt :help, "Display Help"
-        opt :attributes, "CSV list of updates attributes", :type  => :string,
-                                                           :multi => true
+        opt :attributes, "= seperated attribute and it's value", :type  => :string,
+                                                                 :multi => true
         opt :environment, "Set the target environment", :type => :string
         opt :name, "Stack name to manage", :type => :string
         opt :template, "Path to the template file", :type => :string
