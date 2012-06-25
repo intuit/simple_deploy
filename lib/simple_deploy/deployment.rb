@@ -58,14 +58,14 @@ module SimpleDeploy
     def ssh_options
       @logger.info "Setting key to #{@config.key(@environment)}."
       { 
-        :keys => @config.key,
+        :keys => @config.key(@environment),
         :paranoid => false
       }
     end
 
     def create_deployment 
       @deployment = Capistrano::Configuration.new
-      if @config.user
+      if @config.user(@environment)
         @logger.info "Setting user to #{@config.user(@environment)}."
         @deployment.set :user, @config.user(@environment)
       end
