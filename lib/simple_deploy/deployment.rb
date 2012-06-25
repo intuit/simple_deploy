@@ -69,7 +69,11 @@ module SimpleDeploy
         @logger.info "Setting user to #{@config.user}."
         @deployment.set :user, @config.user
       end
-      @deployment.set :gateway, @config.gateway if @config.gateway
+
+      if @config.gateway @environment
+        @deployment.set :gateway, @config.gateway @environment
+      end
+
       @deployment.variables[:ssh_options] = ssh_options
       @logger.info "Proxying via gateway #{@config.gateway}."
       

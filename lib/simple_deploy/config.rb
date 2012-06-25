@@ -20,10 +20,6 @@ module SimpleDeploy
       config['deploy']['key'] ||= "#{env_home}/.ssh/id_rsa"
     end
 
-    def gateway
-      config['deploy']['gateway']
-    end
-
     def user
       config['deploy']['user'] ||= "#{env_user}"
     end
@@ -34,6 +30,10 @@ module SimpleDeploy
 
     def environments
       config['environments']
+    end
+
+    def gateway(name)
+      environments[name]['gateway']
     end
 
     def environment(name)
