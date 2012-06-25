@@ -13,7 +13,7 @@ module SimpleDeploy
     end
 
     def self.read_attributes
-      @opts[:attributes].nil? ? [] :  @opts[:attributes].split(',')
+      @opts[:attributes].nil? ? [] :  @opts[:attributes]
     end                                         
 
     def self.environment_provided?
