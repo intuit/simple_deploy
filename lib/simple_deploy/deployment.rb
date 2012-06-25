@@ -70,12 +70,12 @@ module SimpleDeploy
         @deployment.set :user, @config.user
       end
 
-      if @config.gateway @environment
-        @deployment.set :gateway, @config.gateway @environment
+      if @config.gateway(@environment)
+        @deployment.set :gateway, @config.gateway(@environment)
       end
 
       @deployment.variables[:ssh_options] = ssh_options
-      @logger.info "Proxying via gateway #{@config.gateway}."
+      @logger.info "Proxying via gateway #{@config.gateway(@environment)}."
       
       @instances.each do |i| 
         @logger.info "Adding instance #{i}."
