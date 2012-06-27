@@ -21,8 +21,9 @@ module SimpleDeploy
     end
 
     def execute
-      @logger.info 'Starting Deployment.'
+      @logger.info 'Starting deployment.'
       @deployment.simpledeploy
+      @logger.info 'Deployment complete.'
     end
 
     private

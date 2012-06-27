@@ -38,8 +38,8 @@ module SimpleDeploy
                                   :instances   => instances,
                                   :attributes  => attributes,
                                   :ssh_gateway => stack.attributes['ssh_gateway'],
-                                  :ssh_user    => ENV['SIMPLE_DEPLOY_USER'],
-                                  :ssh_key     => ENV['SIMPLE_DEPLOY_KEY']
+                                  :ssh_user    => ENV['SIMPLE_DEPLOY_SSH_USER'],
+                                  :ssh_key     => ENV['SIMPLE_DEPLOY_SSH_KEY']
       deployment.execute
     end
 
@@ -88,7 +88,8 @@ module SimpleDeploy
     def stack
       @stack ||= Stackster::Stack.new :environment => @environment,
                                       :name        => @name,
-                                      :config      => @config.environment(@environment)
+                                      :config      => @config.environment(@environment),
+                                      :logger      => @config.logger
     end
 
   end

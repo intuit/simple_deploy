@@ -72,6 +72,6 @@ For more information, run simple_deploy -h.
 Deploying
 ---------
 
-By default simple deploy will use your user name and id_rsa key for deployments.  To override either these, set the SIMPLE_DEPLOY_USER & SIMPLE_DEPLOY_KEY respectively.
+By default simple deploy will use your user name and id_rsa key for deployments.  To override either these, set the **SIMPLE_DEPLOY_SSH_USER** & **SIMPLE_DEPLOY_SSH_KEY** respectively.
 
-The deployment gateway is ready from the ssh_gateway_attribute for that stack.
+The deployment gateway is ready from the **ssh_gateway** attribute for that stack.

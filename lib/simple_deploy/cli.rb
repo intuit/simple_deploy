@@ -77,7 +77,6 @@ EOS
         puts "#{@opts[:name]} destroyed."
       when 'deploy'
         @stack.deploy
-        puts "#{@opts[:name]} deployed."
       when 'environments'
         Config.new.environments.keys.each { |e| puts e }
       when 'update'
