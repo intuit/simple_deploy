@@ -33,10 +33,13 @@ module SimpleDeploy
     end
 
     def deploy
-      deployment = Deployment.new :config => @config,
+      deployment = Deployment.new :config      => @config,
                                   :environment => @environment,
-                                  :instances => instances,
-                                  :attributes => attributes
+                                  :instances   => instances,
+                                  :attributes  => attributes,
+                                  :ssh_gateway => stack.attributes['ssh_gateway'],
+                                  :ssh_user    => ENV['SIMPLE_DEPLOY_USER'],
+                                  :ssh_key     => ENV['SIMPLE_DEPLOY_KEY']
       deployment.execute
     end
 

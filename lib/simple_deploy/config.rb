@@ -24,18 +24,6 @@ module SimpleDeploy
       config['environments']
     end
 
-    def gateway(name)
-      environments[name]['gateway']
-    end
-
-    def key(name)
-      environments[name]['key'] ||= "#{env_home}/.ssh/id_rsa"
-    end
-
-    def user(name)
-      environments[name]['user'] ||= "#{env_user}"
-    end
-
     def environment(name)
       environments[name]
     end

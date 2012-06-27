@@ -6,6 +6,9 @@ module SimpleDeploy
     def initialize(args)
       @config = args[:config]
       @instances = args[:instances]
+      @ssh_gateway = args[:ssh_gateway]
+      @ssh_user = args[:ssh_user] ||= "#{env_user}"
+      @ssh_key = args[:ssh_key] ||= "#{env_home}/.ssh/id_rsa"
       @environment = args[:environment]
       @attributes = args[:attributes]
       @logger = @config.logger
@@ -56,32 +59,45 @@ module SimpleDeploy
     end
 
     def ssh_options
-      @logger.info "Setting key to #{@config.key(@environment)}."
+      @logger.info "Setting key to #{@ssh_key}."
       { 
-        :keys => @config.key(@environment),
+        :keys => @ssh_key,
         :paranoid => false
       }
     end
 
     def create_deployment 
       @deployment = Capistrano::Configuration.new
-      if @config.user(@environment)
-        @logger.info "Setting user to #{@config.user(@environment)}."
-        @deployment.set :user, @config.user(@environment)
+      if @ssh_user
+        @logger.info "Setting user to #{@ssh_user}."
+        @deployment.set :user, @ssh_user
       end
 
-      if @config.gateway(@environment)
-        @deployment.set :gateway, @config.gateway(@environment)
+      if @ssh_gateway
+        @deployment.set :gateway, @ssh_gateway
+        @logger.info "Proxying via gateway #{@ssh_gateway}."
+      else
+        @logger.info "Not using an ssh gateway."
       end
 
       @deployment.variables[:ssh_options] = ssh_options
-      @logger.info "Proxying via gateway #{@config.gateway(@environment)}."
       
       @instances.each do |i| 
         @logger.info "Adding instance #{i}."
         @deployment.server i, :instances
       end
     end
+
+    private
+
+    def env_home
+      ENV['HOME']
+    end
+
+    def env_user
+      ENV['USER']
+    end
+
   end
 end
 

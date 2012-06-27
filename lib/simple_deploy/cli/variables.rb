@@ -2,7 +2,7 @@ module SimpleDeploy
   module CLI
     def self.attributes
       attrs = []
-      puts "Read the following attributes:"
+      puts "\nRead the following attributes:\n\n"
       read_attributes.each do |attribs|
         key = attribs.split('=').first.gsub(/\s+/, "")
         value = attribs.gsub(/^.+?=/, '')
