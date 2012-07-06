@@ -60,9 +60,11 @@ EOS
       when 'create', 'delete', 'deploy', 'destroy', 'instances',
            'status', 'attributes', 'events', 'resources',
            'outputs', 'template', 'update', 'parameters'
+        @logger = SimpleDeployLogger.new
         @stack = Stack.new :environment => @opts[:environment],
                            :name        => @opts[:name],
-                           :config      => @config
+                           :config      => @config,
+                           :logger      => @logger
       end
 
       case @cmd
@@ -71,21 +73,21 @@ EOS
       when 'create'
         @stack.create :attributes => attributes,
                       :template => @opts[:template]
-        puts "#{@opts[:name]} created."
+        @logger.info "#{@opts[:name]} created."
       when 'delete', 'destroy'
         @stack.destroy
-        puts "#{@opts[:name]} destroyed."
+        @logger.info "#{@opts[:name]} destroyed."
       when 'deploy'
         @stack.deploy
       when 'environments'
         Config.new.environments.keys.each { |e| puts e }
       when 'update'
         @stack.update :attributes => attributes
-        puts "#{@opts[:name]} updated."
+        @logger.info "#{@opts[:name]} updated."
       when 'instances'
         @stack.instances.each { |s| puts s }
       when 'list'
-        puts Stackster::StackLister.new.all
+        puts Stackster::StackLister.new(:config => @config).all
       when 'template'
         jj @stack.template
       when 'events', 'outputs', 'resources', 'status', 'parameters'

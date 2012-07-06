@@ -9,8 +9,7 @@ module SimpleDeploy
     def initialize(args)
       @environment = args[:environment]
       @name = args[:name]
-      @config = Config.new
-      @config.logger = SimpleDeployLogger.new
+      @config = Config.new :logger => args[:logger]
     end
 
     def self.list(args)
