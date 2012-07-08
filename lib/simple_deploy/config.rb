@@ -8,17 +8,30 @@ module SimpleDeploy
       self.logger = args[:logger] ||= SimpleDeployLogger.new
     end
 
-    def load_config_file
-      config_file = "#{ENV['HOME']}/.simple_deploy.yml"
-      self.config = YAML::load( File.open( config_file ) )
+    def artifacts
+      ['chef_repo', 'cookbooks', 'app']
     end
 
-    def artifacts
-      config['deploy']['artifacts']
+    def artifact_deploy_variable(artifact)
+      a = { 'chef_repo' => 'CHEF_REPO_URL',
+            'app'       => 'APP_URL',
+            'cookbooks' => 'COOKBOOKS_URL' }
+      a[artifact]
+    end
+
+    def artifact_cloud_formation_url(artifact)
+      a = { 'chef_repo' => 'ChefRepoURL',
+            'app'       => 'AppArtifactURL',
+            'cookbooks' => 'CookbooksURL' }
+      a[artifact]
+    end 
+
+    def artifact_bucket_prefix(artifact)
+      config['artifacts'][artifact]['bucket_prefix']
     end
 
     def deploy_script
-      config['deploy']['script']
+      '/opt/intu/admin/bin/configure.sh'
     end
 
     def environments
@@ -33,11 +46,12 @@ module SimpleDeploy
       environment(name)['region']
     end
 
-    def artifact_repository
-      config['artifact_repository']
-    end
-
     private
+
+    def load_config_file
+      config_file = "#{ENV['HOME']}/.simple_deploy.yml"
+      self.config = YAML::load( File.open( config_file ) )
+    end
 
     def env_home
       ENV['HOME']

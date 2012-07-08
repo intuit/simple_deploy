@@ -56,11 +56,19 @@ EOS
         end
       end
 
+      @stacks = Stackster::StackLister.new(:config => @config).all
+      @logger = SimpleDeployLogger.new
+
       case @cmd
       when 'create', 'delete', 'deploy', 'destroy', 'instances',
            'status', 'attributes', 'events', 'resources',
            'outputs', 'template', 'update', 'parameters'
-        @logger = SimpleDeployLogger.new
+
+        unless @stacks.include? @opts[:name]
+          @logger.info "Stack '#{@opts[:name]}' does not exist."
+          exit 1
+        end
+
         @stack = Stack.new :environment => @opts[:environment],
                            :name        => @opts[:name],
                            :config      => @config,
@@ -87,7 +95,7 @@ EOS
       when 'instances'
         @stack.instances.each { |s| puts s }
       when 'list'
-        puts Stackster::StackLister.new(:config => @config).all
+        puts @stacks
       when 'template'
         jj @stack.template
       when 'events', 'outputs', 'resources', 'status', 'parameters'

@@ -43,18 +43,16 @@ module SimpleDeploy
 
     def get_artifact_endpoints
       h = {}
-      @config.artifacts.each do |a|
-        name = a['name']
-        endpoint = a['endpoint'] ||= 's3'
-        variable = a['variable']
-        bucket_prefix = a['bucket_prefix']
+      @config.artifacts.each do |artifact|
+        variable = @config.artifact_deploy_variable artifact
+        bucket_prefix = @config.artifact_bucket_prefix artifact
 
-        artifact = Artifact.new :name          => name,
+        artifact = Artifact.new :name          => artifact,
                                 :id            => @attributes[name],
                                 :region        => @region,
                                 :config        => @config,
                                 :bucket_prefix => bucket_prefix
-        h[variable] = artifact.endpoints[endpoint]
+        h[variable] = artifact.endpoints['s3']
       end
       h
     end
@@ -88,8 +86,6 @@ module SimpleDeploy
         @deployment.server i, :instances
       end
     end
-
-    private
 
     def env_home
       ENV['HOME']
