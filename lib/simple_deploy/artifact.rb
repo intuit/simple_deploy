@@ -7,6 +7,7 @@ module SimpleDeploy
       @id = args[:id]
       @name = args[:name]
       @region = args[:region]
+      @domain = @config.artifact_domain @name
 
       @bucket = "#{@bucket_prefix}-#{@region}"
       @key = "#{@id}.tar.gz"
@@ -23,15 +24,15 @@ module SimpleDeploy
     private
 
     def s3_url
-      "s3://#{@bucket}/#{@name}/#{@key}"
+      "s3://#{@bucket}/#{@domain}/#{@key}"
     end
 
     def http_url
-      "http://#{s3_endpoints[@region]}/#{@bucket}/#{@name}/#{@key}"
+      "http://#{s3_endpoints[@region]}/#{@bucket}/#{@domain}/#{@key}"
     end
 
     def https_url
-      "https://#{s3_endpoints[@region]}/#{@bucket}/#{@name}/#{@key}"
+      "https://#{s3_endpoints[@region]}/#{@bucket}/#{@domain}/#{@key}"
     end
 
     def s3_endpoints

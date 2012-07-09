@@ -32,10 +32,13 @@ You must setup a simple_deploy.yaml file in your home directory.  Format as foll
 
   artifacts:
     chef_repo:
+      domain: app_specific_domain
       bucket_prefix: chef-bucket-prefix
     app:
+      domain: app_specific_app
       bucket_prefix: app-bucket-prefix
     cookbooks:
+      domain: app_specific_cookbooks
       bucket_prefix: cookbooks-bucket-prefix
 
   environments:
@@ -55,6 +58,8 @@ You must setup a simple_deploy.yaml file in your home directory.  Format as foll
 Bucket prefixes will append -us-west-1 (or appropriate region) when deploying based on the environment.
 
 For example app-bucket-prefix will be tranlated to app-bucket-prefix-us-west-1.
+
+The domain is the specific domain that is set when the artifact is created by heirloom.
 
 EOS
         opt :help, "Display Help"

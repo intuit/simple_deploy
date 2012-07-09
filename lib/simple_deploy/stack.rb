@@ -15,29 +15,30 @@ module SimpleDeploy
     end
 
     def create(args)
-      stack.create :attributes => stack_attribute_formater.updated_attributes,
+      stack.create :attributes => stack_attribute_formater.updated_attributes(args[:attributes]),
                    :template => args[:template]
     end
 
     def update(args)
-      stack.update :attributes => stack_attribute_formater.updated_attributes
+      stack.update :attributes => stack_attribute_formater.updated_attributes(args[:attributes])
     end
 
     # To Do: Abstract deployment into it's own class
     # Pass in required stack objects for attribut mgmt
     def deploy(force = false)
-      @logger.info "Checking stack deployment status."
+      @logger.info "Checking deployment status."
       if deployment_in_progress?
         @logger.info "Deployment in progress."
         @logger.info "Started by #{attributes['deployment_user']}@#{attributes['deployment_datetime']}."
         if force
-          @logger.info "Clearing deployment status."
           clear_deployment_status
         else
           @logger.error "Exiting due to existing deployment."
           @logger.error "Use -f to override."
           exit 1
         end
+      else
+        @logger.info "No other deployments in progress."
       end
       set_deployment_in_progress
       deployment.execute
@@ -49,12 +50,14 @@ module SimpleDeploy
     end
 
     def set_deployment_in_progress
+      @logger.info "Setting deployment in progress by #{ssh_user}."
       stack.update :attributes => [ { 'deployment_in_progress' => 'true',
-                                      'deployment_user'        => 'bweaver',
+                                      'deployment_user'        => ssh_user,
                                       'deployment_datetime'    => Time.now.to_s } ]
     end
 
     def clear_deployment_status
+      @logger.info "Clearing deployment status."
       stack.update :attributes => [ { 'deployment_in_progress' => '' } ]
     end
 
@@ -108,8 +111,7 @@ module SimpleDeploy
     end
     
     def stack_attribute_formater
-      @saf ||= StackAttributeFormater.new :attributes  => args[:attributes],
-                                          :config      => @config,
+      @saf ||= StackAttributeFormater.new :config      => @config,
                                           :environment => @environment
     end
 
