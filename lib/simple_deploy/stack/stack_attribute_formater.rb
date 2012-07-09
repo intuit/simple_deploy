@@ -21,7 +21,7 @@ module SimpleDeploy
     end
 
     def artifact_names
-      @config.artifacts.map {|i| i['name']}
+      @config.artifacts
     end
     
     def cloud_formation_url attribute
@@ -29,8 +29,8 @@ module SimpleDeploy
       id = attribute[name]
       a = @config.artifacts.select { |a| a['name'] == name }.first
 
-      bucket_prefix = @config.artifact_bucket_prefix artifact
-      cloud_formation_url = @config.artifact_cloud_formation_url artifact
+      bucket_prefix = @config.artifact_bucket_prefix name
+      cloud_formation_url = @config.artifact_cloud_formation_url name
 
       artifact = Artifact.new :name          => name,
                               :id            => id,

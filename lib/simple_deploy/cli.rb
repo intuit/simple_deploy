@@ -100,11 +100,6 @@ EOS
            'status', 'attributes', 'events', 'resources',
            'outputs', 'template', 'update', 'parameters'
 
-        unless @stacks.include? @opts[:name]
-          @logger.error "Stack '#{@opts[:name]}' does not exist."
-          exit 1
-        end
-
         @stack = Stack.new :environment => @opts[:environment],
                            :name        => @opts[:name],
                            :config      => @config,
