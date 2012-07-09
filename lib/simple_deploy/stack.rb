@@ -1,4 +1,5 @@
 require 'stackster'
+require 'simple_deploy/stack/deployment'
 require 'simple_deploy/stack/stack_reader'
 require 'simple_deploy/stack/stack_lister'
 require 'simple_deploy/stack/stack_attribute_formater'
@@ -10,44 +11,59 @@ module SimpleDeploy
       @environment = args[:environment]
       @name = args[:name]
       @config = Config.new :logger => args[:logger]
-    end
-
-    def self.list(args)
-      StackLister.new(:config => args[:config]).all
+      @logger = @config.logger
     end
 
     def create(args)
-      saf = StackAttributeFormater.new(:attributes  => args[:attributes],
-                                       :config      => @config,
-                                       :environment => @environment)
-      stack.create :attributes => saf.updated_attributes,
+      stack.create :attributes => stack_attribute_formater.updated_attributes,
                    :template => args[:template]
     end
 
     def update(args)
-      saf = StackAttributeFormater.new(:attributes  => args[:attributes],
-                                       :config      => @config,
-                                       :environment => @environment)
-      stack.update :attributes => saf.updated_attributes
+      stack.update :attributes => stack_attribute_formater.updated_attributes
     end
 
-    def deploy
-      deployment = Deployment.new :config      => @config,
-                                  :environment => @environment,
-                                  :instances   => instances,
-                                  :attributes  => attributes,
-                                  :ssh_gateway => stack.attributes['ssh_gateway'],
-                                  :ssh_user    => ENV['SIMPLE_DEPLOY_SSH_USER'],
-                                  :ssh_key     => ENV['SIMPLE_DEPLOY_SSH_KEY']
+    # To Do: Abstract deployment into it's own class
+    # Pass in required stack objects for attribut mgmt
+    def deploy(force = false)
+      @logger.info "Checking stack deployment status."
+      if deployment_in_progress?
+        @logger.info "Deployment in progress."
+        @logger.info "Started by #{attributes['deployment_user']}@#{attributes['deployment_datetime']}."
+        if force
+          @logger.info "Clearing deployment status."
+          clear_deployment_status
+        else
+          @logger.error "Exiting due to existing deployment."
+          @logger.error "Use -f to override."
+          exit 1
+        end
+      end
+      set_deployment_in_progress
       deployment.execute
+      clear_deployment_status
+    end
+
+    def deployment_in_progress?
+      attributes['deployment_in_progress'] == 'true'
+    end
+
+    def set_deployment_in_progress
+      stack.update :attributes => [ { 'deployment_in_progress' => 'true',
+                                      'deployment_user'        => 'bweaver',
+                                      'deployment_datetime'    => Time.now.to_s } ]
+    end
+
+    def clear_deployment_status
+      stack.update :attributes => [ { 'deployment_in_progress' => '' } ]
     end
 
     def destroy
       stack.destroy
     end
 
-    def events
-      stack.events
+    def events(limit)
+      stack.events limit
     end
 
     def outputs
@@ -88,7 +104,30 @@ module SimpleDeploy
       @stack ||= Stackster::Stack.new :environment => @environment,
                                       :name        => @name,
                                       :config      => @config.environment(@environment),
-                                      :logger      => @config.logger
+                                      :logger      => @logger
+    end
+    
+    def stack_attribute_formater
+      @saf ||= StackAttributeFormater.new :attributes  => args[:attributes],
+                                          :config      => @config,
+                                          :environment => @environment
+    end
+
+    def deployment
+      @deployment ||= Stack::Deployment.new :config      => @config,
+                                            :environment => @environment,
+                                            :instances   => instances,
+                                            :attributes  => attributes,
+                                            :ssh_user    => ssh_user,
+                                            :ssh_key     => ssh_key
+    end
+
+    def ssh_key
+      ENV['SIMPLE_DEPLOY_SSH_KEY'] ||= "#{ENV['HOME']}/.ssh/id_rsa"
+    end
+
+    def ssh_user
+      ENV['SIMPLE_DEPLOY_SSH_USER'] ||= ENV['USER']
     end
 
   end

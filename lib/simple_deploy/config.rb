@@ -13,17 +13,17 @@ module SimpleDeploy
     end
 
     def artifact_deploy_variable(artifact)
-      a = { 'chef_repo' => 'CHEF_REPO_URL',
-            'app'       => 'APP_URL',
-            'cookbooks' => 'COOKBOOKS_URL' }
-      a[artifact]
+      name_to_variable_map = { 'chef_repo' => 'CHEF_REPO_URL',
+                               'app'       => 'APP_URL',
+                               'cookbooks' => 'COOKBOOKS_URL' }
+      a[name_to_variable_map]
     end
 
     def artifact_cloud_formation_url(artifact)
-      a = { 'chef_repo' => 'ChefRepoURL',
-            'app'       => 'AppArtifactURL',
-            'cookbooks' => 'CookbooksURL' }
-      a[artifact]
+      name_to_url_map = { 'chef_repo' => 'ChefRepoURL',
+                          'app'       => 'AppArtifactURL',
+                          'cookbooks' => 'CookbooksURL' }
+      name_to_url_map[artifact]
     end 
 
     def artifact_bucket_prefix(artifact)

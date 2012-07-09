@@ -28,11 +28,42 @@ Attributes are specified as '=' seperated key value pairs.  Multiple can be spec
 
 simple_deploy create -t ~/my-template.json -e my-env -n test-stack -a arg1=val1 -a arg2=vol2
 
+You must setup a simple_deploy.yaml file in your home directory.  Format as follows:
+
+  artifacts:
+    chef_repo:
+      bucket_prefix: chef-bucket-prefix
+    app:
+      bucket_prefix: app-bucket-prefix
+    cookbooks:
+      bucket_prefix: cookbooks-bucket-prefix
+
+  environments:
+    preprod_shared_us_west_1:
+      access_key: XXXXXXXXXXXXXXXXXXX
+      secret_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      region: us-west-1
+    infrastructure_us_west_1:
+      access_key: XXXXXXXXXXXXXXXXXXX
+      secret_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      region: us-west-1
+    infrastructure_us_west_2:
+      access_key: XXXXXXXXXXXXXXXXXXX
+      secret_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+      region: us-west-2
+
+Bucket prefixes will append -us-west-1 (or appropriate region) when deploying based on the environment.
+
+For example app-bucket-prefix will be tranlated to app-bucket-prefix-us-west-1.
+
 EOS
         opt :help, "Display Help"
         opt :attributes, "= seperated attribute and it's value", :type  => :string,
                                                                  :multi => true
         opt :environment, "Set the target environment", :type => :string
+        opt :force, "Force a deployment to proceed"
+        opt :limit, "Add limit to results returned by events.", :type    => :integer,
+                                                                :default => 3
         opt :name, "Stack name to manage", :type => :string
         opt :template, "Path to the template file", :type => :string
       end
@@ -65,7 +96,7 @@ EOS
            'outputs', 'template', 'update', 'parameters'
 
         unless @stacks.include? @opts[:name]
-          @logger.info "Stack '#{@opts[:name]}' does not exist."
+          @logger.error "Stack '#{@opts[:name]}' does not exist."
           exit 1
         end
 
@@ -86,7 +117,7 @@ EOS
         @stack.destroy
         @logger.info "#{@opts[:name]} destroyed."
       when 'deploy'
-        @stack.deploy
+        @stack.deploy @opts[:force]
       when 'environments'
         Config.new.environments.keys.each { |e| puts e }
       when 'update'
@@ -98,8 +129,10 @@ EOS
         puts @stacks
       when 'template'
         jj @stack.template
-      when 'events', 'outputs', 'resources', 'status', 'parameters'
+      when 'outputs', 'resources', 'status', 'parameters'
         puts (@stack.send @cmd.to_sym).to_yaml
+      when 'events'
+        puts (@stack.events @opts[:limit]).to_yaml
       else
         puts "Unknown command.  Use -h for help."
       end
