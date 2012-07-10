@@ -1,3 +1,8 @@
+## v0.3.3:
+
+* Exist if -e is not a valid environment
+* Updated to version 0.2.4 of stackster
+
 ## v0.3.2:
 
 * Improved debuging

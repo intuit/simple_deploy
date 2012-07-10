@@ -43,6 +43,7 @@ module SimpleDeploy
     end
 
     def environment(name)
+      raise "Environment not found" unless environments.include? name
       environments[name]
     end
 

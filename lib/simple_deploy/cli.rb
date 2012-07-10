@@ -84,13 +84,20 @@ EOS
       read_attributes
       
       unless @cmd == 'environments'
-        @config = Config.new.environment @opts[:environment]
 
+        environments = Config.new.environments
         unless environment_provided?
           puts "\nPlease specify an environment.\n\n"
-          Config.new.environments.keys.each { |e| puts e }
+          environments.keys.each { |e| puts e }
           exit 1
         end
+
+        unless environments.include? @opts[:environment]
+          puts "\nEnvironment #{@opts[:environment]} not found.\n"
+          exit 1
+        end
+
+        @config = Config.new.environment @opts[:environment]
       end
 
       @stacks = Stackster::StackLister.new(:config => @config).all
