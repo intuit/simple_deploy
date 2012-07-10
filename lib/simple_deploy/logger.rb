@@ -14,6 +14,10 @@ module SimpleDeploy
       @logger
     end
 
+    def debug(msg)
+      @logger.debug msg
+    end
+
     def info(msg)
       @logger.info msg
     end

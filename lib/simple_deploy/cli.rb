@@ -71,6 +71,12 @@ EOS
                                                                 :default => 3
         opt :name, "Stack name to manage", :type => :string
         opt :template, "Path to the template file", :type => :string
+        opt :version, "Display simple deploy version"
+      end
+
+      if @opts[:version]
+        puts "Version: #{SimpleDeploy::VERSION}"
+        exit 0
       end
 
       @cmd = ARGV.shift
@@ -108,7 +114,7 @@ EOS
 
       case @cmd
       when 'attributes'
-        @stack.attributes.each_pair { |k, v| puts "#{k}: #{v}" }
+        @stack.attributes.each_pair { |k, v| puts "#{k}=#{v}" }
       when 'create'
         @stack.create :attributes => attributes,
                       :template => @opts[:template]
