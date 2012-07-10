@@ -2,27 +2,26 @@ module SimpleDeploy
   class StackAttributeFormater
 
     def initialize(args)
-      @attributes = args[:attributes]
       @config = args[:config]
       @environment = args[:environment]
       @region = @config.region @environment
       @logger = @config.logger
     end
 
-    def updated_attributes
+    def updated_attributes(attributes)
       updates = []
-      @attributes.each do |attribute|
+      attributes.each do |attribute|
         key = attribute.keys.first
         if artifact_names.include? key
           updates << cloud_formation_url(attribute)
           @logger.info "Adding artifact attribute: #{cloud_formation_url(attribute)}"
         end
       end
-      @attributes + updates
+      attributes + updates
     end
 
     def artifact_names
-      @config.artifacts.map {|i| i['name']}
+      @config.artifacts
     end
     
     def cloud_formation_url attribute
@@ -30,10 +29,8 @@ module SimpleDeploy
       id = attribute[name]
       a = @config.artifacts.select { |a| a['name'] == name }.first
 
-      endpoint = a['endpoint'] ||= 's3'
-      variable = a['variable']
-      bucket_prefix = a['bucket_prefix']
-      cloud_formation_url = a['cloud_formation_url']
+      bucket_prefix = @config.artifact_bucket_prefix name
+      cloud_formation_url = @config.artifact_cloud_formation_url name
 
       artifact = Artifact.new :name          => name,
                               :id            => id,
@@ -41,7 +38,7 @@ module SimpleDeploy
                               :config        => @config,
                               :bucket_prefix => bucket_prefix
 
-      { cloud_formation_url => artifact.endpoints[endpoint] }
+      { cloud_formation_url => artifact.endpoints['s3'] }
     end
 
   end

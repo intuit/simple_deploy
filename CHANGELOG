@@ -1,0 +1,49 @@
+## v0.3.4:
+
+* List stacks in order based on name
+
+## v0.3.3:
+
+* Exist if -e is not a valid environment
+* Updated to version 0.2.4 of stackster
+
+## v0.3.2:
+
+* Improved debuging
+* Added version
+* Updated to version 0.2.3 of stackster
+
+## v0.3.1:
+
+* Fixed bug in creating new stacks
+
+## v0.3.0:
+
+* Updating to new ~/.simpledeploy.yml format.
+
+    artifacts: 
+      chef_repo:
+        bucket_prefix: prefix_to_bucket
+        domain: name_of_object
+      app:
+        bucket_prefix: prefix_to_bucket
+        domain: name_of_object
+      cookbooks:
+        bucket_prefix: prefix_to_bucket
+
+    environments:
+      preprod_shared_us-west-1:
+        access_key: XXX
+        secret_key: YYY
+        region: us-west-1
+      infrastructure_us-west-1:
+        access_key: XXX
+        secret_key: YYY
+        region: us-west-1
+      infrastructure_us-east-1:
+        access_key: XXX
+        secret_key: YYY
+        region: us-east-1
+
+* Adding locking to deployment.
+* Added limit to number of events coming out with -l flag.

@@ -5,7 +5,7 @@ module SimpleDeploy
       read_attributes.each do |attribs|
         key = attribs.split('=').first.gsub(/\s+/, "")
         value = attribs.gsub(/^.+?=/, '')
-        @logger.info "Read #{key} : #{value}"
+        @logger.info "Read #{key}=#{value}"
         attrs << { key => value }
       end
       attrs
