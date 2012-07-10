@@ -100,7 +100,7 @@ EOS
         @config = Config.new.environment @opts[:environment]
       end
 
-      @stacks = Stackster::StackLister.new(:config => @config).all
+      @stacks = Stackster::StackLister.new(:config => @config).all.sort
       @logger = SimpleDeployLogger.new
 
       case @cmd

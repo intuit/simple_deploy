@@ -1,3 +1,7 @@
+## v0.3.4:
+
+* List stacks in order based on name
+
 ## v0.3.3:
 
 * Exist if -e is not a valid environment
