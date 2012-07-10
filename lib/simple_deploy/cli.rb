@@ -5,6 +5,7 @@ module SimpleDeploy
   module CLI
     def self.start
       @opts = Trollop::options do
+        version SimpleDeploy::VERSION
         banner <<-EOS
 
 Deploy and manage resources in AWS
@@ -71,12 +72,6 @@ EOS
                                                                 :default => 3
         opt :name, "Stack name to manage", :type => :string
         opt :template, "Path to the template file", :type => :string
-        opt :version, "Display simple deploy version"
-      end
-
-      if @opts[:version]
-        puts "Version: #{SimpleDeploy::VERSION}"
-        exit 0
       end
 
       @cmd = ARGV.shift
