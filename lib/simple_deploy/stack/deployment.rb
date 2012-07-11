@@ -18,13 +18,19 @@ module SimpleDeploy
         @deploy_script = @config.deploy_script
 
         create_deployment
-        set_deploy_command
       end
 
       def execute
+        set_deploy_command
         @logger.info 'Starting deployment.'
         @deployment.simpledeploy
         @logger.info 'Deployment complete.'
+      end
+
+      def ssh
+        @instances.map do |i|
+          "\n-----\nssh -i #{@ssh_key} -l #{@ssh_user} -L 9998:#{i}:22 -N #{@ssh_gateway} &\nssh -p 9998 localhost\n-----\n"
+        end
       end
 
       private

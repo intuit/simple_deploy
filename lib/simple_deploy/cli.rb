@@ -15,6 +15,7 @@ simple_deploy list -e ENVIRONMENT
 simple_deploy create -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES -t TEMPLATE_PATH
 simple_deploy update -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES
 simple_deploy deploy -n STACK_NAME -e ENVIRONMENT
+simple_deploy ssh -n STACK_NAME -e ENVIRONMENT
 simple_deploy destroy -n STACK_NAME -e ENVIRONMENT
 simple_deploy instances -n STACK_NAME -e ENVIRONMENT
 simple_deploy status -n STACK_NAME -e ENVIRONMENT
@@ -106,7 +107,8 @@ EOS
       case @cmd
       when 'create', 'delete', 'deploy', 'destroy', 'instances',
            'status', 'attributes', 'events', 'resources',
-           'outputs', 'template', 'update', 'parameters'
+           'outputs', 'template', 'update', 'parameters',
+           'ssh'
 
         @stack = Stack.new :environment => @opts[:environment],
                            :name        => @opts[:name],
@@ -139,6 +141,8 @@ EOS
         jj @stack.template
       when 'outputs', 'resources', 'status', 'parameters'
         puts (@stack.send @cmd.to_sym).to_yaml
+      when 'ssh'
+        puts @stack.send @cmd.to_sym
       when 'events'
         puts (@stack.events @opts[:limit]).to_yaml
       else
