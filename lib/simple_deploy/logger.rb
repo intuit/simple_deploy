@@ -3,6 +3,7 @@ module SimpleDeploy
     
     def initialize(args = {})
       @logger = args[:logger] ||= Logger.new(STDOUT)
+      @log_level = args[:log_level] ||= 'info'
 
       unless args[:logger]
         @logger.datetime_format = "%Y-%m-%d %H:%M:%S"
@@ -11,6 +12,16 @@ module SimpleDeploy
         end
       end
 
+      case @log_level.downcase
+      when 'info'
+        @logger.level = Logger::INFO
+      when 'debug'
+        @logger.level = Logger::DEBUG
+      when 'warn'
+        @logger.level = Logger::WARN
+      when 'error'
+        @logger.level = Logger::ERROR
+      end
       @logger
     end
 
