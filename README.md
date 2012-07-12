@@ -12,21 +12,15 @@ gem install simple_deploy
 Create a file **~/.simple_deploy.yml** and include within it:
 
 ```
-deploy:
-  script: /opt/intu/admin/bin/configure.sh
-  artifacts: 
-    - name: live_community_chef_repo
-      bucket_prefix: intu-lc
-      variable: CHEF_REPO_URL
-      cloud_formation_url: ChefRepoURL
-    - name: live_community
-      bucket_prefix: intu-lc
-      variable: APP_URL
-      cloud_formation_url: AppArtifactURL
-    - name: cookbooks
-      bucket_prefix: intu-artifacts
-      variable: COOKBOOKS_URL
-      cloud_formation_url: CookbooksURL
+artifacts: 
+  chef_repo:
+    bucket_prefix: intu-lc
+    domain: live_community_chef_repo
+  app:
+    bucket_prefix: intu-lc
+    domain: live_community
+  cookbooks:
+    bucket_prefix: intu-artifacts
 
 environments:
   preprod_shared_us_west_1:
@@ -53,6 +47,7 @@ simple_deploy list -e ENVIRONMENT
 simple_deploy create -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES -t TEMPLATE_PATH
 simple_deploy update -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES
 simple_deploy deploy -n STACK_NAME -e ENVIRONMENT
+simple_deploy ssh -n STACK_NAME -e ENVIRONMENT
 simple_deploy destroy -n STACK_NAME -e ENVIRONMENT
 simple_deploy instances -n STACK_NAME -e ENVIRONMENT
 simple_deploy status -n STACK_NAME -e ENVIRONMENT
