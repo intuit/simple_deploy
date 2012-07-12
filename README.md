@@ -14,13 +14,13 @@ Create a file **~/.simple_deploy.yml** and include within it:
 ```
 artifacts: 
   chef_repo:
-    bucket_prefix: intu-lc
-    domain: live_community_chef_repo
+    bucket_prefix: bucket1
+    domain: app1-chef_repo
   app:
-    bucket_prefix: intu-lc
-    domain: live_community
+    bucket_prefix: bucket2
+    domain: app1
   cookbooks:
-    bucket_prefix: intu-artifacts
+    bucket_prefix: bucket2
 
 environments:
   preprod_shared_us_west_1:
