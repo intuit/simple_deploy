@@ -45,6 +45,10 @@ module SimpleDeploy
       clear_deployment_status
     end
 
+    def ssh
+      deployment.ssh
+    end
+
     def deployment_in_progress?
       attributes['deployment_in_progress'] == 'true'
     end
