@@ -69,8 +69,8 @@ EOS
                                                                  :multi => true
         opt :environment, "Set the target environment", :type => :string
         opt :force, "Force a deployment to proceed"
-        opt :results, "Add limit to results returned by events.", :type    => :integer,
-                                                                  :default => 3
+        opt :count, "Count of events returned.", :type    => :integer,
+                                                 :default => 3
         opt :log_level, "Log level to output. Valid levels:  debug, info, warn, error", :type    => :string,
                                                                                         :default => 'info'
         opt :name, "Stack name to manage", :type => :string
@@ -104,7 +104,18 @@ EOS
       end
 
       @stacks = Stackster::StackLister.new(:config => @config).all.sort
-      @logger = SimpleDeployLogger.new :log_level => @opts[:log_level]
+
+
+      case @cmd
+      when 'ssh'
+        @log_level = 'warn'
+      else
+        @log_level = 'info'
+      end
+
+      @log_level = @opts[:log_level] if @opts[:log_level]
+
+      @logger = SimpleDeployLogger.new :log_level => @log_level
 
       case @cmd
       when 'create', 'delete', 'deploy', 'destroy', 'instances',
@@ -129,6 +140,7 @@ EOS
         @stack.destroy
         @logger.info "#{@opts[:name]} destroyed."
       when 'deploy'
+        @stack.update :attributes => attributes
         @stack.deploy @opts[:force]
       when 'environments'
         Config.new.environments.keys.each { |e| puts e }
@@ -146,7 +158,7 @@ EOS
       when 'ssh'
         puts @stack.send @cmd.to_sym
       when 'events'
-        puts (@stack.events @opts[:results]).to_yaml
+        puts (@stack.events @opts[:count]).to_yaml
       else
         puts "Unknown command.  Use -h for help."
       end

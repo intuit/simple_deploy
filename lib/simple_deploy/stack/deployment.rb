@@ -29,7 +29,7 @@ module SimpleDeploy
 
       def ssh
         @instances.map do |i|
-          "\n-----\nssh -i #{@ssh_key} -l #{@ssh_user} -L 9998:#{i}:22 -N #{@ssh_gateway} &\nssh -p 9998 localhost\n-----\n"
+          "\nssh -i #{@ssh_key} -l #{@ssh_user} -L 9998:#{i}:22 -N #{@ssh_gateway} &\nssh -p 9998 localhost"
         end
       end
 
