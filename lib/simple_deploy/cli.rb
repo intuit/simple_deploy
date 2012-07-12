@@ -69,8 +69,10 @@ EOS
                                                                  :multi => true
         opt :environment, "Set the target environment", :type => :string
         opt :force, "Force a deployment to proceed"
-        opt :limit, "Add limit to results returned by events.", :type    => :integer,
-                                                                :default => 3
+        opt :results, "Add limit to results returned by events.", :type    => :integer,
+                                                                  :default => 3
+        opt :log_level, "Log level to output. Valid levels:  debug, info, warn, error", :type    => :string,
+                                                                                        :default => 'info'
         opt :name, "Stack name to manage", :type => :string
         opt :template, "Path to the template file", :type => :string
       end
@@ -102,7 +104,7 @@ EOS
       end
 
       @stacks = Stackster::StackLister.new(:config => @config).all.sort
-      @logger = SimpleDeployLogger.new
+      @logger = SimpleDeployLogger.new :log_level => @opts[:log_level]
 
       case @cmd
       when 'create', 'delete', 'deploy', 'destroy', 'instances',
@@ -144,7 +146,7 @@ EOS
       when 'ssh'
         puts @stack.send @cmd.to_sym
       when 'events'
-        puts (@stack.events @opts[:limit]).to_yaml
+        puts (@stack.events @opts[:results]).to_yaml
       else
         puts "Unknown command.  Use -h for help."
       end
