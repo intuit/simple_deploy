@@ -1,21 +1,13 @@
 module SimpleDeploy
   class SimpleDeployLogger
 
+    include Forwardable
+
+    def_delegators :@logger, :debug, :error, :info, :warn
+
     def initialize(args = {})
       @log_level = args[:log_level] ||= 'info'
       @logger    = args[:logger] ||= new_logger(args)
-    end
-
-    def debug(msg)
-      @logger.debug msg
-    end
-
-    def info(msg)
-      @logger.info msg
-    end
-
-    def error(msg)
-      @logger.error msg
     end
 
     private
