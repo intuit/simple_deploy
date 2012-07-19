@@ -57,6 +57,9 @@ module SimpleDeploy
         CLI::SSH.new.show
       when 'update'
         CLI::Update.new.update
+      when '-h'
+        puts "simple_deploy [attributes|create|destroy|environments|events|instances|list|template|outputs|parameters|resources|ssh|status|update]"
+        puts "Append -h for help on specific subcommand."
       else
         puts "Unknown command: '#{cmd}'."
         puts "simple_deploy [attributes|create|destroy|environments|events|instances|list|template|outputs|parameters|resources|ssh|status|update]"

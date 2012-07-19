@@ -20,6 +20,9 @@ EOS
           opt :name, "Stack name(s) of stack to deploy", :type => :string
         end
 
+        CLI::Shared.valid_options? :provided => opts,
+                                   :required => [:environment, :name]
+
         config = Config.new.environment opts[:environment]
 
         logger = SimpleDeployLogger.new :log_level => opts[:log_level]

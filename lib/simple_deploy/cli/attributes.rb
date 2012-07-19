@@ -20,6 +20,9 @@ EOS
           opt :name, "Stack name to manage", :type => :string
         end
 
+        CLI::Shared.valid_options? :provided => opts,
+                                   :required => [:environment, :name]
+
         config = Config.new.environment opts[:environment]
 
         logger = SimpleDeployLogger.new :log_level => opts[:log_level]
@@ -28,7 +31,7 @@ EOS
                           :name        => opts[:name],
                           :config      => config,
                           :logger      => logger
-        stack.attributes.each_pair { |k, v| puts "#{k}=#{v}" }
+        Hash[stack.attributes.sort].each_pair { |k, v| puts "#{k}=#{v}" }
       end
     end
   end
