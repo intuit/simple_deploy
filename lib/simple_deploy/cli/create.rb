@@ -34,7 +34,7 @@ EOS
                                                   :logger     => logger
 
         stack = Stack.new :environment => opts[:environment],
-                          :name        => name,
+                          :name        => opts[:name],
                           :config      => config,
                           :logger      => logger
 

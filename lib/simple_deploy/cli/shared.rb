@@ -26,6 +26,14 @@ module SimpleDeploy
             exit 1
           end
         end
+
+        if required.include? :environment
+          unless Config.new.environments.keys.include? provided[:environment]
+            puts "Environment '#{provided[:environment]}' does not exist."
+            exit 1
+          end
+        end
+
       end
 
     end

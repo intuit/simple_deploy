@@ -34,6 +34,7 @@ module SimpleDeploy
         @logger.info "Deployment in progress for #{@name}."
         @logger.info "Started by #{attributes['deployment_user']}@#{attributes['deployment_datetime']}."
         if force
+          @logger.info "Forcing.  Clearing deployment status."
           clear_deployment_status
         else
           @logger.error "Exiting due to existing deployment."

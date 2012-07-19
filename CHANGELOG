@@ -1,3 +1,10 @@
+## v0.4.0:
+
+* Added support for passing updates with deploy command
+* Added support for deploying updates to multiple stacks
+* Updated log outputs
+* Abstracted CLI into individual classes
+
 ## v0.3.7:
 
 * Updated stackster

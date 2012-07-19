@@ -28,7 +28,7 @@ EOS
         logger = SimpleDeployLogger.new :log_level => opts[:log_level]
 
         stack = Stack.new :environment => opts[:environment],
-                          :name        => name,
+                          :name        => opts[:name],
                           :config      => config,
                           :logger      => logger
 

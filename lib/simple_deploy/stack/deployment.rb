@@ -70,7 +70,7 @@ module SimpleDeploy
       end
 
       def ssh_options
-        @logger.info "Setting key to #{@ssh_key}."
+        @logger.debug "Setting key to #{@ssh_key}."
         { 
           :keys => @ssh_key,
           :paranoid => false
@@ -80,7 +80,7 @@ module SimpleDeploy
       def create_deployment 
         @deployment = Capistrano::Configuration.new
         if @ssh_user
-          @logger.info "Setting user to #{@ssh_user}."
+          @logger.debug "Setting user to #{@ssh_user}."
           @deployment.set :user, @ssh_user
         end
 
@@ -94,7 +94,7 @@ module SimpleDeploy
         @deployment.variables[:ssh_options] = ssh_options
         
         @instances.each do |i| 
-          @logger.info "Adding instance #{i}."
+          @logger.debug "Deploying to instance #{i}."
           @deployment.server i, :instances
         end
       end
