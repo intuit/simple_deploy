@@ -40,12 +40,17 @@ module SimpleDeploy
         get_artifact_endpoints.each_pair do |k,v|
           cmd += "#{k}=#{v} "
         end
+        cmd += "PRIMARY=#{primary_instance} "
         cmd += @deploy_script
 
         @logger.info "Executing '#{cmd}.'"
         @deployment.load :string => "task :simpledeploy do
         sudo '#{cmd}'
         end"
+      end
+
+      def primary_instance 
+        @instances.first
       end
 
       def get_artifact_endpoints
