@@ -1,28 +1,9 @@
 module SimpleDeploy
   class SimpleDeployLogger
-    
+
     def initialize(args = {})
-      @logger = args[:logger] ||= Logger.new(STDOUT)
       @log_level = args[:log_level] ||= 'info'
-
-      unless args[:logger]
-        @logger.datetime_format = "%Y-%m-%d %H:%M:%S"
-        @logger.formatter = proc do |severity, datetime, progname, msg|
-            "#{datetime}: #{msg}\n"
-        end
-      end
-
-      case @log_level.downcase
-      when 'info'
-        @logger.level = Logger::INFO
-      when 'debug'
-        @logger.level = Logger::DEBUG
-      when 'warn'
-        @logger.level = Logger::WARN
-      when 'error'
-        @logger.level = Logger::ERROR
-      end
-      @logger
+      @logger    = args[:logger] ||= new_logger(args)
     end
 
     def debug(msg)
@@ -36,5 +17,21 @@ module SimpleDeploy
     def error(msg)
       @logger.error msg
     end
+
+    private
+    def new_logger(args)
+      Logger.new(STDOUT).tap do |l|
+        l.datetime_format = '%Y-%m-%dT%H:%M:%S%z'
+        l.formatter = proc do |severity, datetime, progname, msg|
+          "#{datetime} #{severity} : #{msg}\n"
+        end
+        l.level = logger_level
+      end
+    end
+
+    def logger_level
+      Logger.const_get @log_level.upcase
+    end
+
   end
 end
