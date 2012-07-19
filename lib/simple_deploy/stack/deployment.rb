@@ -40,7 +40,7 @@ module SimpleDeploy
         get_artifact_endpoints.each_pair do |k,v|
           cmd += "#{k}=#{v} "
         end
-        cmd += "PRIMARY=#{primary_instance} "
+        cmd += "PRIMARY_HOST=#{primary_instance} "
         cmd += @deploy_script
 
         @logger.info "Executing '#{cmd}.'"
