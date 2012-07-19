@@ -20,17 +20,21 @@ module SimpleDeploy
     end
 
     def update(args)
+      @logger.info "Updating #{@name}."
       stack.update :attributes => stack_attribute_formater.updated_attributes(args[:attributes])
+      @logger.info "Update complete for #{@name}."
     end
 
     # To Do: Abstract deployment into it's own class
     # Pass in required stack objects for attribut mgmt
     def deploy(force = false)
-      @logger.info "Checking deployment status."
+      @logger.info "Deploying to #{@name}."
+      @logger.debug "Checking deployment status for #{@name}."
       if deployment_in_progress?
-        @logger.info "Deployment in progress."
+        @logger.info "Deployment in progress for #{@name}."
         @logger.info "Started by #{attributes['deployment_user']}@#{attributes['deployment_datetime']}."
         if force
+          @logger.info "Forcing.  Clearing deployment status."
           clear_deployment_status
         else
           @logger.error "Exiting due to existing deployment."
@@ -38,11 +42,12 @@ module SimpleDeploy
           exit 1
         end
       else
-        @logger.info "No other deployments in progress."
+        @logger.debug "No other deployments in progress for #{@name}."
       end
       set_deployment_in_progress
       deployment.execute
       clear_deployment_status
+      @logger.info "Deploy completed succesfully for #{@name}."
     end
 
     def ssh
@@ -54,19 +59,20 @@ module SimpleDeploy
     end
 
     def set_deployment_in_progress
-      @logger.info "Setting deployment in progress by #{ssh_user}."
+      @logger.debug "Setting deployment in progress by #{ssh_user} for #{@name}."
       stack.update :attributes => [ { 'deployment_in_progress' => 'true',
                                       'deployment_user'        => ssh_user,
                                       'deployment_datetime'    => Time.now.to_s } ]
     end
 
     def clear_deployment_status
-      @logger.info "Clearing deployment status."
+      @logger.debug "Clearing deployment status for #{@name}."
       stack.update :attributes => [ { 'deployment_in_progress' => '' } ]
     end
 
     def destroy
       stack.destroy
+      @logger.info "#{@name} destroyed."
     end
 
     def events(limit)

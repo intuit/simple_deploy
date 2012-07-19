@@ -1,166 +1,70 @@
 require 'trollop'
-require 'simple_deploy/cli/variables'
+
+require 'simple_deploy/cli/shared'
+
+require 'simple_deploy/cli/attributes'
+require 'simple_deploy/cli/create'
+require 'simple_deploy/cli/deploy'
+require 'simple_deploy/cli/destroy'
+require 'simple_deploy/cli/events'
+require 'simple_deploy/cli/instances'
+require 'simple_deploy/cli/list'
+require 'simple_deploy/cli/outputs'
+require 'simple_deploy/cli/parameters'
+require 'simple_deploy/cli/resources'
+require 'simple_deploy/cli/ssh'
+require 'simple_deploy/cli/status'
+require 'simple_deploy/cli/template'
+require 'simple_deploy/cli/update'
 
 module SimpleDeploy
   module CLI
     def self.start
-      @opts = Trollop::options do
-        version SimpleDeploy::VERSION
-        banner <<-EOS
+      cmd = ARGV.shift
 
-Deploy and manage resources in AWS
-
-simple_deploy environments
-simple_deploy list -e ENVIRONMENT
-simple_deploy create -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES -t TEMPLATE_PATH
-simple_deploy update -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES
-simple_deploy deploy -n STACK_NAME -e ENVIRONMENT
-simple_deploy ssh -n STACK_NAME -e ENVIRONMENT
-simple_deploy destroy -n STACK_NAME -e ENVIRONMENT
-simple_deploy instances -n STACK_NAME -e ENVIRONMENT
-simple_deploy status -n STACK_NAME -e ENVIRONMENT
-simple_deploy attributes -n STACK_NAME -e ENVIRONMENT
-simple_deploy events -n STACK_NAME -e ENVIRONMENT
-simple_deploy resources -n STACK_NAME -e ENVIRONMENT
-simple_deploy outputs -n STACK_NAME -e ENVIRONMENT
-simple_deploy template -n STACK_NAME -e ENVIRONMENT
-simple_deploy parameters -n STACK_NAME -e ENVIRONMENT
-
-Attributes are specified as '=' seperated key value pairs.  Multiple can be specified.  For example:
-
-simple_deploy create -t ~/my-template.json -e my-env -n test-stack -a arg1=val1 -a arg2=vol2
-
-You must setup a simple_deploy.yaml file in your home directory.  Format as follows:
-
-  artifacts:
-    chef_repo:
-      domain: app_specific_domain
-      bucket_prefix: chef-bucket-prefix
-    app:
-      domain: app_specific_app
-      bucket_prefix: app-bucket-prefix
-    cookbooks:
-      domain: app_specific_cookbooks
-      bucket_prefix: cookbooks-bucket-prefix
-
-  environments:
-    preprod_shared_us_west_1:
-      access_key: XXXXXXXXXXXXXXXXXXX
-      secret_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-      region: us-west-1
-    infrastructure_us_west_1:
-      access_key: XXXXXXXXXXXXXXXXXXX
-      secret_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-      region: us-west-1
-    infrastructure_us_west_2:
-      access_key: XXXXXXXXXXXXXXXXXXX
-      secret_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-      region: us-west-2
-
-Bucket prefixes will append -us-west-1 (or appropriate region) when deploying based on the environment.
-
-For example app-bucket-prefix will be tranlated to app-bucket-prefix-us-west-1.
-
-The domain is the specific domain that is set when the artifact is created by heirloom.
-
-EOS
-        opt :help, "Display Help"
-        opt :attributes, "= seperated attribute and it's value", :type  => :string,
-                                                                 :multi => true
-        opt :environment, "Set the target environment", :type => :string
-        opt :force, "Force a deployment to proceed"
-        opt :count, "Count of events returned.", :type    => :integer,
-                                                 :default => 3
-        opt :log_level, "Log level to output. Valid levels:  debug, info, warn, error", :type    => :string,
-                                                                                        :default => 'info'
-        opt :name, "Stack name to manage", :type => :string
-        opt :template, "Path to the template file", :type => :string
-      end
-
-      @cmd = ARGV.shift
-
-      unless @cmd
+      unless cmd
         puts "\nPlease specify a command.\n"
         exit 1
       end
 
-      read_attributes
-      
-      unless @cmd == 'environments'
-
-        environments = Config.new.environments
-        unless environment_provided?
-          puts "\nPlease specify an environment.\n\n"
-          environments.keys.each { |e| puts e }
-          exit 1
-        end
-
-        unless environments.include? @opts[:environment]
-          puts "\nEnvironment #{@opts[:environment]} not found.\n"
-          exit 1
-        end
-
-        @config = Config.new.environment @opts[:environment]
-      end
-
-      @stacks = Stackster::StackLister.new(:config => @config).all.sort
-
-
-      case @cmd
-      when 'ssh'
-        @log_level = 'warn'
-      else
-        @log_level = 'info'
-      end
-
-      @log_level = @opts[:log_level] if @opts[:log_level]
-
-      @logger = SimpleDeployLogger.new :log_level => @log_level
-
-      case @cmd
-      when 'create', 'delete', 'deploy', 'destroy', 'instances',
-           'status', 'attributes', 'events', 'resources',
-           'outputs', 'template', 'update', 'parameters',
-           'ssh'
-
-        @stack = Stack.new :environment => @opts[:environment],
-                           :name        => @opts[:name],
-                           :config      => @config,
-                           :logger      => @logger
-      end
-
-      case @cmd
+      case cmd
       when 'attributes'
-        @stack.attributes.each_pair { |k, v| puts "#{k}=#{v}" }
+        CLI::Attributes.new.show
       when 'create'
-        @stack.create :attributes => attributes,
-                      :template => @opts[:template]
-        @logger.info "#{@opts[:name]} created."
-      when 'delete', 'destroy'
-        @stack.destroy
-        @logger.info "#{@opts[:name]} destroyed."
+        CLI::Create.new.create
+      when 'destroy', 'delete'
+        CLI::Destroy.new.destroy
       when 'deploy'
-        @stack.update :attributes => attributes
-        @stack.deploy @opts[:force]
+        CLI::Deploy.new.deploy
       when 'environments'
-        Config.new.environments.keys.each { |e| puts e }
-      when 'update'
-        @stack.update :attributes => attributes
-        @logger.info "#{@opts[:name]} updated."
-      when 'instances'
-        @stack.instances.each { |s| puts s }
-      when 'list'
-        puts @stacks
-      when 'template'
-        jj @stack.template
-      when 'outputs', 'resources', 'status', 'parameters'
-        puts (@stack.send @cmd.to_sym).to_yaml
-      when 'ssh'
-        puts @stack.send @cmd.to_sym
+        CLI::List.new.environments
       when 'events'
-        puts (@stack.events @opts[:count]).to_yaml
+        CLI::Events.new.show
+      when 'instances'
+        CLI::Instances.new.list
+      when 'list'
+        CLI::List.new.stacks
+      when 'outputs'
+        CLI::Outputs.new.show
+      when 'parameters'
+        CLI::Parameters.new.show
+      when 'resources'
+        CLI::Resources.new.show
+      when 'status'
+        CLI::Status.new.show
+      when 'template'
+        CLI::Template.new.show
+      when 'ssh'
+        CLI::SSH.new.show
+      when 'update'
+        CLI::Update.new.update
+      when '-h'
+        puts "simple_deploy [attributes|create|destroy|environments|events|instances|list|template|outputs|parameters|resources|ssh|status|update]"
+        puts "Append -h for help on specific subcommand."
       else
-        puts "Unknown command.  Use -h for help."
+        puts "Unknown command: '#{cmd}'."
+        puts "simple_deploy [attributes|create|destroy|environments|events|instances|list|template|outputs|parameters|resources|ssh|status|update]"
+        puts "Append -h for help on specific subcommand."
       end
     end
 
