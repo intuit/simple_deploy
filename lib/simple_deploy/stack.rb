@@ -28,7 +28,7 @@ module SimpleDeploy
     # To Do: Abstract deployment into it's own class
     # Pass in required stack objects for attribut mgmt
     def deploy(force = false)
-      @logger.info "Deploying #{@name}."
+      @logger.info "Deploying to #{@name}."
       @logger.debug "Checking deployment status for #{@name}."
       if deployment_in_progress?
         @logger.info "Deployment in progress for #{@name}."
