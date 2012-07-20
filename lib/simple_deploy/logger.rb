@@ -1,6 +1,8 @@
 module SimpleDeploy
   class SimpleDeployLogger
 
+    require 'forwardable'
+
     include Forwardable
 
     def_delegators :@logger, :debug, :error, :info, :warn
