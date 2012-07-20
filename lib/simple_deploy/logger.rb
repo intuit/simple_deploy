@@ -3,7 +3,7 @@ module SimpleDeploy
 
     require 'forwardable'
 
-    include Forwardable
+    extend Forwardable
 
     def_delegators :@logger, :debug, :error, :info, :warn
 
