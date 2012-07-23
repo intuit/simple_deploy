@@ -5,7 +5,6 @@ module SimpleDeploy
     class Campfire
 
       def initialize(args)
-        @environment = args[:environment]
         @stack_name = args[:stack_name]
         @config = args[:config]
         @logger = @config.logger
@@ -19,7 +18,7 @@ module SimpleDeploy
 
       def send(message)
         @room_ids.each do |room_id|
-          @logger.debug "Sending notification to Campfire room #{room_id}."
+          @logger.info "Sending notification to Campfire room #{room_id}."
           room = @campfire.find_room_by_id room_id
           room.speak message
         end

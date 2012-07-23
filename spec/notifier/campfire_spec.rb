@@ -30,9 +30,9 @@ describe SimpleDeploy do
                                                   and_return room1_mock
     @tinder_mock.should_receive(:find_room_by_id).with('2').
                                                   and_return room2_mock
-    @logger_mock.should_receive(:debug).
+    @logger_mock.should_receive(:info).
                  with "Sending notification to Campfire room 1."
-    @logger_mock.should_receive(:debug).
+    @logger_mock.should_receive(:info).
                  with "Sending notification to Campfire room 2."
     room1_mock.should_receive(:speak).with :message => "heh you guys!"
     room2_mock.should_receive(:speak).with :message => "heh you guys!"

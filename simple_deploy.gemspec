@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec"
 
   s.add_runtime_dependency "capistrano"
-  s.add_runtime_dependency "stackster", '= 0.2.7'
+  s.add_runtime_dependency "stackster", '= 0.2.8'
   s.add_runtime_dependency "tinder"
   s.add_runtime_dependency "trollop"
 end

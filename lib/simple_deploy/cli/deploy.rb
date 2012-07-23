@@ -31,8 +31,8 @@ EOS
         environment_config = config.environment opts[:environment]
         logger = SimpleDeployLogger.new :log_level => opts[:log_level]
 
-        attributes = CLI::Shared.parse_attributes :attributes => opts[:attributes],
-                                                  :logger     => logger
+        new_attributes = CLI::Shared.parse_attributes :attributes => opts[:attributes],
+                                                      :logger     => logger
         opts[:name].each do |name|
           notifier = Notifier.new :stack_name  => name,
                                   :environment => opts[:environment],
@@ -42,9 +42,11 @@ EOS
                             :name        => name,
                             :config      => environment_config,
                             :logger      => logger
-          stack.update(:attributes => attributes) if attributes.any?
+
+          stack.update(:attributes => new_attributes) if new_attributes.any?
           stack.deploy opts[:force]
-          notifier.send("Deployment to #{name} complete.")
+
+          notifier.send_deployment_complete_message
         end
       end
     end

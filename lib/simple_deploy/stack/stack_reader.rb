@@ -1,4 +1,5 @@
 require 'json'
+
 module SimpleDeploy
   class StackReader
 
