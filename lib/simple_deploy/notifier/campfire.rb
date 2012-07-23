@@ -1,7 +1,7 @@
 require 'tinder'
 
 module SimpleDeploy
-  module Notifier
+  class Notifier
     class Campfire
 
       def initialize(args)
