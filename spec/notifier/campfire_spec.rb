@@ -38,17 +38,19 @@ describe SimpleDeploy do
     it "should send a message to campfire rooms" do
       room1_mock = mock 'tinder'
       room2_mock = mock 'tinder'
-      @tinder_mock.should_receive(:find_room_by_id).with('1').
+      @tinder_mock.should_receive(:find_room_by_id).with(1).
                                                     and_return room1_mock
-      @tinder_mock.should_receive(:find_room_by_id).with('2').
+      @tinder_mock.should_receive(:find_room_by_id).with(2).
                                                     and_return room2_mock
       @logger_mock.should_receive(:debug).
                    with "Sending notification to Campfire room 1."
       @logger_mock.should_receive(:debug).
                    with "Sending notification to Campfire room 2."
+      @logger_mock.should_receive(:debug).
+                   with "Campfire notifications complete."
       room1_mock.should_receive(:speak).with :message => "heh you guys!"
       room2_mock.should_receive(:speak).with :message => "heh you guys!"
-      @campfire.send(:message => 'heh you guys!').should be_true
+      @campfire.send(:message => 'heh you guys!')
     end
   end
 
@@ -78,6 +80,8 @@ describe SimpleDeploy do
                    with "Campfire subdomain ''."
       @logger_mock.should_receive(:debug).
                    with "Campfire room ids ''."
+      @logger_mock.should_receive(:debug).
+                   with "Campfire notifications complete."
       @campfire = SimpleDeploy::Notifier::Campfire.new :stack_name  => 'stack_name',
                                                        :environment => 'test',
                                                        :config      => @config_mock

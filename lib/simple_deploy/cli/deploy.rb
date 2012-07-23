@@ -28,8 +28,6 @@ EOS
         CLI::Shared.valid_options? :provided => opts,
                                    :required => [:environment, :name]
 
-        config = Config.new
-        environment_config = config.environment opts[:environment]
         logger = SimpleDeployLogger.new :log_level => opts[:log_level]
 
         new_attributes = CLI::Shared.parse_attributes :attributes => opts[:attributes],
@@ -37,11 +35,10 @@ EOS
         opts[:name].each do |name|
           notifier = Notifier.new :stack_name  => name,
                                   :environment => opts[:environment],
-                                  :config      => config
+                                  :logger      => logger
 
           stack = Stack.new :environment => opts[:environment],
                             :name        => name,
-                            :config      => environment_config,
                             :logger      => logger
 
           stack.update(:attributes => new_attributes) if new_attributes.any?

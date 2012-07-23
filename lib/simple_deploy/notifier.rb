@@ -5,7 +5,7 @@ module SimpleDeploy
     def initialize(args)
       @stack_name = args[:stack_name]
       @environment = args[:environment]
-      @config = args[:config]
+      @config = Config.new :logger => args[:logger]
       @logger = @config.logger
       @notifications = @config.notifications
     end
@@ -15,11 +15,11 @@ module SimpleDeploy
       attributes = stack.attributes
 
       if attributes['app_github_url']
-        message += " App: #{attributes['app_github_url']}/commits/#{attributes['app']}"
+        message += " App: #{attributes['app_github_url']}/commit/#{attributes['app']}"
       end
 
       if attributes['chef_repo_github_url']
-        message += " Chef: #{attributes['chef_repo_github_url']}/commits/#{attributes['chef_repo']}"
+        message += " Chef: #{attributes['chef_repo_github_url']}/commit/#{attributes['chef_repo']}"
       end
 
       send message
