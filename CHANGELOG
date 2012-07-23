@@ -1,3 +1,8 @@
+## v0.4.2:
+
+* Upgrade to stackster v0.2.9
+* Added -v to main cli options
+
 ## v0.4.1:
 
 * Added notifier class and campfire notifications
