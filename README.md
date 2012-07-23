@@ -27,6 +27,10 @@ environments:
     access_key: XXX
     secret_key: yyy
     region: us-west-1
+
+notifications:
+  campfire:
+    token: XXX
 ```
 
 Configuration File
