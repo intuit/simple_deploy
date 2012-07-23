@@ -22,6 +22,7 @@ EOS
                                                                   :default => 'info'
           opt :name, "Stack name(s) of stack to deploy", :type => :string,
                                                          :multi => true
+          opt :quiet, "Quiet, do not send notifications"
         end
 
         CLI::Shared.valid_options? :provided => opts,
@@ -46,7 +47,7 @@ EOS
           stack.update(:attributes => new_attributes) if new_attributes.any?
           stack.deploy opts[:force]
 
-          notifier.send_deployment_complete_message
+          notifier.send_deployment_complete_message unless opts[:quiet]
         end
       end
     end
