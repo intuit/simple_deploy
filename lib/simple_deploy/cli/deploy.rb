@@ -22,23 +22,29 @@ EOS
                                                                   :default => 'info'
           opt :name, "Stack name(s) of stack to deploy", :type => :string,
                                                          :multi => true
+          opt :quiet, "Quiet, do not send notifications"
         end
 
         CLI::Shared.valid_options? :provided => opts,
                                    :required => [:environment, :name]
 
-        config = Config.new.environment opts[:environment]
         logger = SimpleDeployLogger.new :log_level => opts[:log_level]
 
-        attributes = CLI::Shared.parse_attributes :attributes => opts[:attributes],
-                                                  :logger     => logger
+        new_attributes = CLI::Shared.parse_attributes :attributes => opts[:attributes],
+                                                      :logger     => logger
         opts[:name].each do |name|
+          notifier = Notifier.new :stack_name  => name,
+                                  :environment => opts[:environment],
+                                  :logger      => logger
+
           stack = Stack.new :environment => opts[:environment],
                             :name        => name,
-                            :config      => config,
                             :logger      => logger
-          stack.update(:attributes => attributes) if attributes.any?
+
+          stack.update(:attributes => new_attributes) if new_attributes.any?
           stack.deploy opts[:force]
+
+          notifier.send_deployment_complete_message unless opts[:quiet]
         end
       end
     end
