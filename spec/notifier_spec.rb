@@ -41,6 +41,9 @@ describe SimpleDeploy do
   it "should send a message to each listed notification endpoint" do
     campfire_mock = mock 'campfire mock'
     SimpleDeploy::Notifier::Campfire.should_receive(:new).
+                                     with(:environment => 'test',
+                                          :stack_name  => 'stack_name',
+                                          :config      => @config_mock).
                                      and_return campfire_mock
     campfire_mock.should_receive(:send).with 'heh you guys!'
     @notifier.send 'heh you guys!'

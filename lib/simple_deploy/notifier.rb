@@ -30,6 +30,7 @@ module SimpleDeploy
         case notification
         when 'campfire'
           campfire = Notifier::Campfire.new :stack_name  => @stack_name,
+                                            :environment => @environment,
                                             :config      => @config
           campfire.send message
         end
