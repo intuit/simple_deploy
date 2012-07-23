@@ -16,7 +16,7 @@ module SimpleDeploy
           campfire = Notifier::Campfire.new :stack_name  => @stack_name,
                                             :environment => @environment,
                                             :config      => @config
-          campfire.send :message => message
+          campfire.send message
         end
       end
     end

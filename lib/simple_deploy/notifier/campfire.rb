@@ -19,6 +19,7 @@ module SimpleDeploy
 
       def send(message)
         @room_ids.each do |room_id|
+          @logger.debug "Sending notification to Campfire room #{room_id}."
           room = @campfire.find_room_by_id room_id
           room.speak message
         end
