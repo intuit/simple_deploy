@@ -47,6 +47,10 @@ module SimpleDeploy
       environments[name]
     end
 
+    def notifications
+      config['notifications']
+    end
+
     def region(name)
       environment(name)['region']
     end

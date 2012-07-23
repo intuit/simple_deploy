@@ -29,6 +29,7 @@ EOS
 
         config = Config.new.environment opts[:environment]
         logger = SimpleDeployLogger.new :log_level => opts[:log_level]
+        notifier = Notifier.new
 
         attributes = CLI::Shared.parse_attributes :attributes => opts[:attributes],
                                                   :logger     => logger
