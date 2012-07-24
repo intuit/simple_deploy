@@ -1,3 +1,9 @@
+## v0.4.3:
+
+* Gracefully exit if no notification settings
+* Send info level notification starting message
+* Set verify SSL to false
+
 ## v0.4.2:
 
 * Upgrade to stackster v0.2.9

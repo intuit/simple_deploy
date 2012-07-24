@@ -21,7 +21,7 @@ describe SimpleDeploy do
                        and_return @stack_mock
 
       Tinder::Campfire.should_receive(:new).
-                       with('subdom', :token => 'tkn').and_return @tinder_mock
+                       with('subdom', :token => 'tkn', :verify=>true).and_return @tinder_mock
       @stack_mock.should_receive(:attributes).
                   and_return( 'campfire_room_ids'  => '1,2',
                               'campfire_subdomain' => 'subdom' )
@@ -46,7 +46,9 @@ describe SimpleDeploy do
                    with "Sending notification to Campfire room 1."
       @logger_mock.should_receive(:debug).
                    with "Sending notification to Campfire room 2."
-      @logger_mock.should_receive(:debug).
+      @logger_mock.should_receive(:info).
+                   with "Sending Campfire notifications."
+      @logger_mock.should_receive(:info).
                    with "Campfire notifications complete."
       room1_mock.should_receive(:speak).with :message => "heh you guys!"
       room2_mock.should_receive(:speak).with :message => "heh you guys!"
@@ -73,14 +75,16 @@ describe SimpleDeploy do
                        and_return @stack_mock
 
       Tinder::Campfire.should_receive(:new).
-                       with(nil, :token => 'tkn').and_return @tinder_mock
+                       with(nil, :token => 'tkn', :verify=>true).and_return @tinder_mock
       @stack_mock.should_receive(:attributes).
                   and_return({})
       @logger_mock.should_receive(:debug).
                    with "Campfire subdomain ''."
       @logger_mock.should_receive(:debug).
                    with "Campfire room ids ''."
-      @logger_mock.should_receive(:debug).
+      @logger_mock.should_receive(:info).
+                   with "Sending Campfire notifications."
+      @logger_mock.should_receive(:info).
                    with "Campfire notifications complete."
       @campfire = SimpleDeploy::Notifier::Campfire.new :stack_name  => 'stack_name',
                                                        :environment => 'test',

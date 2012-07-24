@@ -16,16 +16,18 @@ module SimpleDeploy
         @logger.debug "Campfire subdomain '#{@subdomain}'."
         @logger.debug "Campfire room ids '#{@room_ids}'."
         @token = @config.notifications['campfire']['token']
-        @campfire = Tinder::Campfire.new @subdomain, :token => @token
+        @campfire = Tinder::Campfire.new @subdomain, :token => @token,
+                                                     :verify => true
       end
 
       def send(message)
+        @logger.info "Sending Campfire notifications."
         @room_ids.split(',').each do |room_id|
           @logger.debug "Sending notification to Campfire room #{room_id}."
           room = @campfire.find_room_by_id room_id.to_i
           room.speak message
         end
-        @logger.debug "Campfire notifications complete."
+        @logger.info "Campfire notifications complete."
       end
 
       private
