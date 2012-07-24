@@ -21,7 +21,7 @@ describe SimpleDeploy do
                        and_return @stack_mock
 
       Tinder::Campfire.should_receive(:new).
-                       with('subdom', :token => 'tkn', :verify=>true).and_return @tinder_mock
+                       with('subdom', :token => 'tkn', :verify => false).and_return @tinder_mock
       @stack_mock.should_receive(:attributes).
                   and_return( 'campfire_room_ids'  => '1,2',
                               'campfire_subdomain' => 'subdom' )
@@ -58,14 +58,13 @@ describe SimpleDeploy do
 
   describe "without valid attributes" do
     before do
-      config = { 'campfire' => { 'token' => 'tkn' } }
+      config = nil
                 
       @config_mock = mock 'config mock'
       @stack_mock = mock 'stack'
       @logger_mock = mock 'logger mock'
       @tinder_mock = mock 'tinder'
       @config_mock.should_receive(:logger).and_return @logger_mock
-      @config_mock.should_receive(:notifications).and_return config
       @config_mock.should_receive(:environment).and_return 'env_config'
       Stackster::Stack.should_receive(:new).
                        with(:environment => 'test',
@@ -74,8 +73,6 @@ describe SimpleDeploy do
                             :logger      => @logger_mock).
                        and_return @stack_mock
 
-      Tinder::Campfire.should_receive(:new).
-                       with(nil, :token => 'tkn', :verify=>true).and_return @tinder_mock
       @stack_mock.should_receive(:attributes).
                   and_return({})
       @logger_mock.should_receive(:debug).
