@@ -11,7 +11,7 @@ describe SimpleDeploy do
                            and_return @config_mock
                    
       @config_mock.should_receive(:notifications).
-                   exactly(2).times.
+                   exactly(1).times.
                    and_return({ 'campfire' => 'settings' })
       @config_mock.should_receive(:logger).
                    and_return @logger_mock

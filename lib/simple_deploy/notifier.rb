@@ -7,7 +7,7 @@ module SimpleDeploy
       @environment = args[:environment]
       @config = Config.new :logger => args[:logger]
       @logger = @config.logger
-      @notifications = @config.notifications ? @config.notifications : {}
+      @notifications = @config.notifications || {}
     end
 
     def send_deployment_complete_message
