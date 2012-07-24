@@ -20,12 +20,13 @@ module SimpleDeploy
       end
 
       def send(message)
+        @logger.info "Sending Campfire notifications."
         @room_ids.split(',').each do |room_id|
           @logger.debug "Sending notification to Campfire room #{room_id}."
           room = @campfire.find_room_by_id room_id.to_i
           room.speak message
         end
-        @logger.debug "Campfire notifications complete."
+        @logger.info "Campfire notifications complete."
       end
 
       private

@@ -46,7 +46,9 @@ describe SimpleDeploy do
                    with "Sending notification to Campfire room 1."
       @logger_mock.should_receive(:debug).
                    with "Sending notification to Campfire room 2."
-      @logger_mock.should_receive(:debug).
+      @logger_mock.should_receive(:info).
+                   with "Sending Campfire notifications."
+      @logger_mock.should_receive(:info).
                    with "Campfire notifications complete."
       room1_mock.should_receive(:speak).with :message => "heh you guys!"
       room2_mock.should_receive(:speak).with :message => "heh you guys!"
@@ -80,7 +82,9 @@ describe SimpleDeploy do
                    with "Campfire subdomain ''."
       @logger_mock.should_receive(:debug).
                    with "Campfire room ids ''."
-      @logger_mock.should_receive(:debug).
+      @logger_mock.should_receive(:info).
+                   with "Sending Campfire notifications."
+      @logger_mock.should_receive(:info).
                    with "Campfire notifications complete."
       @campfire = SimpleDeploy::Notifier::Campfire.new :stack_name  => 'stack_name',
                                                        :environment => 'test',
