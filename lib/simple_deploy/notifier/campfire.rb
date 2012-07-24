@@ -16,7 +16,8 @@ module SimpleDeploy
         @logger.debug "Campfire subdomain '#{@subdomain}'."
         @logger.debug "Campfire room ids '#{@room_ids}'."
         @token = @config.notifications['campfire']['token']
-        @campfire = Tinder::Campfire.new @subdomain, :token => @token
+        @campfire = Tinder::Campfire.new @subdomain, :token => @token,
+                                                     :verify => true
       end
 
       def send(message)
