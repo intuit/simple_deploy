@@ -21,7 +21,7 @@ describe SimpleDeploy do
                        and_return @stack_mock
 
       Tinder::Campfire.should_receive(:new).
-                       with('subdom', :token => 'tkn').and_return @tinder_mock
+                       with('subdom', :token => 'tkn', :verify=>true).and_return @tinder_mock
       @stack_mock.should_receive(:attributes).
                   and_return( 'campfire_room_ids'  => '1,2',
                               'campfire_subdomain' => 'subdom' )
@@ -75,7 +75,7 @@ describe SimpleDeploy do
                        and_return @stack_mock
 
       Tinder::Campfire.should_receive(:new).
-                       with(nil, :token => 'tkn').and_return @tinder_mock
+                       with(nil, :token => 'tkn', :verify=>true).and_return @tinder_mock
       @stack_mock.should_receive(:attributes).
                   and_return({})
       @logger_mock.should_receive(:debug).
