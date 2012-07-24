@@ -21,7 +21,7 @@ describe SimpleDeploy do
                        and_return @stack_mock
 
       Tinder::Campfire.should_receive(:new).
-                       with('subdom', :token => 'tkn', :verify => false).and_return @tinder_mock
+                       with("subdom", { :token=>"tkn", :ssl_options=> { :verify => false } }).and_return @tinder_mock
       @stack_mock.should_receive(:attributes).
                   and_return( 'campfire_room_ids'  => '1,2',
                               'campfire_subdomain' => 'subdom' )

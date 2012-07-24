@@ -19,7 +19,7 @@ module SimpleDeploy
         if @subdomain
           @token = @config.notifications['campfire']['token']
           @campfire = Tinder::Campfire.new @subdomain, :token => @token,
-                                                       :verify => false
+                                                       :ssl_options => { :verify => false }
         end
       end
 

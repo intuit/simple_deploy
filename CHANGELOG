@@ -1,3 +1,7 @@
+## v0.4.5:
+
+* Corrected SSL verification options
+
 ## v0.4.4:
 
 * Set verify SSL to false for real
