@@ -1,3 +1,7 @@
+## v0.4.4:
+
+* Set verify SSL to false for real
+
 ## v0.4.3:
 
 * Gracefully exit if no notification settings
