@@ -33,8 +33,13 @@ notifications:
     token: XXX
 ```
 
-Configuration File
-------------------
+Notifications
+-------------
+
+Currently Simple Deploy only supports Campfire for notifications.  To enable them, add your token, which can be obtained on the 'My Info' screen of Campfire in the notifications yaml above.  If you don't want notificaitons, omit this section.
+
+Advaned Configurations
+----------------------
 
 The configuration file supports additional optional deployment parameters.  Artifacts can have an **endpoint** specified to be passed in (by default they pass in the s3 url).
 
@@ -43,30 +48,7 @@ Deploy can have a ssh **user** and **key** set.  These will be used to connect t
 Commands
 --------
 
-You can issues the following commands:
-
-```
-simple_deploy environments
-simple_deploy list -e ENVIRONMENT
-simple_deploy create -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES -t TEMPLATE_PATH
-simple_deploy update -n STACK_NAME -e ENVIRONMENT -a ATTRIBUTES
-simple_deploy deploy -n STACK_NAME -e ENVIRONMENT
-simple_deploy ssh -n STACK_NAME -e ENVIRONMENT
-simple_deploy destroy -n STACK_NAME -e ENVIRONMENT
-simple_deploy instances -n STACK_NAME -e ENVIRONMENT
-simple_deploy status -n STACK_NAME -e ENVIRONMENT
-simple_deploy attributes -n STACK_NAME -e ENVIRONMENT
-simple_deploy events -n STACK_NAME -e ENVIRONMENT
-simple_deploy resources -n STACK_NAME -e ENVIRONMENT
-simple_deploy outputs -n STACK_NAME -e ENVIRONMENT
-simple_deploy template -n STACK_NAME -e ENVIRONMENT
-
-Attribute pairs are = seperated key value pairs.  Multiple can be specified.  For example:
-
-simple_deploy create -t ~/my-template.json -e my-env -n test-stack -a arg1=val1 -a arg2=vol2
-```
-
-For more information, run simple_deploy -h.
+For a list of commands, run simple_deploy -h.  To get more information about each subcommand, append a -h after the subcomand.  For example: **simple_deploy deploy -h**.
 
 Deploying
 ---------

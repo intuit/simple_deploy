@@ -14,11 +14,7 @@ module SimpleDeploy
     end
 
     def endpoints
-      {
-        's3' => s3_url,
-        'http' => http_url,
-        'https' => https_url
-      }
+      { 's3' => s3_url, 'http' => http_url, 'https' => https_url }
     end
 
     private

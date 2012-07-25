@@ -7,12 +7,23 @@ module SimpleDeploy
 
     def_delegators :@logger, :debug, :error, :info, :warn
 
+    # For capistrano output
+    # Only output Cap commands in debug mode
+    def puts(msg, line_prefix=nil)
+      @logger.debug msg.chomp
+    end
+
     def initialize(args = {})
       @log_level = args[:log_level] ||= 'info'
       @logger    = args[:logger] ||= new_logger(args)
     end
 
+    def logger_level
+      Logger.const_get @log_level.upcase
+    end
+
     private
+
     def new_logger(args)
       Logger.new(STDOUT).tap do |l|
         l.datetime_format = '%Y-%m-%dT%H:%M:%S%z'
@@ -21,10 +32,6 @@ module SimpleDeploy
         end
         l.level = logger_level
       end
-    end
-
-    def logger_level
-      Logger.const_get @log_level.upcase
     end
 
   end
