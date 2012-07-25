@@ -37,8 +37,8 @@ module SimpleDeploy
 
       def set_deploy_command
         cmd = get_artifact_endpoints.any? ? "env " : ""
-        get_artifact_endpoints.each_pair do |k,v|
-          cmd += "#{k}=#{v} "
+        get_artifact_endpoints.each_pair do |key,value|
+          cmd += "#{key}=#{value} "
         end
         cmd += "PRIMARY_HOST=#{primary_instance} "
         cmd += @deploy_script
@@ -64,6 +64,7 @@ module SimpleDeploy
                                   :region        => @region,
                                   :config        => @config,
                                   :bucket_prefix => bucket_prefix
+
           h[variable] = artifact.endpoints['s3']
         end
         h
@@ -71,14 +72,14 @@ module SimpleDeploy
 
       def ssh_options
         @logger.debug "Setting key to #{@ssh_key}."
-        { 
-          :keys => @ssh_key,
-          :paranoid => false
-        }
+        { :keys => @ssh_key, :paranoid => false }
       end
 
       def create_deployment 
-        @deployment = Capistrano::Configuration.new
+        @deployment = Capistrano::Configuration.new :output => @logger
+
+        @deploy.logger.level = @logger.logger_level = 0 ? 3 : 1
+
         if @ssh_user
           @logger.debug "Setting user to #{@ssh_user}."
           @deployment.set :user, @ssh_user
