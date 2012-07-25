@@ -15,13 +15,15 @@ module SimpleDeploy
     end
 
     def create(args)
-      stack.create :attributes => stack_attribute_formater.updated_attributes(args[:attributes]),
-                   :template => args[:template]
+      attributes = stack_attribute_formater.updated_attributes args[:attributes]
+      stack.create :attributes => attributes,
+                   :template   => args[:template]
     end
 
     def update(args)
       @logger.info "Updating #{@name}."
-      stack.update :attributes => stack_attribute_formater.updated_attributes(args[:attributes])
+      attributes = stack_attribute_formater.updated_attributes args[:attributes]
+      stack.update :attributes => attributes
       @logger.info "Update complete for #{@name}."
     end
 
@@ -66,7 +68,7 @@ module SimpleDeploy
     end
 
     def clear_deployment_status
-      @logger.debug "Clearing deployment status for #{@name}."
+      @logger.debug "Clearing deployment in progress for #{@name}."
       stack.update :attributes => [ { 'deployment_in_progress' => '' } ]
     end
 
@@ -114,9 +116,10 @@ module SimpleDeploy
     private
 
     def stack
+      environment_config = @config.environment @environment
       @stack ||= Stackster::Stack.new :environment => @environment,
                                       :name        => @name,
-                                      :config      => @config.environment(@environment),
+                                      :config      => environment_config,
                                       :logger      => @logger
     end
     

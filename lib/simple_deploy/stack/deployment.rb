@@ -78,7 +78,7 @@ module SimpleDeploy
       def create_deployment 
         @deployment = Capistrano::Configuration.new :output => @logger
 
-        @deploy.logger.level = @logger.logger_level = 0 ? 3 : 1
+        @deployment.logger.level = @logger.logger_level == 0 ? 3 : 0
 
         if @ssh_user
           @logger.debug "Setting user to #{@ssh_user}."

@@ -8,8 +8,9 @@ module SimpleDeploy
     def_delegators :@logger, :debug, :error, :info, :warn
 
     # For capistrano output
+    # Only output Cap commands in debug mode
     def puts(msg, line_prefix=nil)
-      @logger.info msg
+      @logger.debug msg.chomp
     end
 
     def initialize(args = {})
