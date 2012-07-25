@@ -1,3 +1,9 @@
+## TBD
+
+* Added spec tests.
+* Passing logger object into Capistrano deploy.
+* Updated logger to accept puts from Capistrano.
+
 ## v0.4.5:
 
 * Corrected SSL verification options

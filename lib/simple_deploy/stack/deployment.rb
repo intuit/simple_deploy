@@ -6,13 +6,14 @@ module SimpleDeploy
     class Deployment
       def initialize(args)
         @config = args[:config]
-        @logger = @config.logger
         @instances = args[:instances]
         @attributes = args[:attributes]
         @environment = args[:environment]
-        @ssh_gateway = @attributes['ssh_gateway']
         @ssh_user = args[:ssh_user]
         @ssh_key = args[:ssh_key]
+
+        @ssh_gateway = @attributes['ssh_gateway']
+        @logger = @config.logger
 
         @region = @config.region(@environment)
         @deploy_script = @config.deploy_script
@@ -40,8 +41,7 @@ module SimpleDeploy
         get_artifact_endpoints.each_pair do |key,value|
           cmd += "#{key}=#{value} "
         end
-        cmd += "PRIMARY_HOST=#{primary_instance} "
-        cmd += @deploy_script
+        cmd += "PRIMARY_HOST=#{primary_instance} #{@deploy_script}"
 
         @logger.info "Executing '#{cmd}.'"
         @deployment.load :string => "task :simpledeploy do
