@@ -1,6 +1,8 @@
 require 'capistrano'
 require 'capistrano/cli'
 
+require 'simple_deploy/stack/deployment/status'
+
 module SimpleDeploy
   class Stack
     class Deployment
@@ -39,13 +41,6 @@ module SimpleDeploy
       end
 
       private
-
-      def status
-        @status ||= SimpleDeploy::Stack::Deployment.new :name     => @name,
-                                                        :ssh_user => @ssh_user,
-                                                        :config   => @config,
-                                                        :stack    -> @stack
-      end
 
       def set_deploy_command
         cmd = get_artifact_endpoints.any? ? "env " : ""
@@ -121,6 +116,13 @@ module SimpleDeploy
 
       def deploy_script
         @config.deploy_script
+      end
+
+      def status
+        @status ||= SimpleDeploy::Stack::Deployment.new :name     => @name,
+                                                        :ssh_user => @ssh_user,
+                                                        :config   => @config,
+                                                        :stack    => @stack
       end
 
     end
