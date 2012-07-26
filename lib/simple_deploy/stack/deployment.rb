@@ -1,31 +1,48 @@
 require 'capistrano'
 require 'capistrano/cli'
 
+require 'simple_deploy/stack/deployment/status'
+
 module SimpleDeploy
   class Stack
     class Deployment
       def initialize(args)
         @config = args[:config]
         @instances = args[:instances]
-        @attributes = args[:attributes]
         @environment = args[:environment]
         @ssh_user = args[:ssh_user]
         @ssh_key = args[:ssh_key]
-
-        @ssh_gateway = @attributes['ssh_gateway']
+        @stack = args[:stack]
+        @name = args[:name]
+        @attributes = @stack.attributes
         @logger = @config.logger
-
-        @region = @config.region(@environment)
-        @deploy_script = @config.deploy_script
-
-        create_deployment
+        @region = @config.region @environment
       end
 
-      def execute
+      def create_deployment 
+        @deployment = Capistrano::Configuration.new :output => @logger
+        @deployment.logger.level = 3
+        @logger.info "Creating deployment to #{@name}."
+
+        set_ssh_gateway
+        set_ssh_user
+        set_ssh_options
+        set_instances
         set_deploy_command
-        @logger.info 'Starting deployment.'
-        @deployment.simpledeploy
-        @logger.info 'Deployment complete.'
+      end
+
+      def execute(force=false)
+        if status.cleared_to_deploy?(force)
+          status.set_deployment_in_progress
+          @logger.info 'Starting deployment.'
+          @deployment.simpledeploy
+          @logger.info 'Deployment complete.'
+          status.unset_deployment_in_progress
+          true
+        else
+          @logger.error "Not clear to deploy."
+          false
+        end
       end
 
       def ssh
@@ -41,16 +58,12 @@ module SimpleDeploy
         get_artifact_endpoints.each_pair do |key,value|
           cmd += "#{key}=#{value} "
         end
-        cmd += "PRIMARY_HOST=#{primary_instance} #{@deploy_script}"
+        cmd += "PRIMARY_HOST=#{primary_instance} #{deploy_script}"
 
-        @logger.info "Executing '#{cmd}.'"
+        @logger.info "Deploy command: '#{cmd}'."
         @deployment.load :string => "task :simpledeploy do
         sudo '#{cmd}'
         end"
-      end
-
-      def primary_instance 
-        @instances.first
       end
 
       def get_artifact_endpoints
@@ -70,34 +83,49 @@ module SimpleDeploy
         h
       end
 
-      def ssh_options
-        @logger.debug "Setting key to #{@ssh_key}."
-        { :keys => @ssh_key, :paranoid => false }
+      def set_instances
+        @instances.each do |instance| 
+          @logger.debug "Deploying to instance #{instance}."
+          @deployment.server instance, :instances
+        end
       end
 
-      def create_deployment 
-        @deployment = Capistrano::Configuration.new :output => @logger
+      def set_ssh_options
+        @logger.debug "Setting key to #{@ssh_key}."
+        @deployment.variables[:ssh_options] = { :keys     => @ssh_key, 
+                                                :paranoid => false }
+      end
 
-        @deployment.logger.level = @logger.logger_level == 0 ? 3 : 0
-
-        if @ssh_user
-          @logger.debug "Setting user to #{@ssh_user}."
-          @deployment.set :user, @ssh_user
-        end
-
-        if @ssh_gateway
-          @deployment.set :gateway, @ssh_gateway
-          @logger.info "Proxying via gateway #{@ssh_gateway}."
+      def set_ssh_gateway
+        ssh_gateway = @attributes['ssh_gateway']
+        if ssh_gateway && !ssh_gateway.empty?
+          @deployment.set :gateway, ssh_gateway
+          @logger.info "Proxying via gateway #{ssh_gateway}."
         else
           @logger.info "Not using an ssh gateway."
         end
+      end
 
-        @deployment.variables[:ssh_options] = ssh_options
-        
-        @instances.each do |i| 
-          @logger.debug "Deploying to instance #{i}."
-          @deployment.server i, :instances
-        end
+      def set_ssh_user
+        @logger.debug "Setting user to #{@ssh_user}."
+        @deployment.set :user, @ssh_user
+      end
+
+      def primary_instance 
+        @instances.first
+      end
+
+      def deploy_script
+        @config.deploy_script
+      end
+
+      def status
+        options = { :name        => @name,
+                    :environment => @environment,
+                    :ssh_user    => @ssh_user,
+                    :config      => @config,
+                    :stack       => @stack }
+        @status ||= SimpleDeploy::Stack::Deployment::Status.new options
       end
 
     end

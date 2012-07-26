@@ -40,5 +40,27 @@ describe SimpleDeploy do
                     :template => 'some_json')
     end
 
+    it "should call update stack" do
+      saf_mock = mock 'stack attribute formater mock'
+      stack_mock = mock 'stackster stack mock'
+      environment_config_mock = mock 'environment config mock'
+      @logger_mock.should_receive(:info).exactly(2).times
+      @config_mock.should_receive(:environment).with('test-env').
+                   and_return environment_config_mock
+      SimpleDeploy::StackAttributeFormater.should_receive(:new).
+                                           with(:config      => @config_mock,
+                                                :environment => 'test-env').
+                                           and_return saf_mock
+      Stackster::Stack.should_receive(:new).with(:environment => 'test-env',
+                                                 :name        => 'test-stack',
+                                                 :config      => environment_config_mock,
+                                                 :logger      => @logger_mock).
+                                            and_return stack_mock
+      saf_mock.should_receive(:updated_attributes).with({'arg1' => 'val'}).
+               and_return('arg1' => 'new_val')
+      stack_mock.should_receive(:update).with :attributes => { 'arg1' => 'new_val' }
+      @stack.update :attributes => { 'arg1' => 'val' }
+    end
+
   end
 end
