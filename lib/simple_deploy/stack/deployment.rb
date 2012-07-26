@@ -9,24 +9,25 @@ module SimpleDeploy
       def initialize(args)
         @config = args[:config]
         @instances = args[:instances]
-        @attributes = args[:attributes]
         @environment = args[:environment]
         @ssh_user = args[:ssh_user]
         @ssh_key = args[:ssh_key]
         @stack = args[:stack]
         @name = args[:name]
+        @attributes = @stack.attributes
         @logger = @config.logger
-        @region = @config.region(@environment)
+        @region = @config.region @environment
 
         create_deployment
       end
 
       def execute(force)
         if status.cleared_to_deploy?(force)
+          status.set_deployment_in_progress
           @logger.info 'Starting deployment.'
-          set_deploy_command
           @deployment.simpledeploy
           @logger.info 'Deployment complete.'
+          status.unset_deployment_in_progress
         else
           @logger.error "Not clear to deploy.  Exiting."
           @logger.error "Use -f to override."
@@ -57,12 +58,13 @@ module SimpleDeploy
 
       def create_deployment 
         @deployment = Capistrano::Configuration.new :output => @logger
-        @deployment.logger.level = @logger.logger_level == 0 ? 3 : 0
+        @deployment.logger.level = 3
 
         set_ssh_gateway
         set_ssh_user
         set_ssh_options
         set_instances
+        set_deploy_command
       end
 
       def get_artifact_endpoints
@@ -119,10 +121,12 @@ module SimpleDeploy
       end
 
       def status
-        @status ||= SimpleDeploy::Stack::Deployment.new :name     => @name,
-                                                        :ssh_user => @ssh_user,
-                                                        :config   => @config,
-                                                        :stack    => @stack
+        options = { :name        => @name,
+                    :environment => @environment,
+                    :ssh_user    => @ssh_user,
+                    :config      => @config,
+                    :stack       => @stack }
+        @status ||= SimpleDeploy::Stack::Deployment::Status.new options
       end
 
     end

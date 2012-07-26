@@ -29,7 +29,7 @@ module SimpleDeploy
 
     def deploy(force = false)
       @logger.info "Deploying to #{@name}."
-      deployment.execute(force)
+      deployment.execute force
       @logger.info "Deploy completed succesfully for #{@name}."
     end
 
@@ -55,10 +55,9 @@ module SimpleDeploy
     end
 
     def instances
-      stack.instances.map do |i| 
-        if i['instancesSet'].first['privateIpAddress']
-          i['instancesSet'].first['privateIpAddress']
-        end
+      stack.instances.map do |instance| 
+        info = instance['instancesSet'].first
+        info['vpcId'] ? info['privateIpAddress'] : info['ipAddress']
       end
     end
 
@@ -81,10 +80,10 @@ module SimpleDeploy
     private
 
     def stack
-      environment_config = @config.environment @environment
+      stackster_config = @config.environment @environment
       @stack ||= Stackster::Stack.new :environment => @environment,
                                       :name        => @name,
-                                      :config      => environment_config,
+                                      :config      => stackster_config,
                                       :logger      => @logger
     end
     
@@ -96,10 +95,9 @@ module SimpleDeploy
     def deployment
       @deployment ||= Stack::Deployment.new :config      => @config,
                                             :environment => @environment,
+                                            :name        => @name,
                                             :stack       => stack,
-                                            :name        => name,
                                             :instances   => instances,
-                                            :attributes  => attributes,
                                             :ssh_user    => ssh_user,
                                             :ssh_key     => ssh_key
     end

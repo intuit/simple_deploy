@@ -3,10 +3,12 @@ module SimpleDeploy
     class Deployment
       class Status
 
-        def initialize
+        def initialize(args)
+          @config = args[:config]
           @stack = args[:stack]
           @ssh_user = args[:ssh_user]
           @name = args[:name]
+          @logger = @config.logger
         end
 
         def cleared_to_deploy?(force=false)
@@ -14,7 +16,7 @@ module SimpleDeploy
 
           if force          
             @logger.info "Forcing. Clearing deployment status."
-            clear_deployment_status
+            unset_deployment_in_progress
           else
             false
           end
@@ -39,7 +41,7 @@ module SimpleDeploy
                                            'deployment_datetime'    => Time.now.to_s } ]
         end
 
-        def clear_deployment_status
+        def unset_deployment_in_progress
           @logger.debug "Clearing deployment in progress for #{@name}."
           @stack.update :attributes => [ { 'deployment_in_progress' => 'false' } ]
         end
