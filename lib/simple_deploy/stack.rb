@@ -1,7 +1,5 @@
 require 'stackster'
 require 'simple_deploy/stack/deployment'
-require 'simple_deploy/stack/stack_reader'
-require 'simple_deploy/stack/stack_lister'
 require 'simple_deploy/stack/stack_attribute_formater'
 
 module SimpleDeploy
@@ -28,9 +26,8 @@ module SimpleDeploy
     end
 
     def deploy(force = false)
-      @logger.info "Deploying to #{@name}."
+      deployment.create_deployment
       deployment.execute force
-      @logger.info "Deploy completed succesfully for #{@name}."
     end
 
     def ssh
@@ -38,6 +35,7 @@ module SimpleDeploy
     end
 
     def destroy
+      deployment.create_deployment
       stack.destroy
       @logger.info "#{@name} destroyed."
     end

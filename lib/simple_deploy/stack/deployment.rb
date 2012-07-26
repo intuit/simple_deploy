@@ -17,21 +17,31 @@ module SimpleDeploy
         @attributes = @stack.attributes
         @logger = @config.logger
         @region = @config.region @environment
-
-        create_deployment
       end
 
-      def execute(force)
+      def create_deployment 
+        @deployment = Capistrano::Configuration.new :output => @logger
+        @deployment.logger.level = 3
+        @logger.info "Creating deployment to #{@name}."
+
+        set_ssh_gateway
+        set_ssh_user
+        set_ssh_options
+        set_instances
+        set_deploy_command
+      end
+
+      def execute(force=false)
         if status.cleared_to_deploy?(force)
           status.set_deployment_in_progress
           @logger.info 'Starting deployment.'
           @deployment.simpledeploy
           @logger.info 'Deployment complete.'
           status.unset_deployment_in_progress
+          true
         else
-          @logger.error "Not clear to deploy.  Exiting."
-          @logger.error "Use -f to override."
-          exit 1
+          @logger.error "Not clear to deploy."
+          false
         end
       end
 
@@ -54,17 +64,6 @@ module SimpleDeploy
         @deployment.load :string => "task :simpledeploy do
         sudo '#{cmd}'
         end"
-      end
-
-      def create_deployment 
-        @deployment = Capistrano::Configuration.new :output => @logger
-        @deployment.logger.level = 3
-
-        set_ssh_gateway
-        set_ssh_user
-        set_ssh_options
-        set_instances
-        set_deploy_command
       end
 
       def get_artifact_endpoints
@@ -99,7 +98,7 @@ module SimpleDeploy
 
       def set_ssh_gateway
         ssh_gateway = @attributes['ssh_gateway']
-        if ssh_gateway
+        if ssh_gateway && !ssh_gateway.empty?
           @deployment.set :gateway, ssh_gateway
           @logger.info "Proxying via gateway #{ssh_gateway}."
         else

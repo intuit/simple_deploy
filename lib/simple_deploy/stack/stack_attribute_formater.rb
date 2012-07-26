@@ -20,6 +20,8 @@ module SimpleDeploy
       attributes + updates
     end
 
+    private
+
     def artifact_names
       @config.artifacts
     end
@@ -30,7 +32,7 @@ module SimpleDeploy
       a = @config.artifacts.select { |a| a['name'] == name }.first
 
       bucket_prefix = @config.artifact_bucket_prefix name
-      cloud_formation_url = @config.artifact_cloud_formation_url name
+      url_parameter = @config.artifact_cloud_formation_url name
 
       artifact = Artifact.new :name          => name,
                               :id            => id,
@@ -38,7 +40,7 @@ module SimpleDeploy
                               :config        => @config,
                               :bucket_prefix => bucket_prefix
 
-      { cloud_formation_url => artifact.endpoints['s3'] }
+      { url_parameter => artifact.endpoints['s3'] }
     end
 
   end

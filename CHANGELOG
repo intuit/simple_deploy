@@ -1,8 +1,11 @@
-## TBD
+## v0.4.6:
 
-* Added spec tests.
-* Passing logger object into Capistrano deploy.
-* Updated logger to accept puts from Capistrano.
+* Added spec tests
+* Passing logger object into Capistrano deploy
+* Updated logger to accept puts from Capistrano
+* Refactored deployment
+* Added support for both classic & vpc deployments
+* Removed unused stack_reader & stack_lister classes
 
 ## v0.4.5:
 

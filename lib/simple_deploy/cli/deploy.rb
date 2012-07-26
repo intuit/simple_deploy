@@ -42,9 +42,14 @@ EOS
                             :logger      => logger
 
           stack.update(:attributes => new_attributes) if new_attributes.any?
-          stack.deploy opts[:force]
 
-          notifier.send_deployment_complete_message unless opts[:quiet]
+          if stack.deploy opts[:force]
+            notifier.send_deployment_complete_message unless opts[:quiet]
+          else
+            logger.error "Deployment to #{name} did not complete succesfully."
+            exit 1
+          end
+
         end
       end
     end
