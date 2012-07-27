@@ -2,6 +2,7 @@
 
 * Added specs
 * Updated deployment to set primary host properly in classic
+* Updated ssh to return classic commands properly
 
 ## v0.4.6:
 
