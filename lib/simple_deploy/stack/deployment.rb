@@ -46,17 +46,23 @@ module SimpleDeploy
       end
 
       def ssh
-        @instances.map do |i|
-          "\nssh -i #{@ssh_key} -l #{@ssh_user} -L 9998:#{i}:22 -N #{@ssh_gateway} &\nssh -p 9998 localhost"
+        @stack.instances.map do |instance|
+          info = instance['instancesSet'].first
+          if info['vpcId']
+            gw = @attributes['ssh_gateway']
+            "\nssh -i #{@ssh_key} -l #{@ssh_user} -L 9998:#{info['privateIpAddress']}:22 -N #{gw} &\nssh -p 9998 localhost"
+          else
+            "\nssh -i #{@ssh_key} -l #{@ssh_user} #{info['ipAddress']}"
+          end
         end
       end
 
       private
 
       def set_deploy_command
-        cmd = get_artifact_endpoints.any? ? "env " : ""
+        cmd = ''
         get_artifact_endpoints.each_pair do |key,value|
-          cmd += "#{key}=#{value} "
+          cmd += "env #{key}=#{value} "
         end
         cmd += "PRIMARY_HOST=#{primary_instance} #{deploy_script}"
 
@@ -112,7 +118,11 @@ module SimpleDeploy
       end
 
       def primary_instance 
-        @instances.first
+        if @stack.instances.any?
+          @stack.instances.first['instancesSet'].first['privateIpAddress']
+        else
+          "169.254.169.254"
+        end
       end
 
       def deploy_script
