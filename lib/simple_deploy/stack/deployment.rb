@@ -60,9 +60,9 @@ module SimpleDeploy
       private
 
       def set_deploy_command
-        cmd = ''
+        cmd = 'env '
         get_artifact_endpoints.each_pair do |key,value|
-          cmd += "env #{key}=#{value} "
+          cmd += "#{key}=#{value} "
         end
         cmd += "PRIMARY_HOST=#{primary_instance} #{deploy_script}"
 
