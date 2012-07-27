@@ -120,8 +120,6 @@ module SimpleDeploy
       def primary_instance 
         if @stack.instances.any?
           @stack.instances.first['instancesSet'].first['privateIpAddress']
-        else
-          "169.254.169.254"
         end
       end
 
