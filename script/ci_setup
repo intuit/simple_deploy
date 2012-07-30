@@ -7,8 +7,5 @@ rvm use "1.9.3-p125@simple_deploy" --create
 # Bundle gems
 bundle
 
-# Create blank deployment config
-touch $HOME/.simple_deploy.yml
-
 # Run spec tests
 rspec spec
