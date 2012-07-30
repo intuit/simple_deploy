@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Exit with error if any command returns non zero
+set -e
+
 # Source RVM profile and set ruby / gemset
 . /etc/profile
 rvm use "1.9.3-p125@simple_deploy" --create
