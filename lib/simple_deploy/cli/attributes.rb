@@ -2,9 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Attributes
       def show
-        opts = Trollop::options do
+        @opts = Trollop::options do
           version SimpleDeploy::VERSION
           banner <<-EOS
 
@@ -20,19 +21,29 @@ EOS
           opt :name, "Stack name to manage", :type => :string
         end
 
-        CLI::Shared.valid_options? :provided => opts,
+        CLI::Shared.valid_options? :provided => @opts,
                                    :required => [:environment, :name]
 
-        config = Config.new.environment opts[:environment]
-
-        logger = SimpleDeployLogger.new :log_level => opts[:log_level]
-
-        stack = Stack.new :environment => opts[:environment],
-                          :name        => opts[:name],
-                          :config      => config,
-                          :logger      => logger
         Hash[stack.attributes.sort].each_pair { |k, v| puts "#{k}=#{v}" }
       end
+
+      private
+      def config
+        @config ||= Config.new.environment @opts[:environment]
+      end
+
+      def logger
+        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
+      end
+
+      def stack
+        @stack = Stack.new :environment => @opts[:environment],
+                          :name         => @opts[:name],
+                          :config       => config,
+                          :logger       => logger
+      end
+
     end
+
   end
 end
