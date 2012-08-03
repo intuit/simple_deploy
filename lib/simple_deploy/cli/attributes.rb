@@ -24,12 +24,20 @@ EOS
         CLI::Shared.valid_options? :provided => @opts,
                                    :required => [:environment, :name]
 
-        Hash[stack.attributes.sort].each_pair { |k, v| puts "#{k}=#{v}" }
+        default_output
       end
 
       private
+      def attribute_data
+        Hash[stack.attributes.sort]
+      end
+
       def config
         @config ||= Config.new.environment @opts[:environment]
+      end
+
+      def default_output
+        attribute_data.each_pair { |k, v| puts "#{k}=#{v}" }
       end
 
       def logger
