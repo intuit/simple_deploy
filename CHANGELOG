@@ -1,3 +1,7 @@
+## v0.4.8:
+
+* Added as_command_args option to attributes cli
+
 ## v0.4.7:
 
 * Added specs
