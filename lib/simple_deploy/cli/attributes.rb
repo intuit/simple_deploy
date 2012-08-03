@@ -52,9 +52,9 @@ EOS
 
       def stack
         @stack = Stack.new :environment => @opts[:environment],
-                          :name         => @opts[:name],
-                          :config       => config,
-                          :logger       => logger
+                           :name         => @opts[:name],
+                           :config       => config,
+                           :logger       => logger
       end
 
     end
