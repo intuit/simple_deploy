@@ -15,6 +15,8 @@ simple_deploy attributes -n STACK_NAME -e ENVIRONMENT
 
 EOS
           opt :help, "Display Help"
+          opt :as_command_args,
+              "Displays the attributes in a format suitable for using on the command line"
           opt :environment, "Set the target environment", :type => :string
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
@@ -24,12 +26,16 @@ EOS
         CLI::Shared.valid_options? :provided => @opts,
                                    :required => [:environment, :name]
 
-        default_output
+        @opts[:as_command_args] ? command_args_output : default_output
       end
 
       private
       def attribute_data
         Hash[stack.attributes.sort]
+      end
+
+      def command_args_output
+        puts attribute_data.map { |k, v| "-a #{k}=#{v}" }.join(' ')
       end
 
       def config

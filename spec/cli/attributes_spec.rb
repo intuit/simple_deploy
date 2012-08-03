@@ -11,7 +11,6 @@ describe SimpleDeploy::CLI::Attributes do
                    :name        => 'my_stack' }
       @stack   = stub :attributes => { 'foo' => 'bar', 'baz' => 'blah' }
 
-      Trollop.stub(:options).and_return(@options)
       SimpleDeploy::Config.stub(:new).and_return(@config)
       @config.should_receive(:environment).with('my_env').and_return(@config)
       SimpleDeploy::SimpleDeployLogger.should_receive(:new).
@@ -25,13 +24,27 @@ describe SimpleDeploy::CLI::Attributes do
                           and_return(@stack)
     end
 
-    context 'by default' do
-      it 'should validate the options and output the default' do
+    it 'should output the attributes' do
+      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
+                                with(:provided => @options,
+                                     :required => [:environment, :name])
+      Trollop.stub(:options).and_return(@options)
+      subject.should_receive(:puts).with("foo=bar")
+      subject.should_receive(:puts).with("baz=blah")
+      subject.show
+    end
+
+    context 'with --as-command-args' do
+      before do
+        @options[:as_command_args] = true
+        Trollop.stub(:options).and_return(@options)
         SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
                                   with(:provided => @options,
                                        :required => [:environment, :name])
-        subject.should_receive(:puts).with("foo=bar")
-        subject.should_receive(:puts).with("baz=blah")
+      end
+
+      it 'should output the attributes as command arguments' do
+        subject.should_receive(:puts).with("-a baz=blah -a foo=bar")
         subject.show
       end
     end
