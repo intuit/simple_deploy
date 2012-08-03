@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Attributes do
 
