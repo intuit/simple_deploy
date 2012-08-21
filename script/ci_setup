@@ -11,4 +11,4 @@ rvm use "1.9.3-p125@simple_deploy" --create
 bundle
 
 # Run spec tests
-rspec spec
+rake spec
