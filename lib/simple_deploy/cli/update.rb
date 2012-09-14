@@ -38,7 +38,7 @@ EOS
                             :name        => name,
                             :config      => config,
                             :logger      => logger
-          stack.update :attributes => attributes
+          stack.update false, :attributes => attributes
         end
       end
     end
