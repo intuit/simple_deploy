@@ -72,4 +72,37 @@ describe SimpleDeploy do
 
   end
 
+  describe "gracefully handling yaml file errors" do
+    before do
+      if File.exists? "#{ENV['HOME']}/.simple_deploy.yml"
+        FileUtils.mv("#{ENV['HOME']}/.simple_deploy.yml",
+                     "#{ENV['HOME']}/.simple_deploy.yml.bak")
+      end
+    end
+
+    after do
+      if File.exists? "#{ENV['HOME']}/.simple_deploy.yml.bak"
+        FileUtils.mv("#{ENV['HOME']}/.simple_deploy.yml.bak",
+                     "#{ENV['HOME']}/.simple_deploy.yml")
+      end
+    end
+
+    it "should handle a missing file gracefully" do
+      expect {
+        config = SimpleDeploy::Config.new
+      }.to raise_error(RuntimeError, "#{ENV['HOME']}/.simple_deploy.yml not found")
+    end
+
+    it "should handle a corrupt file gracefully" do
+      s = "--\nport:\t80\t80"
+      File.open("#{ENV['HOME']}/.simple_deploy.yml", 'w') do |out|
+        out.write(s)
+      end
+
+      expect {
+        config = SimpleDeploy::Config.new
+      }.to raise_error(RuntimeError, "#{ENV['HOME']}/.simple_deploy.yml is corrupt")
+      FileUtils.rm "#{ENV['HOME']}/.simple_deploy.yml"
+    end
+  end
 end
