@@ -2,21 +2,20 @@ require 'spec_helper'
 
 describe SimpleDeploy do
 
-  describe "A stack" do
-    
-    before do
-      @config_mock = mock 'config mock'
-      @logger_mock = mock 'logger mock'
-      @config_mock.should_receive(:logger).and_return @logger_mock
-      SimpleDeploy::Config.should_receive(:new).
-                           with(:logger => 'my-logger').
-                           and_return @config_mock
-      @stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                       :name        => 'test-stack',
-                                       :logger      => 'my-logger',
-                                       :config      => @config_mock
-    end
+  before do
+    @config_mock = mock 'config mock'
+    @logger_mock = mock 'logger mock'
+    @config_mock.should_receive(:logger).and_return @logger_mock
+    SimpleDeploy::Config.should_receive(:new).
+                         with(:logger => 'my-logger').
+                         and_return @config_mock
+    @stack = SimpleDeploy::Stack.new :environment => 'test-env',
+                                     :name        => 'test-stack',
+                                     :logger      => 'my-logger',
+                                     :config      => @config_mock
+  end
 
+  describe "A stack" do
     it "should call create stack" do
       saf_mock = mock 'stack attribute formater mock'
       stack_mock = mock 'stackster stack mock'
@@ -62,5 +61,19 @@ describe SimpleDeploy do
       @stack.update :attributes => { 'arg1' => 'val' }
     end
 
+  end
+
+  describe "destroying a stack" do
+    it "should not create a deployment" do
+      @stack.should_receive(:deployment).never
+
+      stack_mock = mock 'stackster stack mock'
+      @stack.should_receive(:stack).and_return(stack_mock)
+      stack_mock.should_receive(:destroy)
+
+      @logger_mock.should_receive(:info).exactly(1).times
+
+      @stack.destroy
+    end
   end
 end
