@@ -59,7 +59,14 @@ module SimpleDeploy
 
     def load_config_file
       config_file = "#{ENV['HOME']}/.simple_deploy.yml"
-      self.config = YAML::load( File.open( config_file ) )
+
+      begin
+        self.config = YAML::load( File.open( config_file ) )
+      rescue Errno::ENOENT
+        raise "#{config_file} not found"
+      rescue Psych::SyntaxError => e
+        raise "#{config_file} is corrupt"
+      end
     end
 
     def env_home
