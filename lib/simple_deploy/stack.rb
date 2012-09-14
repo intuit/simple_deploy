@@ -18,11 +18,13 @@ module SimpleDeploy
                    :template   => args[:template]
     end
 
-    def update(args)
-      @logger.info "Updating #{@name}."
-      attributes = stack_attribute_formater.updated_attributes args[:attributes]
-      stack.update :attributes => attributes
-      @logger.info "Update complete for #{@name}."
+    def update(force, args={})
+      if deployment.cleared_to_deploy?(force)
+        @logger.info "Updating #{@name}."
+        attributes = stack_attribute_formater.updated_attributes args[:attributes]
+        stack.update :attributes => attributes
+        @logger.info "Update complete for #{@name}."
+      end
     end
 
     def deploy(force = false)
