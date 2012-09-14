@@ -40,7 +40,7 @@ describe SimpleDeploy do
     end
 
     it "should call update stack" do
-      deployment_stub = stub 'deployment', :cleared_to_deploy? => true
+      deployment_stub = stub 'deployment', :clear_for_deployment => true
       @stack.should_receive(:deployment).and_return(deployment_stub)
 
       saf_mock = mock 'stack attribute formater mock'
@@ -67,7 +67,7 @@ describe SimpleDeploy do
 
   describe "updating a stack" do
     it "should update when the deployment is not locked" do
-      deployment_stub = stub 'deployment', :cleared_to_deploy? => true
+      deployment_stub = stub 'deployment', :clear_for_deployment => true
       @stack.should_receive(:deployment).and_return(deployment_stub)
 
       saf_mock = mock 'stack attribute formater mock'
@@ -91,7 +91,7 @@ describe SimpleDeploy do
     end
 
     it "should not update when the deployment is locked" do
-      deployment_stub = stub 'deployment', :cleared_to_deploy? => false
+      deployment_stub = stub 'deployment', :clear_for_deployment => false
       @stack.should_receive(:deployment).and_return(deployment_stub)
 
       SimpleDeploy::StackAttributeFormater.should_receive(:new).never
