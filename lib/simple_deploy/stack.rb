@@ -35,7 +35,6 @@ module SimpleDeploy
     end
 
     def destroy
-      deployment.create_deployment
       stack.destroy
       @logger.info "#{@name} destroyed."
     end
