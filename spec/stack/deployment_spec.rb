@@ -5,14 +5,15 @@ describe SimpleDeploy do
   before do
     @attributes = { 'key'         => 'val',
                     'ssh_gateway' => '1.2.3.4' }
-    @config_mock = mock 'config mock'
     @logger_stub = stub 'logger stub'
     @logger_stub.stub :debug => 'true', :info => 'true'
-    @stack_mock = mock 'stack mock'
 
-    @stack_mock.should_receive(:attributes).at_least(:once).and_return @attributes
-    @config_mock.should_receive(:logger).at_least(:once).and_return @logger_stub
-    @config_mock.should_receive(:region).at_least(:once).with('test-us-west-1').and_return 'us-west-1'
+    @config_mock = mock 'config mock'
+    @config_mock.stub(:logger) { @logger_stub }
+    @config_mock.stub(:region) { 'test-us-west-1' }
+
+    @stack_mock = mock 'stack mock'
+    @stack_mock.stub(:attributes) { @attributes }
 
     options = { :config      => @config_mock,
                 :instances   => ['1.2.3.4', '4.3.2.1'],
