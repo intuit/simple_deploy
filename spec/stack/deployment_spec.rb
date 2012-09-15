@@ -67,7 +67,7 @@ describe SimpleDeploy do
       status_mock = mock 'status mock'
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               and_return status_mock
-      status_mock.should_receive(:cleared_to_deploy?).with(false).and_return true
+      status_mock.should_receive(:clear_for_deployment?).and_return true
       status_mock.should_receive(:set_deployment_in_progress)
       @deployment_mock.should_receive(:simpledeploy)
       status_mock.should_receive(:unset_deployment_in_progress)
@@ -78,7 +78,7 @@ describe SimpleDeploy do
       status_mock = mock 'status mock'
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               and_return status_mock
-      status_mock.should_receive(:cleared_to_deploy?).with(true).and_return true
+      status_mock.should_receive(:clear_for_deployment?).and_return true
       status_mock.should_receive(:set_deployment_in_progress)
       @deployment_mock.should_receive(:simpledeploy)
       status_mock.should_receive(:unset_deployment_in_progress)
@@ -89,7 +89,7 @@ describe SimpleDeploy do
       status_mock = mock 'status mock'
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               and_return status_mock
-      status_mock.should_receive(:cleared_to_deploy?).with(false).and_return false
+      status_mock.should_receive(:clear_for_deployment?).and_return false
       @logger_stub.should_receive(:error)
       @stack.execute.should == false
     end
