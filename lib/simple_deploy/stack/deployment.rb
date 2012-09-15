@@ -20,6 +20,10 @@ module SimpleDeploy
       end
 
       def create_deployment 
+        if @instances.nil? || @instances.empty?
+          raise "There are no running instances to deploy to"
+        end
+
         @deployment = Capistrano::Configuration.new :output => @logger
         @deployment.logger.level = 3
         @logger.info "Creating deployment to #{@name}."

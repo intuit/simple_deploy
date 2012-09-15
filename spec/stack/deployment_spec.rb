@@ -5,15 +5,15 @@ describe SimpleDeploy do
   before do
     @attributes = { 'key'         => 'val',
                     'ssh_gateway' => '1.2.3.4' }
-    @config_mock = mock 'config mock'
     @logger_stub = stub 'logger stub'
     @logger_stub.stub :debug => 'true', :info => 'true'
-    @stack_mock = mock 'stack mock'
 
-    @stack_mock.should_receive(:attributes).and_return @attributes
-    @config_mock.should_receive(:logger).and_return @logger_stub
-    @config_mock.should_receive(:region).with('test-us-west-1').
-                                         and_return 'us-west-1'
+    @config_mock = mock 'config mock'
+    @config_mock.stub(:logger) { @logger_stub }
+    @config_mock.stub(:region) { 'test-us-west-1' }
+
+    @stack_mock = mock 'stack mock'
+    @stack_mock.stub(:attributes) { @attributes }
 
     options = { :config      => @config_mock,
                 :instances   => ['1.2.3.4', '4.3.2.1'],
@@ -30,6 +30,23 @@ describe SimpleDeploy do
   end
 
   describe "creating a deploy" do
+    it "should gracefully tell the user there are no running instances" do
+      options = { :config      => @config_mock,
+                 :instances   => [],
+                 :environment => 'test-us-west-1',
+                 :ssh_user    => 'user',
+                 :ssh_key     => 'key',
+                 :stack       => @stack_mock,
+                 :name        => 'stack-name' }
+      stack = SimpleDeploy::Stack::Deployment.new options
+
+      expect {
+        stack.create_deployment
+      }.to raise_error(RuntimeError, 'There are no running instances to deploy to')
+    end
+  end
+
+  describe "executing a deploy" do
     before do
       @deployment_mock = mock 'cap config'
       @variables_mock = mock 'variables mock'
@@ -85,7 +102,7 @@ describe SimpleDeploy do
       @stack.execute(true).should == true
     end
 
-    it "should deploy if the stack is not clear to deploy but forced" do
+    it "should not deploy if the stack is not clear to deploy and not forced" do
       status_mock = mock 'status mock'
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               and_return status_mock
