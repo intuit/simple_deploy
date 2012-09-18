@@ -11,6 +11,7 @@ require 'simple_deploy/cli/instances'
 require 'simple_deploy/cli/list'
 require 'simple_deploy/cli/outputs'
 require 'simple_deploy/cli/parameters'
+require 'simple_deploy/cli/protect'
 require 'simple_deploy/cli/resources'
 require 'simple_deploy/cli/ssh'
 require 'simple_deploy/cli/status'
@@ -43,6 +44,8 @@ module SimpleDeploy
         CLI::Outputs.new.show
       when 'parameters'
         CLI::Parameters.new.show
+      when 'protect'
+        CLI::Protect.new.protect
       when 'resources'
         CLI::Resources.new.show
       when 'status'

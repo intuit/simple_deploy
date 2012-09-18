@@ -102,11 +102,38 @@ describe SimpleDeploy do
   end
 
   describe "destroying a stack" do
-    it "should not create a deployment" do
-      @stack.should_receive(:deployment).never
+    it "should destroy if the stack is not protected" do
+      stack_mock = mock 'stackster stack mock', :attributes => { 'protection' => 'off' }
+      @stack.stub(:stack) { stack_mock }
 
-      stack_mock = mock 'stackster stack mock'
-      @stack.should_receive(:stack).and_return(stack_mock)
+      stack_mock.should_receive(:destroy)
+
+      @stack.destroy
+    end
+
+    it "should not destroy if the stack is protected" do
+      stack_mock = mock 'stackster stack mock', :attributes => { 'protection' => 'on' }
+      @stack.stub(:stack) { stack_mock }
+
+      stack_mock.should_not_receive(:destroy)
+
+      @stack.destroy
+    end
+
+    it "should destroy if protection is undefined" do
+      stack_mock = mock 'stackster stack mock', :attributes => {}
+      @stack.stub(:stack) { stack_mock }
+
+      stack_mock.should_receive(:destroy)
+
+      @stack.destroy
+    end
+
+    it "should not create a deployment" do
+      @stack.should_not_receive(:deployment)
+
+      stack_mock = mock 'stackster stack mock', :attributes => { 'protection' => 'off' }
+      @stack.stub(:stack) { stack_mock }
       stack_mock.should_receive(:destroy)
 
       @stack.destroy
