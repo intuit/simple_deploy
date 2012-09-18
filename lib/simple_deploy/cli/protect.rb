@@ -1,23 +1,24 @@
+
 require 'trollop'
 
 module SimpleDeploy
   module CLI
-    class Destroy
-      def destroy
+    class Protect
+      def protect
         opts = Trollop::options do
           version SimpleDeploy::VERSION
           banner <<-EOS
 
-Destroy a stack.
+Protect a stack.
 
-simple_deploy destroy -n STACK_NAME -e ENVIRONMENT
+simple_deploy protect -n STACK_NAME -e ENVIRONMENT -a PROTECTION=ON_OFF
 
 EOS
           opt :help, "Display Help"
           opt :environment, "Set the target environment", :type => :string
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
-          opt :name, "Stack name(s) of stack to deploy", :type => :string
+          opt :name, "Stack name of stack to protect", :type => :string
         end
 
         CLI::Shared.valid_options? :provided => opts,
@@ -27,16 +28,14 @@ EOS
 
         logger = SimpleDeployLogger.new :log_level => opts[:log_level]
 
+        attributes = CLI::Shared.parse_attributes :attributes => opts[:attributes],
+                                                  :logger     => logger
+
         stack = Stack.new :environment => opts[:environment],
                           :name        => opts[:name],
                           :config      => config,
                           :logger      => logger
-
-        if stack.destroy
-          exit 0
-        else
-          exit 1
-        end
+        stack.update false, :attributes => attributes
       end
     end
   end

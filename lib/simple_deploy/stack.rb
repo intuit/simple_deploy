@@ -37,8 +37,14 @@ module SimpleDeploy
     end
 
     def destroy
-      stack.destroy
-      @logger.info "#{@name} destroyed."
+      if attributes['protection'] != 'on'
+        stack.destroy
+        @logger.info "#{@name} destroyed."
+        true
+      else
+        @logger.warn "#{@name} could not be destroyed because it is protected. Run the protect subcommand to unprotect it"
+        false
+      end
     end
 
     def events(limit)
