@@ -32,7 +32,11 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        stack.destroy
+        if stack.destroy
+          exit 0
+        else
+          exit 1
+        end
       end
     end
   end

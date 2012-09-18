@@ -4,7 +4,7 @@ describe SimpleDeploy do
 
   before do
     @config_mock = mock 'config mock'
-    @logger_stub = stub 'logger stub', :info => ''
+    @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
     @config_mock.should_receive(:logger).and_return @logger_stub
     SimpleDeploy::Config.should_receive(:new).
                          with(:logger => 'my-logger').
@@ -108,7 +108,7 @@ describe SimpleDeploy do
 
       stack_mock.should_receive(:destroy)
 
-      @stack.destroy
+      @stack.destroy.should be_true
     end
 
     it "should not destroy if the stack is protected" do
@@ -117,7 +117,7 @@ describe SimpleDeploy do
 
       stack_mock.should_not_receive(:destroy)
 
-      @stack.destroy
+      @stack.destroy.should_not be_true
     end
 
     it "should destroy if protection is undefined" do
@@ -126,7 +126,7 @@ describe SimpleDeploy do
 
       stack_mock.should_receive(:destroy)
 
-      @stack.destroy
+      @stack.destroy.should be_true
     end
 
     it "should not create a deployment" do
@@ -136,7 +136,7 @@ describe SimpleDeploy do
       @stack.stub(:stack) { stack_mock }
       stack_mock.should_receive(:destroy)
 
-      @stack.destroy
+      @stack.destroy.should be_true
     end
   end
 end
