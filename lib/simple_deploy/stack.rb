@@ -18,8 +18,8 @@ module SimpleDeploy
                    :template   => args[:template]
     end
 
-    def update(force, args={})
-      if deployment.cleared_to_deploy?(force)
+    def update(args)
+      if deployment.clear_for_deployment?
         @logger.info "Updating #{@name}."
         attributes = stack_attribute_formater.updated_attributes args[:attributes]
         stack.update :attributes => attributes

@@ -11,14 +11,14 @@ module SimpleDeploy
           @logger = @config.logger
         end
 
-        def cleared_to_deploy?(force=false)
-          return true unless deployment_in_progress?
+        def clear_for_deployment?
+          !deployment_in_progress?
+        end
 
-          if force          
+        def clear_deployment_lock(force=false)
+          if deployment_in_progress? && force
             @logger.info "Forcing. Clearing deployment status."
             unset_deployment_in_progress
-          else
-            false
           end
         end
 

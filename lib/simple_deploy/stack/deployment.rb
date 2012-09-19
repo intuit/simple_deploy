@@ -36,7 +36,7 @@ module SimpleDeploy
       end
 
       def execute(force=false)
-        if cleared_to_deploy?(force)
+        if clear_for_deployment?
           status.set_deployment_in_progress
           @logger.info 'Starting deployment.'
           @deployment.simpledeploy
@@ -49,8 +49,12 @@ module SimpleDeploy
         end
       end
 
-      def cleared_to_deploy?(force=false)
-        status.cleared_to_deploy?(force)
+      def clear_for_deployment?
+        status.clear_for_deployment?
+      end
+
+      def clear_deployment_lock(force=false)
+        status.clear_deployment_lock(force)
       end
 
       def ssh

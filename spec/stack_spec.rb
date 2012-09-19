@@ -40,7 +40,7 @@ describe SimpleDeploy do
     end
 
     it "should call update stack" do
-      deployment_stub = stub 'deployment', :cleared_to_deploy? => true
+      deployment_stub = stub 'deployment', :clear_for_deployment? => true
       @stack.should_receive(:deployment).and_return(deployment_stub)
 
       saf_mock = mock 'stack attribute formater mock'
@@ -60,14 +60,14 @@ describe SimpleDeploy do
       saf_mock.should_receive(:updated_attributes).with({'arg1' => 'val'}).
                and_return('arg1' => 'new_val')
       stack_mock.should_receive(:update).with :attributes => { 'arg1' => 'new_val' }
-      @stack.update false, :attributes => { 'arg1' => 'val' }
+      @stack.update :attributes => { 'arg1' => 'val' }
     end
 
   end
 
   describe "updating a stack" do
     it "should update when the deployment is not locked" do
-      deployment_stub = stub 'deployment', :cleared_to_deploy? => true
+      deployment_stub = stub 'deployment', :clear_for_deployment? => true
       @stack.should_receive(:deployment).and_return(deployment_stub)
 
       saf_mock = mock 'stack attribute formater mock'
@@ -87,17 +87,17 @@ describe SimpleDeploy do
       saf_mock.should_receive(:updated_attributes).with({'arg1' => 'val'}).
                and_return('arg1' => 'new_val')
       stack_mock.should_receive(:update).with :attributes => { 'arg1' => 'new_val' }
-      @stack.update false, :attributes => { 'arg1' => 'val' }
+      @stack.update :attributes => { 'arg1' => 'val' }
     end
 
     it "should not update when the deployment is locked" do
-      deployment_stub = stub 'deployment', :cleared_to_deploy? => false
+      deployment_stub = stub 'deployment', :clear_for_deployment? => false
       @stack.should_receive(:deployment).and_return(deployment_stub)
 
       SimpleDeploy::StackAttributeFormater.should_receive(:new).never
       Stackster::Stack.should_receive(:new).never
 
-      @stack.update false, :attributes => { 'arg1' => 'val' }
+      @stack.update :attributes => { 'arg1' => 'val' }
     end
   end
 
