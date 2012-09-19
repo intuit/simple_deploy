@@ -28,7 +28,7 @@ describe SimpleDeploy::CLI::Protect do
       Trollop.stub(:options).and_return(options)
 
       stack   = stub :attributes => { 'protection' => 'on' }
-      stack.should_receive(:update).with(false, hash_including(:attributes => [{ 'protection' => 'on' }]))
+      stack.should_receive(:update).with(hash_including(:attributes => [{ 'protection' => 'on' }]))
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:config      => @config,
@@ -52,7 +52,7 @@ describe SimpleDeploy::CLI::Protect do
       Trollop.stub(:options).and_return(options)
 
       stack   = stub :attributes => { 'protection' => 'off' }
-      stack.should_receive(:update).with(false, hash_including(:attributes => [{ 'protection' => 'off' }]))
+      stack.should_receive(:update).with(hash_including(:attributes => [{ 'protection' => 'off' }]))
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:config      => @config,
