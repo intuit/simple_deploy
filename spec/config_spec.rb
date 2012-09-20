@@ -42,18 +42,6 @@ describe SimpleDeploy do
       @config.artifact_cloud_formation_url('app').should == 'AppArtifactURL'
     end
 
-    it "should return the domain (the folder in the s3 bucket) for an artifact" do
-      @config.artifact_domain('test_repo').should == 'test_domain'
-    end
-
-    it "should return the name of an artifact for those without a set domain" do
-      @config.artifact_domain('test_repo2').should == 'test_repo2'
-    end
-
-    it "should return the bucket prefix for the artifact" do
-      @config.artifact_bucket_prefix('test_repo').should == 'test_prefix'
-    end
-
     it "should return the environment requested" do
       @config.environment('test_env').should == ({ 'secret_key' => 'secret', 'access_key' => 'access', 'region' => 'us-west-1' })
     end

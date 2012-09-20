@@ -1,3 +1,12 @@
+## HEAD:
+
+* Refactored deployments to read bucket_prefix and domain from attributes instead of the yaml file
+* Added a protect subcommand that allows users to toggle whether stacks should be protected from destroy calls
+* Refactored the deployment locking logic
+* Corrected the destroy subcommand so it no longer creates a deployment
+* Gracefully exit if the .simple_deploy.yml file is missing or corrupt
+* Corrected the update subcommand so it now checks the deployment lock at the beginning of the process
+
 ## v0.4.8:
 
 * Added as_command_args option to attributes cli

@@ -26,14 +26,6 @@ module SimpleDeploy
       name_to_url_map[artifact]
     end 
 
-    def artifact_domain(artifact)
-      config['artifacts'][artifact]['domain'] ||= artifact
-    end
-
-    def artifact_bucket_prefix(artifact)
-      config['artifacts'][artifact]['bucket_prefix']
-    end
-
     def deploy_script
       '/opt/intu/admin/bin/configure.sh'
     end

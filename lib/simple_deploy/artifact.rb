@@ -3,11 +3,10 @@ module SimpleDeploy
 
     def initialize(args)
       @bucket_prefix = args[:bucket_prefix]
-      @config = args[:config]
       @id = args[:id]
       @name = args[:name]
       @region = args[:region]
-      @domain = @config.artifact_domain @name
+      @domain = args[:domain]
 
       @bucket = "#{@bucket_prefix}-#{@region}"
       @key = "#{@id}.tar.gz"
