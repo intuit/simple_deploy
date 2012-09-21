@@ -94,7 +94,8 @@ module SimpleDeploy
     
     def stack_attribute_formater
       @saf ||= StackAttributeFormater.new :config      => @config,
-                                          :environment => @environment
+                                          :environment => @environment,
+                                          :main_attributes => attributes
     end
 
     def deployment

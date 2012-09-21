@@ -4,6 +4,7 @@ module SimpleDeploy
     def initialize(args)
       @config = args[:config]
       @environment = args[:environment]
+      @main_attributes = args[:main_attributes]
       @region = @config.region @environment
       @logger = @config.logger
     end
@@ -31,7 +32,7 @@ module SimpleDeploy
       id = attribute[name]
       a = @config.artifacts.select { |a| a['name'] == name }.first
 
-      bucket_prefix = @config.artifact_bucket_prefix name
+      bucket_prefix = @main_attributes["#{name}_bucket_prefix"]
       url_parameter = @config.artifact_cloud_formation_url name
 
       artifact = Artifact.new :name          => name,
