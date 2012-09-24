@@ -41,7 +41,7 @@ EOS
                             :name        => name,
                             :logger      => logger
 
-          stack.update :attributes => new_attributes if new_attributes.any?
+          stack.update :force => opts[:force], :attributes => new_attributes if new_attributes.any?
 
           if stack.deploy opts[:force]
             notifier.send_deployment_complete_message unless opts[:quiet]

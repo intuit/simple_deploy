@@ -48,7 +48,7 @@ describe SimpleDeploy do
 
     it "should call update stack" do
       deployment_stub = stub 'deployment', :clear_for_deployment? => true
-      @stack.should_receive(:deployment).and_return(deployment_stub)
+      @stack.stub(:deployment).and_return(deployment_stub)
 
       saf_mock = mock 'stack attribute formater mock'
       stack_mock = mock 'stackster stack mock'
@@ -76,7 +76,7 @@ describe SimpleDeploy do
   describe "updating a stack" do
     it "should update when the deployment is not locked" do
       deployment_stub = stub 'deployment', :clear_for_deployment? => true
-      @stack.should_receive(:deployment).and_return(deployment_stub)
+      @stack.stub(:deployment).and_return(deployment_stub)
 
       saf_mock = mock 'stack attribute formater mock'
       stack_mock = mock 'stackster stack mock'
@@ -99,14 +99,49 @@ describe SimpleDeploy do
       @stack.update :attributes => { 'arg1' => 'val' }
     end
 
-    it "should not update when the deployment is locked" do
+    it "should not update when the deployment is locked and force is not set" do
       deployment_stub = stub 'deployment', :clear_for_deployment? => false
-      @stack.should_receive(:deployment).and_return(deployment_stub)
+      @stack.stub(:deployment).and_return(deployment_stub)
 
-      SimpleDeploy::StackAttributeFormater.should_receive(:new).never
-      Stackster::Stack.should_receive(:new).never
+      SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
+      Stackster::Stack.should_not_receive(:new)
 
       @stack.update :attributes => { 'arg1' => 'val' }
+    end
+
+    it "should update when the deployment is locked and force is set true" do
+      deployment_mock = mock 'deployment'
+      deployment_mock.should_receive(:clear_for_deployment?).and_return(false, true)
+      deployment_mock.should_receive(:clear_deployment_lock).with(true)
+      @stack.stub(:deployment).and_return(deployment_mock)
+
+      saf_mock = mock 'stack attribute formater mock'
+      stack_mock = mock 'stackster stack mock'
+      stack_mock.stub(:attributes).and_return(@main_attributes)
+      SimpleDeploy::StackAttributeFormater.should_receive(:new).
+                                           with(:config      => @config_mock,
+                                                :environment => 'test-env',
+                                                :main_attributes => @main_attributes).
+                                           and_return saf_mock
+      Stackster::Stack.should_receive(:new).with(:environment => 'test-env',
+                                                 :name        => 'test-stack',
+                                                 :config      => @environment_config_mock,
+                                                 :logger      => @logger_stub).
+                                            and_return stack_mock
+      saf_mock.should_receive(:updated_attributes).with({'arg1' => 'val'}).
+               and_return('arg1' => 'new_val')
+      stack_mock.should_receive(:update).with :attributes => { 'arg1' => 'new_val' }
+      @stack.update :force => true, :attributes => { 'arg1' => 'val' }
+    end
+
+    it "should not update when the deployment is locked and force is set false" do
+      deployment_stub = stub 'deployment', :clear_for_deployment? => false
+      @stack.stub(:deployment).and_return(deployment_stub)
+
+      SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
+      Stackster::Stack.should_not_receive(:new)
+
+      @stack.update :force => false, :attributes => { 'arg1' => 'val' }
     end
   end
 
