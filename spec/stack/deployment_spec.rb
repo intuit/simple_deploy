@@ -4,7 +4,16 @@ describe SimpleDeploy do
 
   before do
     @attributes = { 'key'         => 'val',
-                    'ssh_gateway' => '1.2.3.4' }
+                    'ssh_gateway' => '1.2.3.4',
+                    'chef_repo' => 'chef_repo',
+                    'chef_repo_bucket_prefix' => 'chef_repo_bp',
+                    'chef_repo_domain' => 'chef_repo_d',
+                    'app' => 'app',
+                    'app_bucket_prefix' => 'app_bp',
+                    'app_domain' => 'app_d',
+                    'cookbooks' => 'cookbooks',
+                    'cookbooks_bucket_prefix' => 'cookbooks_bp',
+                    'cookbooks_domain' => 'cookbooks_d' }
     @logger_stub = stub 'logger stub'
     @logger_stub.stub :debug => 'true', :info => 'true'
 
@@ -67,8 +76,6 @@ describe SimpleDeploy do
                    and_return ['cookbooks']
       @config_mock.should_receive(:artifact_deploy_variable).with('cookbooks').
                    and_return 'deploy_var'
-      @config_mock.should_receive(:artifact_bucket_prefix).with('cookbooks').
-                   and_return 'bucket_prefix'
       SimpleDeploy::Artifact.should_receive(:new).and_return @artifact_mock
       @artifact_mock.should_receive(:endpoints).
                      and_return('s3' => 's3://bucket/dir/key')
@@ -112,4 +119,20 @@ describe SimpleDeploy do
     end
   end
 
+  describe "get_artifact_endpoints" do
+    before do
+      @config_mock.stub(:artifacts) { ['chef_repo', 'cookbooks', 'app'] }
+      @config_mock.should_receive(:artifact_deploy_variable).with('chef_repo').and_return('CHEF_REPO_URL')
+      @config_mock.should_receive(:artifact_deploy_variable).with('app').and_return('APP_URL')
+      @config_mock.should_receive(:artifact_deploy_variable).with('cookbooks').and_return('COOKBOOKS_URL')
+    end
+
+    it "should create S3 endpoints" do
+      endpoints = @stack.send :get_artifact_endpoints
+
+      endpoints['CHEF_REPO_URL'].should == 's3://chef_repo_bp-test-us-west-1/chef_repo_d/chef_repo.tar.gz'
+      endpoints['APP_URL'].should == 's3://app_bp-test-us-west-1/app_d/app.tar.gz'
+      endpoints['COOKBOOKS_URL'].should == 's3://cookbooks_bp-test-us-west-1/cookbooks_d/cookbooks.tar.gz'
+    end
+  end
 end

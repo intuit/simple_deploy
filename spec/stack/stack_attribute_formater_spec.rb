@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe SimpleDeploy do
   before do
     @config_mock = mock 'config mock'
@@ -7,7 +9,8 @@ describe SimpleDeploy do
     @config_mock.should_receive(:logger).and_return @logger_mock
 
     options = { :config      => @config_mock,
-                :environment => 'preprod' }
+                :environment => 'preprod',
+                :main_attributes => { 'chef_repo_bucket_prefix' => 'test-prefix' } }
     @formater = SimpleDeploy::StackAttributeFormater.new options
   end
 
@@ -20,9 +23,6 @@ describe SimpleDeploy do
                                 :config => @config_mock,
                                 :bucket_prefix => 'test-prefix').
                            and_return artifact_mock
-    @config_mock.should_receive(:artifact_bucket_prefix).with('chef_repo').
-                 exactly(2).times.
-                 and_return('test-prefix')
     @config_mock.should_receive(:artifact_cloud_formation_url).with('chef_repo').
                  exactly(2).times.
                  and_return('CookBooksURL')

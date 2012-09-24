@@ -88,12 +88,13 @@ module SimpleDeploy
         h = {}
         @config.artifacts.each do |artifact|
           variable = @config.artifact_deploy_variable artifact
-          bucket_prefix = @config.artifact_bucket_prefix artifact
+          bucket_prefix = @attributes["#{artifact}_bucket_prefix"]
+          domain = @attributes["#{artifact}_domain"]
 
           artifact = Artifact.new :name          => artifact,
                                   :id            => @attributes[artifact],
                                   :region        => @region,
-                                  :config        => @config,
+                                  :domain        => domain,
                                   :bucket_prefix => bucket_prefix
 
           h[variable] = artifact.endpoints['s3']

@@ -5,10 +5,8 @@ describe SimpleDeploy do
   describe "an artifact" do
 
     before do
-      @config_mock = mock 'config'
-      @config_mock.should_receive(:artifact_domain).and_return('us-west-1')
       @artifact = SimpleDeploy::Artifact.new :bucket_prefix => 'test_prefix',
-                                             :config        => @config_mock,
+                                             :domain        => 'us-west-1',
                                              :id            => 'abc123',
                                              :name          => 'myapp',
                                              :region        => 'us-west-1'
