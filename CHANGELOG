@@ -1,4 +1,4 @@
-## HEAD:
+## v0.5.0:
 
 * Updated the update command so it accepts a force option
 * Refactored deployments to read bucket_prefix and domain from attributes instead of the yaml file
