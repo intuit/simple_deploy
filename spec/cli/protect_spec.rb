@@ -20,7 +20,7 @@ describe SimpleDeploy::CLI::Protect do
       options = { :environment => 'my_env',
                   :log_level   => 'debug',
                   :name        => 'my_stack',
-                  :attributes  => ['protection=on'] }
+                  :protection  => 'on' }
 
       SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
                                 with(:provided => options,
@@ -44,7 +44,7 @@ describe SimpleDeploy::CLI::Protect do
       options = { :environment => 'my_env',
                   :log_level   => 'debug',
                   :name        => 'my_stack',
-                  :attributes  => ['protection=off'] }
+                  :protection  => 'off' }
 
       SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
                                 with(:provided => options,
