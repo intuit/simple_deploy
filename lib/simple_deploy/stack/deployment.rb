@@ -121,7 +121,7 @@ module SimpleDeploy
           @deployment.set :gateway, ssh_gateway
           @logger.info "Proxying via gateway #{ssh_gateway}."
         else
-          @logger.info "Not using an ssh gateway."
+          @logger.debug "Not using an ssh gateway."
         end
       end
 
