@@ -11,11 +11,12 @@ module SimpleDeploy
 
 Protect a stack.
 
-simple_deploy protect -n STACK_NAME -e ENVIRONMENT -a PROTECTION=ON_OFF
+simple_deploy protect -n STACK_NAME -e ENVIRONMENT -a protection=on_off
 
 EOS
           opt :help, "Display Help"
           opt :environment, "Set the target environment", :type => :string
+          opt :protection, "= seperated attribute and it's value", :type  => :string
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
           opt :name, "Stack name of stack to protect", :type => :string
