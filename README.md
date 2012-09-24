@@ -12,16 +12,6 @@ gem install simple_deploy
 Create a file **~/.simple_deploy.yml** and include within it:
 
 ```
-artifacts: 
-  chef_repo:
-    bucket_prefix: bucket1
-    domain: app1-chef_repo
-  app:
-    bucket_prefix: bucket2
-    domain: app1
-  cookbooks:
-    bucket_prefix: bucket2
-
 environments:
   preprod_shared_us_west_1:
     access_key: XXX
@@ -41,7 +31,7 @@ Currently Simple Deploy only supports Campfire for notifications.  To enable the
 Advaned Configurations
 ----------------------
 
-The configuration file supports additional optional deployment parameters.  Artifacts can have an **endpoint** specified to be passed in (by default they pass in the s3 url).
+The configuration file supports additional optional deployment parameters. 
 
 Deploy can have a ssh **user** and **key** set.  These will be used to connect to both the gateway and tunnel through to instances.
 
