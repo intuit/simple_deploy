@@ -17,6 +17,7 @@ EOS
           opt :attributes, "= seperated attribute and it's value", :type  => :string,
                                                                    :multi => true
           opt :environment, "Set the target environment", :type => :string
+          opt :force, "Force an update to proceed"
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
           opt :name, "Stack name(s) of stack to deploy", :type => :string,
@@ -38,7 +39,7 @@ EOS
                             :name        => name,
                             :config      => config,
                             :logger      => logger
-          stack.update :attributes => attributes
+          stack.update :force => opts[:force], :attributes => attributes
         end
       end
     end

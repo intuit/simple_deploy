@@ -19,6 +19,10 @@ module SimpleDeploy
     end
 
     def update(args)
+      if !deployment.clear_for_deployment? && !args[:force].nil? && args[:force]
+        deployment.clear_deployment_lock true
+      end
+
       if deployment.clear_for_deployment?
         @logger.info "Updating #{@name}."
         attributes = stack_attribute_formater.updated_attributes args[:attributes]
