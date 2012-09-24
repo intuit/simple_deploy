@@ -135,9 +135,8 @@ describe SimpleDeploy do
     end
 
     it "should not update when the deployment is locked and force is set false" do
-      deployment_mock = mock 'deployment'
-      deployment_mock.should_receive(:clear_for_deployment?).and_return(false, false)
-      @stack.stub(:deployment).and_return(deployment_mock)
+      deployment_stub = stub 'deployment', :clear_for_deployment? => false
+      @stack.stub(:deployment).and_return(deployment_stub)
 
       SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
       Stackster::Stack.should_not_receive(:new)

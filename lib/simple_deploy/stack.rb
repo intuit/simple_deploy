@@ -19,7 +19,7 @@ module SimpleDeploy
     end
 
     def update(args)
-      if !deployment.clear_for_deployment? && !args[:force].nil? && args[:force]
+      if !deployment.clear_for_deployment? && args[:force]
         deployment.clear_deployment_lock true
       end
 

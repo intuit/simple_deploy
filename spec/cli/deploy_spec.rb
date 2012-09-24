@@ -27,7 +27,7 @@ describe SimpleDeploy::CLI::Deploy do
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
-                          with(:stack_name => 'my_stack',
+                          with(:stack_name  => 'my_stack',
                                :environment => 'my_env',
                                :logger      => @logger).
                           and_return(@notifier)
@@ -58,7 +58,7 @@ describe SimpleDeploy::CLI::Deploy do
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
-                          with(:stack_name => 'my_stack',
+                          with(:stack_name  => 'my_stack',
                                :environment => 'my_env',
                                :logger      => @logger).
                           and_return(@notifier)
@@ -91,7 +91,7 @@ describe SimpleDeploy::CLI::Deploy do
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
-                          with(:stack_name => 'my_stack',
+                          with(:stack_name  => 'my_stack',
                                :environment => 'my_env',
                                :logger      => @logger).
                           and_return(@notifier)
