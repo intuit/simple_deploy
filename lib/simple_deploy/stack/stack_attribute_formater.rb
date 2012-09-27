@@ -14,8 +14,9 @@ module SimpleDeploy
       attributes.each do |attribute|
         key = attribute.keys.first
         if artifact_names.include? key
-          updates << cloud_formation_url(attribute)
-          @logger.info "Adding artifact attribute: #{cloud_formation_url(attribute)}"
+          url_hash = cloud_formation_url attribute, attributes
+          updates << url_hash
+          @logger.info "Adding artifact attribute: #{url_hash}"
         end
       end
       attributes + updates
@@ -26,13 +27,25 @@ module SimpleDeploy
     def artifact_names
       @config.artifacts
     end
-    
-    def cloud_formation_url(attribute)
+
+    def cloud_formation_url(attribute, attributes)
       name = attribute.keys.first
       id = attribute[name]
 
-      bucket_prefix = @main_attributes["#{name}_bucket_prefix"]
-      domain = @main_attributes["#{name}_domain"]
+      bucket_match = attributes.find { |h| h.has_key? "#{name}_bucket_prefix" }
+      if bucket_match
+        bucket_prefix = bucket_match["#{name}_bucket_prefix"]
+      else
+        bucket_prefix = @main_attributes["#{name}_bucket_prefix"]
+      end
+
+      domain_match = attributes.find { |h| h.has_key? "#{name}_domain" }
+      if domain_match
+        domain = domain_match["#{name}_domain"]
+      else
+        domain = @main_attributes["#{name}_domain"]
+      end
+
       artifact = Artifact.new :name          => name,
                               :id            => id,
                               :region        => @region,

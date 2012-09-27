@@ -4,99 +4,82 @@ describe SimpleDeploy do
 
   before do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
-    
     @environment_config_mock = mock 'environment config mock'
-    @config_mock = mock 'config mock'
-    @config_mock.should_receive(:logger).and_return @logger_stub
-    @config_mock.stub(:environment).and_return(@environment_config_mock)
+
+    @config_stub = stub 'config stub', :region => 'us-west-1', :logger => @logger_stub
+    @config_stub.stub(:environment).and_return(@environment_config_mock)
+    @config_stub.stub(:artifacts).and_return(['chef_repo', 'cookbooks', 'app'])
+    @config_stub.stub(:artifact_cloud_formation_url).and_return('CookBooksURL')
 
     SimpleDeploy::Config.should_receive(:new).
                          with(:logger => 'my-logger').
-                         and_return @config_mock
+                         and_return @config_stub
     @stack = SimpleDeploy::Stack.new :environment => 'test-env',
                                      :name        => 'test-stack',
                                      :logger      => 'my-logger',
-                                     :config      => @config_mock
+                                     :config      => @config_stub
 
-    @main_attributes = { 'arg1_bucket_prefix' => 'arg1_bp' }
+    @main_attributes = {
+      'chef_repo_bucket_prefix' => 'test-prefix',
+      'chef_repo_domain' => 'test-domain' 
+    }
+
+    @stack_mock = mock 'stackster stack'
+
+    @expected_attributes = [
+      { 'chef_repo' => 'test123' },
+      { 'CookBooksURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz' }
+    ]
   end
 
-  describe "A stack" do
-    it "should call create stack" do
-      saf_mock = mock 'stack attribute formater mock'
-      stack_mock = mock 'stackster stack mock'
-      stack_mock.stub(:attributes).and_return(@main_attributes)
-      @config_mock.should_receive(:environment).with('test-env').
-                   and_return @environment_config_mock
-      SimpleDeploy::StackAttributeFormater.should_receive(:new).
-                                           with(:config      => @config_mock,
-                                                :environment => 'test-env',
-                                                :main_attributes => @main_attributes).
-                                           and_return saf_mock
+  describe "creating a stack" do
+    before do
+      @stack_mock.stub(:attributes).and_return({})
+    end
+
+    it "should set the attributes using what is passed to the create command" do
       Stackster::Stack.should_receive(:new).with(:environment => 'test-env',
                                                  :name        => 'test-stack',
                                                  :config      => @environment_config_mock,
                                                  :logger      => @logger_stub).
-                                            and_return stack_mock
-      saf_mock.should_receive(:updated_attributes).with({'arg1' => 'val'}).
-               and_return('arg1' => 'new_val')
-      stack_mock.should_receive(:create).with :attributes => { 'arg1' => 'new_val' },
-                                              :template   => 'some_json'
-      @stack.create(:attributes => { 'arg1' => 'val' }, 
-                    :template => 'some_json')
+                                            and_return @stack_mock
+
+      expecteds = [
+        { 'chef_repo' => 'test123' },
+        { 'chef_repo_bucket_prefix' => 'test-prefix' },
+        { 'chef_repo_domain' => 'test-domain' },
+        { 'CookBooksURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz' }
+      ]
+      @stack_mock.should_receive(:create).with :attributes => expecteds,
+                                               :template   => 'some_json'
+
+      attributes = [
+        { 'chef_repo' => 'test123' },
+        { 'chef_repo_bucket_prefix' => 'test-prefix' },
+        { 'chef_repo_domain' => 'test-domain' }
+      ]
+
+      @stack.create :attributes => attributes, :template => 'some_json'
     end
-
-    it "should call update stack" do
-      deployment_stub = stub 'deployment', :clear_for_deployment? => true
-      @stack.stub(:deployment).and_return(deployment_stub)
-
-      saf_mock = mock 'stack attribute formater mock'
-      stack_mock = mock 'stackster stack mock'
-      stack_mock.stub(:attributes).and_return(@main_attributes)
-      @config_mock.should_receive(:environment).with('test-env').
-                   and_return @environment_config_mock
-      SimpleDeploy::StackAttributeFormater.should_receive(:new).
-                                           with(:config      => @config_mock,
-                                                :environment => 'test-env',
-                                                :main_attributes => @main_attributes).
-                                           and_return saf_mock
-      Stackster::Stack.should_receive(:new).with(:environment => 'test-env',
-                                                 :name        => 'test-stack',
-                                                 :config      => @environment_config_mock,
-                                                 :logger      => @logger_stub).
-                                            and_return stack_mock
-      saf_mock.should_receive(:updated_attributes).with({'arg1' => 'val'}).
-               and_return('arg1' => 'new_val')
-      stack_mock.should_receive(:update).with :attributes => { 'arg1' => 'new_val' }
-      @stack.update :attributes => { 'arg1' => 'val' }
-    end
-
   end
 
   describe "updating a stack" do
+    before do
+      @stack_mock.stub(:attributes).and_return(@main_attributes)
+    end
+
     it "should update when the deployment is not locked" do
       deployment_stub = stub 'deployment', :clear_for_deployment? => true
       @stack.stub(:deployment).and_return(deployment_stub)
 
-      saf_mock = mock 'stack attribute formater mock'
-      stack_mock = mock 'stackster stack mock'
-      stack_mock.stub(:attributes).and_return(@main_attributes)
-      @config_mock.should_receive(:environment).with('test-env').
-                   and_return @environment_config_mock
-      SimpleDeploy::StackAttributeFormater.should_receive(:new).
-                                           with(:config      => @config_mock,
-                                                :environment => 'test-env',
-                                                :main_attributes => @main_attributes).
-                                           and_return saf_mock
       Stackster::Stack.should_receive(:new).with(:environment => 'test-env',
                                                  :name        => 'test-stack',
                                                  :config      => @environment_config_mock,
                                                  :logger      => @logger_stub).
-                                            and_return stack_mock
-      saf_mock.should_receive(:updated_attributes).with({'arg1' => 'val'}).
-               and_return('arg1' => 'new_val')
-      stack_mock.should_receive(:update).with :attributes => { 'arg1' => 'new_val' }
-      @stack.update :attributes => { 'arg1' => 'val' }
+                                            and_return @stack_mock
+      @stack_mock.should_receive(:update).with :attributes => @expected_attributes
+
+      @stack.update :attributes => [{ 'chef_repo' => 'test123' }]
     end
 
     it "should not update when the deployment is locked and force is not set" do
@@ -115,23 +98,14 @@ describe SimpleDeploy do
       deployment_mock.should_receive(:clear_deployment_lock).with(true)
       @stack.stub(:deployment).and_return(deployment_mock)
 
-      saf_mock = mock 'stack attribute formater mock'
-      stack_mock = mock 'stackster stack mock'
-      stack_mock.stub(:attributes).and_return(@main_attributes)
-      SimpleDeploy::StackAttributeFormater.should_receive(:new).
-                                           with(:config      => @config_mock,
-                                                :environment => 'test-env',
-                                                :main_attributes => @main_attributes).
-                                           and_return saf_mock
       Stackster::Stack.should_receive(:new).with(:environment => 'test-env',
                                                  :name        => 'test-stack',
                                                  :config      => @environment_config_mock,
                                                  :logger      => @logger_stub).
-                                            and_return stack_mock
-      saf_mock.should_receive(:updated_attributes).with({'arg1' => 'val'}).
-               and_return('arg1' => 'new_val')
-      stack_mock.should_receive(:update).with :attributes => { 'arg1' => 'new_val' }
-      @stack.update :force => true, :attributes => { 'arg1' => 'val' }
+                                            and_return @stack_mock
+      @stack_mock.should_receive(:update).with :attributes => @expected_attributes
+
+      @stack.update :force => true, :attributes => [{ 'chef_repo' => 'test123' }]
     end
 
     it "should not update when the deployment is locked and force is set false" do
