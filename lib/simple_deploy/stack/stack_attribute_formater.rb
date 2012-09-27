@@ -27,20 +27,20 @@ module SimpleDeploy
       @config.artifacts
     end
     
-    def cloud_formation_url attribute
+    def cloud_formation_url(attribute)
       name = attribute.keys.first
       id = attribute[name]
-      a = @config.artifacts.select { |a| a['name'] == name }.first
 
       bucket_prefix = @main_attributes["#{name}_bucket_prefix"]
-      url_parameter = @config.artifact_cloud_formation_url name
-
+      domain = @main_attributes["#{name}_domain"]
       artifact = Artifact.new :name          => name,
                               :id            => id,
                               :region        => @region,
                               :config        => @config,
+                              :domain        => domain,
                               :bucket_prefix => bucket_prefix
 
+      url_parameter = @config.artifact_cloud_formation_url name
       { url_parameter => artifact.endpoints['s3'] }
     end
 
