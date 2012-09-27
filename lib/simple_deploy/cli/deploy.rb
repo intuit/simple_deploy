@@ -12,6 +12,21 @@ Execute deployment on given stack(s).
 
 simple_deploy deploy -n STACK_NAME -n STACK_NAME -e ENVIRONMENT
 
+Using SSH:
+
+Simple deploy defaults your user and key for SSH to your username and your id_rsa key.
+
+If you need to override these because you want to use a different username or you have a different key file,
+you can set simple deploy specific environment variables to do the override.
+
+Example 1: Overriding when the command is run.
+SIMPLE_DEPLOY_SSH_USER=fred SIMPLE_DEPLOY_SSH_KEY=$HOME/.ssh/id_dsa simple_deploy deploy -n STACK_NAME -n STACK_NAME -e ENVIRONMENT
+
+Example 2: Overriding them in your shell environment (bash shell used in the example).
+export SIMPLE_DEPLOY_SSH_USER=fred
+export SIMPLE_DEPLOY_SSH_KEY=$HOME/.ssh/id_dsa
+simple_deploy deploy -n STACK_NAME -n STACK_NAME -e ENVIRONMENT
+
 EOS
           opt :help, "Display Help"
           opt :attributes, "= seperated attribute and it's value", :type  => :string,
