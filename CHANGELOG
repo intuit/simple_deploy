@@ -1,3 +1,10 @@
+## v0.5.1:
+
+* Corrected the use of the domain attribute in URLs during deployments
+* Corrected the use of the force option during deployments
+* Added help text on SSH usage to the deploy command
+* Corrected the acceptable options for the protect command
+
 ## v0.5.0:
 
 * Updated the update command so it accepts a force option
