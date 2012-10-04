@@ -30,7 +30,12 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        jj stack.instances
+        instances = stack.instances
+        if instances.nil? || instances.empty?
+          puts "stack '#{opts[:name]}' does not exist"
+        else
+          jj stack.instances
+        end
       end
     end
   end
