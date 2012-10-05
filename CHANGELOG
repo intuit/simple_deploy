@@ -1,3 +1,10 @@
+## HEAD
+
+* Added a clone command that clones a stack
+* Updated the protect command so it allows multiple stacks
+* Updated the instances command so it tells the user when the stack does not exist
+* Updated the outputs command to make the output values easier to read
+
 ## v0.5.2
 
 * Upgrade to stackster 0.3.0
