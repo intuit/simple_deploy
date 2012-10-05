@@ -31,13 +31,13 @@ EOS
       private
 
       def filter_attributes(old_attributes)
-        new_attributes = {}
+        new_attributes = []
 
         old_attributes.each_key do |key|
           if key == 'Name'
-            new_attributes['Name'] = @opts[:new_name]
+            new_attributes << { 'Name' => @opts[:new_name] }
           elsif is_camel_case? key
-            new_attributes[key] = old_attributes[key]
+            new_attributes << { key => old_attributes[key] }
           end
         end
 

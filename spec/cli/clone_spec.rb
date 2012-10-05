@@ -33,23 +33,24 @@ describe SimpleDeploy::CLI::Clone do
       it 'should only filter attributes with camel case names' do
         new_attributes = subject.send(:filter_attributes, @old_attributes)
 
-        new_attributes.has_key?('AmiId').should be_true
-        new_attributes['AmiId'].should == 'ami-7b6a4e3e'
-        new_attributes.has_key?('AppEnv').should be_true
-        new_attributes['AppEnv'].should == 'pod-2-cd-1'
-        new_attributes.has_key?('MaximumAppInstances').should be_true
-        new_attributes['MaximumAppInstances'].should == 1
-        new_attributes.has_key?('MinimumAppInstances').should be_true
-        new_attributes['MinimumAppInstances'].should == 1
-        new_attributes.has_key?('chef_repo_bucket_prefix').should_not be_true
-        new_attributes.has_key?('chef_repo_domain').should_not be_true
+        new_attributes.size.should == 4
+
+        new_attributes[0].has_key?('AmiId').should be_true
+        new_attributes[0]['AmiId'].should == 'ami-7b6a4e3e'
+        new_attributes[1].has_key?('AppEnv').should be_true
+        new_attributes[1]['AppEnv'].should == 'pod-2-cd-1'
+        new_attributes[2].has_key?('MaximumAppInstances').should be_true
+        new_attributes[2]['MaximumAppInstances'].should == 1
+        new_attributes[3].has_key?('MinimumAppInstances').should be_true
+        new_attributes[3]['MinimumAppInstances'].should == 1
       end
 
       it 'should replace the old stack name with the new stack name' do
         subject.instance_variable_set(:@opts, :new_name => 'new_stack')
 
         new_attributes = subject.send(:filter_attributes, 'Name' => 'old_stack')
-        new_attributes['Name'].should == 'new_stack'
+        new_attributes.size.should == 1
+        new_attributes[0]['Name'].should == 'new_stack'
       end
     end
 
@@ -98,11 +99,11 @@ describe SimpleDeploy::CLI::Clone do
                                       :required => [:environment, :old_name, :new_name, :template])
         Trollop.stub(:options).and_return(@options)
 
-        @new_stack.should_receive(:create).with(:attributes => {
-          'AmiId' => 'ami-7b6a4e3e',
-          'AppEnv' => 'pod-2-cd-1',
-          'MaximumAppInstances' => 1,
-          'MinimumAppInstances' => 1}, :template => 'my_template')
+        @new_stack.should_receive(:create).with(:attributes => [{ 'AmiId' => 'ami-7b6a4e3e' },
+                                                                { 'AppEnv' => 'pod-2-cd-1' },
+                                                                { 'MaximumAppInstances' => 1 },
+                                                                { 'MinimumAppInstances' => 1 }],
+                                                                :template => 'my_template')
 
         subject.clone
       end
