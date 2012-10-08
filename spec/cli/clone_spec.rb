@@ -20,7 +20,7 @@ describe SimpleDeploy::CLI::Clone do
 
     context 'filter_attributes' do
       before do
-        @old_attributes = {
+        @source_attributes = {
           'AmiId' => 'ami-7b6a4e3e',
           'AppEnv' => 'pod-2-cd-1',
           'MaximumAppInstances' => 1,
@@ -31,7 +31,7 @@ describe SimpleDeploy::CLI::Clone do
       end
 
       it 'should only filter attributes with camel case names' do
-        new_attributes = subject.send(:filter_attributes, @old_attributes)
+        new_attributes = subject.send(:filter_attributes, @source_attributes)
 
         new_attributes.size.should == 4
 
@@ -44,14 +44,6 @@ describe SimpleDeploy::CLI::Clone do
         new_attributes[3].has_key?('MinimumAppInstances').should be_true
         new_attributes[3]['MinimumAppInstances'].should == 1
       end
-
-      it 'should replace the old stack name with the new stack name' do
-        subject.instance_variable_set(:@opts, :new_name => 'new_stack')
-
-        new_attributes = subject.send(:filter_attributes, 'Name' => 'old_stack')
-        new_attributes.size.should == 1
-        new_attributes[0]['Name'].should == 'new_stack'
-      end
     end
 
     context 'stack creation' do
@@ -60,17 +52,17 @@ describe SimpleDeploy::CLI::Clone do
         @logger  = stub 'logger'
         @options = { :environment => 'my_env',
                      :log_level   => 'debug',
-                     :old_name    => 'old_stack',
+                     :source_name    => 'source_stack',
                      :new_name    => 'new_stack',
                      :template    => 'my_template' }
-        @old_stack   = stub :attributes => {
+        @source_stack   = stub :attributes => {
           'AmiId' => 'ami-7b6a4e3e',
           'AppEnv' => 'pod-2-cd-1',
           'MaximumAppInstances' => 1,
           'MinimumAppInstances' => 1,
           'chef_repo_bucket_prefix' => 'intu-lc',
           'chef_repo_domain' => 'live_community_chef_repo'
-        }
+        }, :template => { 'foo' => 'bah' }
         @new_stack   = stub :attributes => {}
 
         SimpleDeploy::Config.stub(:new).and_return(@config)
@@ -83,8 +75,8 @@ describe SimpleDeploy::CLI::Clone do
                                       with(:config      => @config,
                                            :environment => 'my_env',
                                            :logger      => @logger,
-                                           :name        => 'old_stack').
-                                      and_return(@old_stack)
+                                           :name        => 'source_stack').
+                                      and_return(@source_stack)
         SimpleDeploy::Stack.should_receive(:new).
                                       with(:config      => @config,
                                            :environment => 'my_env',
@@ -96,14 +88,14 @@ describe SimpleDeploy::CLI::Clone do
       it 'should create the new stack using the filtered attributes' do
         SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
                                  with(:provided => @options,
-                                      :required => [:environment, :old_name, :new_name, :template])
+                                      :required => [:environment, :source_name, :new_name, :template])
         Trollop.stub(:options).and_return(@options)
 
         @new_stack.should_receive(:create).with(:attributes => [{ 'AmiId' => 'ami-7b6a4e3e' },
                                                                 { 'AppEnv' => 'pod-2-cd-1' },
                                                                 { 'MaximumAppInstances' => 1 },
                                                                 { 'MinimumAppInstances' => 1 }],
-                                                                :template => 'my_template')
+                                                                :template => '/tmp/new_stack_template.json')
 
         subject.clone
       end
