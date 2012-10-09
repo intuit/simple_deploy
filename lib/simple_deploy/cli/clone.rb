@@ -1,4 +1,5 @@
 require 'trollop'
+require 'tempfile'
 
 module SimpleDeploy
   module CLI
@@ -25,9 +26,7 @@ EOS
 
         new_attributes = filter_attributes source_stack.attributes
 
-        template_file = File.join '/', 'tmp', "#{@opts[:new_name]}_template.json"
-        File::open(template_file, 'w') { |f| f.write source_stack.template.to_json }
-
+        template_file = Tempfile.new("#{@opts[:new_name]}_template.json").path
         new_stack.create :attributes => new_attributes,
                          :template   => template_file
       end
@@ -68,9 +67,9 @@ EOS
 
       def new_stack
         @new_stack ||= Stack.new :environment => @opts[:environment],
-                               :name        => @opts[:new_name],
-                               :config      => config,
-                               :logger      => logger
+                                 :name        => @opts[:new_name],
+                                 :config      => config,
+                                 :logger      => logger
       end
     end
   end

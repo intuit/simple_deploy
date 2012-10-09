@@ -91,11 +91,13 @@ describe SimpleDeploy::CLI::Clone do
                                       :required => [:environment, :source_name, :new_name, :template])
         Trollop.stub(:options).and_return(@options)
 
-        @new_stack.should_receive(:create).with(:attributes => [{ 'AmiId' => 'ami-7b6a4e3e' },
-                                                                { 'AppEnv' => 'pod-2-cd-1' },
-                                                                { 'MaximumAppInstances' => 1 },
-                                                                { 'MinimumAppInstances' => 1 }],
-                                                                :template => '/tmp/new_stack_template.json')
+        @new_stack.should_receive(:create) do |options|
+          options[:attributes].should == [{ 'AmiId' => 'ami-7b6a4e3e' },
+                                          { 'AppEnv' => 'pod-2-cd-1' },
+                                          { 'MaximumAppInstances' => 1 },
+                                          { 'MinimumAppInstances' => 1 }]
+          options[:template].should match /new_stack_template.json/
+        end
 
         subject.clone
       end
