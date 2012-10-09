@@ -4,20 +4,6 @@ require 'simple_deploy/cli'
 describe SimpleDeploy::CLI::Clone do
 
   describe 'clone' do
-
-    context 'camel case detection' do
-      it "should correctly detect camel case attribute names" do
-        subject.send(:is_camel_case?, 'Camelcase').should_not be_true 
-        subject.send(:is_camel_case?, 'CamelCase').should be_true 
-        subject.send(:is_camel_case?, 'camelCase').should be_true 
-        subject.send(:is_camel_case?, 'camel case').should_not be_true 
-        subject.send(:is_camel_case?, 'Camel Case').should_not be_true 
-        subject.send(:is_camel_case?, 'Camel case').should_not be_true 
-        subject.send(:is_camel_case?, 'CamelCaseLongUpper').should be_true 
-        subject.send(:is_camel_case?, 'camelCaseLongLower').should be_true 
-      end
-    end
-
     context 'filter_attributes' do
       before do
         @source_attributes = {
@@ -26,14 +12,15 @@ describe SimpleDeploy::CLI::Clone do
           'MaximumAppInstances' => 1,
           'MinimumAppInstances' => 1,
           'chef_repo_bucket_prefix' => 'intu-lc',
-          'chef_repo_domain' => 'live_community_chef_repo'
+          'chef_repo_domain' => 'live_community_chef_repo',
+          'deployment_user' => 'rmendes'
         }
       end
 
-      it 'should only filter attributes with camel case names' do
+      it 'should filter out deployment attributes' do
         new_attributes = subject.send(:filter_attributes, @source_attributes)
 
-        new_attributes.size.should == 4
+        new_attributes.size.should == 6
 
         new_attributes[0].has_key?('AmiId').should be_true
         new_attributes[0]['AmiId'].should == 'ami-7b6a4e3e'
@@ -43,24 +30,71 @@ describe SimpleDeploy::CLI::Clone do
         new_attributes[2]['MaximumAppInstances'].should == 1
         new_attributes[3].has_key?('MinimumAppInstances').should be_true
         new_attributes[3]['MinimumAppInstances'].should == 1
+        new_attributes[4].has_key?('chef_repo_bucket_prefix').should be_true
+        new_attributes[4]['chef_repo_bucket_prefix'].should == 'intu-lc'
+        new_attributes[5].has_key?('chef_repo_domain').should be_true
+        new_attributes[5]['chef_repo_domain'].should == 'live_community_chef_repo'
+      end
+    end
+
+    context 'merge_attributes' do
+      before do
+        @cloned_attributes = [
+          { 'AmiId' => 'ami-7b6a4e3e' },
+          { 'AppEnv' => 'pod-2-cd-1' },
+          { 'MaximumAppInstances' => 1 },
+          { 'MinimumAppInstances' => 1 },
+          { 'chef_repo_bucket_prefix' => 'intu-lc' },
+          { 'chef_repo_domain' => 'live_community_chef_repo' },
+          { 'deployment_user' => 'rmendes' }
+        ]
+
+        @override_attributes = [
+          { 'chef_repo_bucket_prefix' => 'updated-intu-lc' },
+          { 'chef_repo_domain' => 'updated_community_chef_repo' }
+        ]
+      end
+
+      it 'should merge the override attributes' do
+        merged_attributes = subject.send(:merge_attributes, @cloned_attributes, @override_attributes)
+
+        merged_attributes.size.should == 7
+
+        merged_attributes[0].has_key?('AmiId').should be_true
+        merged_attributes[0]['AmiId'].should == 'ami-7b6a4e3e'
+        merged_attributes[1].has_key?('AppEnv').should be_true
+        merged_attributes[1]['AppEnv'].should == 'pod-2-cd-1'
+        merged_attributes[2].has_key?('MaximumAppInstances').should be_true
+        merged_attributes[2]['MaximumAppInstances'].should == 1
+        merged_attributes[3].has_key?('MinimumAppInstances').should be_true
+        merged_attributes[3]['MinimumAppInstances'].should == 1
+        merged_attributes[4].has_key?('chef_repo_bucket_prefix').should be_true
+        merged_attributes[4]['chef_repo_bucket_prefix'].should == 'updated-intu-lc'
+        merged_attributes[5].has_key?('chef_repo_domain').should be_true
+        merged_attributes[5]['chef_repo_domain'].should == 'updated_community_chef_repo'
+        merged_attributes[6].has_key?('deployment_user').should be_true
+        merged_attributes[6]['deployment_user'].should == 'rmendes'
       end
     end
 
     context 'stack creation' do
       before do
         @config  = mock 'config'
-        @logger  = stub 'logger'
+        @logger  = stub 'logger', :info => 'true'
         @options = { :environment => 'my_env',
                      :log_level   => 'debug',
-                     :source_name    => 'source_stack',
-                     :new_name    => 'new_stack' }
+                     :source_name => 'source_stack',
+                     :new_name    => 'new_stack',
+                     :attributes  => ['chef_repo_bucket_prefix=updated-intu-lc', 'chef_repo_domain=updated_community_chef_repo'] }
+
         @source_stack   = stub :attributes => {
           'AmiId' => 'ami-7b6a4e3e',
           'AppEnv' => 'pod-2-cd-1',
           'MaximumAppInstances' => 1,
           'MinimumAppInstances' => 1,
           'chef_repo_bucket_prefix' => 'intu-lc',
-          'chef_repo_domain' => 'live_community_chef_repo'
+          'chef_repo_domain' => 'live_community_chef_repo',
+          'deployment_user' => 'rmendes'
         }, :template => { 'foo' => 'bah' }
         @new_stack   = stub :attributes => {}
 
@@ -84,7 +118,7 @@ describe SimpleDeploy::CLI::Clone do
                                       and_return(@new_stack)
       end
       
-      it 'should create the new stack using the filtered attributes' do
+      it 'should create the new stack using the filtered and merged attributes' do
         SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
                                  with(:provided => @options,
                                       :required => [:environment, :source_name, :new_name])
@@ -94,7 +128,9 @@ describe SimpleDeploy::CLI::Clone do
           options[:attributes].should == [{ 'AmiId' => 'ami-7b6a4e3e' },
                                           { 'AppEnv' => 'pod-2-cd-1' },
                                           { 'MaximumAppInstances' => 1 },
-                                          { 'MinimumAppInstances' => 1 }]
+                                          { 'MinimumAppInstances' => 1 },
+                                          { 'chef_repo_bucket_prefix' => 'updated-intu-lc' },
+                                          { 'chef_repo_domain' => 'updated_community_chef_repo' }]
           options[:template].should match /new_stack_template.json/
         end
 

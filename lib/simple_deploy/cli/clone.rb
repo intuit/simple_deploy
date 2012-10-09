@@ -11,19 +11,25 @@ module SimpleDeploy
 
 Clone a stack.
 
-simple_deploy clone -s SOURCE_STACK_NAME -n NEW_STACK_NAME -e ENVIRONMENT
+simple_deploy clone -s SOURCE_STACK_NAME -n NEW_STACK_NAME -e ENVIRONMENT -a ATTRIB1=VALUE -a ATTRIB2=VALUE
 
 EOS
           opt :help, "Display Help"
           opt :environment, "Set the target environment", :type => :string
           opt :source_name, "Stack name for the stack to clone", :type => :string
           opt :new_name, "Stack name for the new stack", :type => :string
+          opt :attributes, "= separated attribute and it's value", :type  => :string,
+                                                                   :multi => true
         end
 
         CLI::Shared.valid_options? :provided => @opts,
                                    :required => [:environment, :source_name, :new_name]
 
-        new_attributes = filter_attributes source_stack.attributes
+        override_attributes = CLI::Shared.parse_attributes :attributes => @opts[:attributes],
+                                                           :logger     => logger
+
+        cloned_attributes = filter_attributes source_stack.attributes
+        new_attributes = merge_attributes cloned_attributes, override_attributes
 
         template_file = Tempfile.new("#{@opts[:new_name]}_template.json").path
         File::open(template_file, 'w') { |f| f.write source_stack.template.to_json }
@@ -38,7 +44,7 @@ EOS
         new_attributes = []
 
         source_attributes.each_key do |key|
-          if is_camel_case? key
+          if key !~ /^deployment/
             new_attributes << { key => source_attributes[key] }
           end
         end
@@ -46,9 +52,14 @@ EOS
         new_attributes
       end
 
-      def is_camel_case?(attribute_name)
-        pattern = /^[a-zA-Z]\w+(?:[A-Z]\w+){1,}/x
-        pattern.match(attribute_name.to_s).nil? ? false : true
+      def merge_attributes(cloned_attributes, override_attributes)
+        cloned_attributes.each do |clone|
+          key = clone.keys.first
+          override = override_attributes.find { |over| over.has_key? key }
+          clone.merge!(override) if override
+        end
+
+        cloned_attributes
       end
 
       def config
