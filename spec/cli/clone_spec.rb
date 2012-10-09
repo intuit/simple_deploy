@@ -53,8 +53,7 @@ describe SimpleDeploy::CLI::Clone do
         @options = { :environment => 'my_env',
                      :log_level   => 'debug',
                      :source_name    => 'source_stack',
-                     :new_name    => 'new_stack',
-                     :template    => 'my_template' }
+                     :new_name    => 'new_stack' }
         @source_stack   = stub :attributes => {
           'AmiId' => 'ami-7b6a4e3e',
           'AppEnv' => 'pod-2-cd-1',
@@ -88,7 +87,7 @@ describe SimpleDeploy::CLI::Clone do
       it 'should create the new stack using the filtered attributes' do
         SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
                                  with(:provided => @options,
-                                      :required => [:environment, :source_name, :new_name, :template])
+                                      :required => [:environment, :source_name, :new_name])
         Trollop.stub(:options).and_return(@options)
 
         @new_stack.should_receive(:create) do |options|

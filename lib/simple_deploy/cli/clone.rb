@@ -18,15 +18,16 @@ EOS
           opt :environment, "Set the target environment", :type => :string
           opt :source_name, "Stack name for the stack to clone", :type => :string
           opt :new_name, "Stack name for the new stack", :type => :string
-          opt :template, "Path to the template file", :type => :string
         end
 
         CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :source_name, :new_name, :template]
+                                   :required => [:environment, :source_name, :new_name]
 
         new_attributes = filter_attributes source_stack.attributes
 
         template_file = Tempfile.new("#{@opts[:new_name]}_template.json").path
+        File::open(template_file, 'w') { |f| f.write source_stack.template.to_json }
+
         new_stack.create :attributes => new_attributes,
                          :template   => template_file
       end
