@@ -41,25 +41,16 @@ EOS
       private
 
       def filter_attributes(source_attributes)
-        new_attributes = []
-
-        source_attributes.each_key do |key|
-          if key !~ /^deployment/
-            new_attributes << { key => source_attributes[key] }
-          end
-        end
-
-        new_attributes
+        selected = source_attributes.select { |k| k !~ /^deployment/ }
+        selected.map { |k,v| { k => v } }
       end
 
       def merge_attributes(cloned_attributes, override_attributes)
-        cloned_attributes.each do |clone|
+        cloned_attributes.map do |clone|
           key = clone.keys.first
-          override = override_attributes.find { |over| over.has_key? key }
-          clone.merge!(override) if override
+          override = override_attributes.find { |o| o.has_key? key }
+          override ? override : clone
         end
-
-        cloned_attributes
       end
 
       def config
