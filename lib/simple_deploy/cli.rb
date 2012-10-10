@@ -3,6 +3,7 @@ require 'trollop'
 require 'simple_deploy/cli/shared'
 
 require 'simple_deploy/cli/attributes'
+require 'simple_deploy/cli/clone'
 require 'simple_deploy/cli/create'
 require 'simple_deploy/cli/deploy'
 require 'simple_deploy/cli/destroy'
@@ -26,6 +27,8 @@ module SimpleDeploy
       case cmd
       when 'attributes'
         CLI::Attributes.new.show
+      when 'clone'
+        CLI::Clone.new.clone
       when 'create'
         CLI::Create.new.create
       when 'destroy', 'delete'
@@ -57,13 +60,13 @@ module SimpleDeploy
       when 'update'
         CLI::Update.new.update
       when '-h'
-        puts "simple_deploy [attributes|create|destroy|environments|events|instances|list|template|outputs|parameters|protect|resources|ssh|status|update] [options]"
+        puts "simple_deploy [attributes|clone|create|destroy|environments|events|instances|list|template|outputs|parameters|protect|resources|ssh|status|update] [options]"
         puts "Append -h for help on specific subcommand."
       when '-v'
         puts SimpleDeploy::VERSION
       else
         puts "Unknown command: '#{cmd}'."
-        puts "simple_deploy [attributes|create|destroy|environments|events|instances|list|template|outputs|parameters|protect|resources|ssh|status|update] [options]"
+        puts "simple_deploy [attributes|clone|create|destroy|environments|events|instances|list|template|outputs|parameters|protect|resources|ssh|status|update] [options]"
         puts "Append -h for help on specific subcommand."
         exit 1
       end
