@@ -1,4 +1,4 @@
-## HEAD
+## v0.5.3
 
 * Added a clone command that clones a stack
 * Updated the protect command so it allows multiple stacks
