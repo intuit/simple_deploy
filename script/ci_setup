@@ -4,7 +4,7 @@
 . /etc/profile
 
 # Use simple deploy gemset
-rvm use "1.9.3-p125@simple_deploy" --create
+rvm use "1.9.3-p194@simple_deploy" --create
 
 # Exit with error if any command returns non zero
 set -e
