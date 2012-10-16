@@ -38,6 +38,11 @@ module SimpleDeploy
       def execute(force = false)
         if !clear_for_deployment? && force
           clear_deployment_lock true
+
+          Backoff.exp_periods do |p|
+            sleep p
+            break if clear_for_deployment?
+          end
         end
 
         if clear_for_deployment?

@@ -103,7 +103,7 @@ describe SimpleDeploy do
       status_mock = mock 'status mock'
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               and_return status_mock
-      status_mock.should_receive(:clear_for_deployment?).and_return false, true
+      status_mock.should_receive(:clear_for_deployment?).and_return false, true, true
       status_mock.should_receive(:clear_deployment_lock).with(true)
       status_mock.should_receive(:set_deployment_in_progress)
       @deployment_mock.should_receive(:simpledeploy)
