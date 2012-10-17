@@ -1,4 +1,4 @@
-## Head
+## v0.5.4
 
 * Added support for internal networking to the deploy and instances commands
 * Added backoff functionality to deployments so they work better with the force option
