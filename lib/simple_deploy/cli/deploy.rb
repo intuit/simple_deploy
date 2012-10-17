@@ -27,6 +27,13 @@ export SIMPLE_DEPLOY_SSH_USER=fred
 export SIMPLE_DEPLOY_SSH_KEY=$HOME/.ssh/id_dsa
 simple_deploy deploy -n STACK_NAME -n STACK_NAME -e ENVIRONMENT
 
+Using Internal IP for SSH:
+
+Simple deploy defaults to using the public IP when ssh'ng to stacks. This option instructs it
+to use the private IP, which is needed when ssh'ng from one stack to another.
+
+simple_deploy deploy -n STACK_NAME -n STACK_NAME -e ENVIRONMENT -i
+
 EOS
           opt :help, "Display Help"
           opt :attributes, "= seperated attribute and it's value", :type  => :string,
@@ -38,6 +45,7 @@ EOS
           opt :name, "Stack name(s) of stack to deploy", :type => :string,
                                                          :multi => true
           opt :quiet, "Quiet, do not send notifications"
+          opt :internal, "Use internal IP for ssh commands"
         end
 
         CLI::Shared.valid_options? :provided => opts,
@@ -54,7 +62,8 @@ EOS
 
           stack = Stack.new :environment => opts[:environment],
                             :name        => name,
-                            :logger      => logger
+                            :logger      => logger,
+                            :internal    => opts[:internal]
 
           stack.update :force => opts[:force], :attributes => new_attributes if new_attributes.any?
 

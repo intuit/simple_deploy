@@ -10,6 +10,8 @@ module SimpleDeploy
       @name = args[:name]
       @config = Config.new :logger => args[:logger]
       @logger = @config.logger
+
+      @use_internal_ips = !!args[:internal]
     end
 
     def create(args)
@@ -66,7 +68,12 @@ module SimpleDeploy
     def instances
       stack.instances.map do |instance| 
         info = instance['instancesSet'].first
-        info['vpcId'] ? info['privateIpAddress'] : info['ipAddress']
+
+        if info['vpcId'] || @use_internal_ips
+          info['privateIpAddress']
+        else
+          info['ipAddress']
+        end
       end
     end
 

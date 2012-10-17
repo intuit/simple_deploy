@@ -19,6 +19,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :log_level   => 'debug',
                   :name        => ['my_stack'],
                   :force       => true,
+                  :internal    => false,
                   :attributes  => [] }
 
       SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
@@ -35,7 +36,8 @@ describe SimpleDeploy::CLI::Deploy do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
                                :logger      => @logger,
-                               :name        => 'my_stack').
+                               :name        => 'my_stack',
+                               :internal    => false).
                           and_return(@stack)
 
       @stack.should_receive(:deploy).with(true).and_return(true)
@@ -50,6 +52,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :log_level   => 'debug',
                   :name        => ['my_stack'],
                   :force       => true,
+                  :internal    => false,
                   :attributes  => [] }
 
       SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
@@ -66,7 +69,8 @@ describe SimpleDeploy::CLI::Deploy do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
                                :logger      => @logger,
-                               :name        => 'my_stack').
+                               :name        => 'my_stack',
+                               :internal    => false).
                           and_return(@stack)
 
       @stack.should_receive(:deploy).with(true).and_return(false)
@@ -83,6 +87,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :log_level   => 'debug',
                   :name        => ['my_stack'],
                   :force       => true,
+                  :internal    => false,
                   :attributes  => ['foo=bah'] }
 
       SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
@@ -99,7 +104,8 @@ describe SimpleDeploy::CLI::Deploy do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
                                :logger      => @logger,
-                               :name        => 'my_stack').
+                               :name        => 'my_stack',
+                               :internal    => false).
                           and_return(@stack)
 
       @stack.should_receive(:update).with(hash_including(:force => true, :attributes => [{'foo' => 'bah'}]))

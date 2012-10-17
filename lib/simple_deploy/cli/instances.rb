@@ -16,6 +16,7 @@ EOS
           opt :help, "Display Help"
           opt :environment, "Set the target environment", :type => :string
           opt :name, "Stack name to manage", :type => :string
+          opt :internal, "Use internal IP for ssh commands"
         end
 
         CLI::Shared.valid_options? :provided => opts,
@@ -28,7 +29,8 @@ EOS
         stack = Stack.new :environment => opts[:environment],
                           :name        => opts[:name],
                           :config      => config,
-                          :logger      => logger
+                          :logger      => logger,
+                          :internal    => opts[:internal]
 
         instances = stack.instances
         if instances.nil? || instances.empty?
