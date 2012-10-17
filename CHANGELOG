@@ -1,3 +1,8 @@
+## Head
+
+* Added support for internal networking to the deploy and instances commands
+* Added backoff functionality to deployments so they work better with the force option
+
 ## v0.5.3
 
 * Added a clone command that clones a stack

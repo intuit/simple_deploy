@@ -12,6 +12,7 @@ describe SimpleDeploy do
     @config_stub.stub(:artifact_cloud_formation_url).and_return('CookBooksURL')
 
     SimpleDeploy::Config.should_receive(:new).
+                         at_least(:once).
                          with(:logger => 'my-logger').
                          and_return @config_stub
     @stack = SimpleDeploy::Stack.new :environment => 'test-env',
@@ -155,6 +156,51 @@ describe SimpleDeploy do
       stack_mock.should_receive(:destroy)
 
       @stack.destroy.should be_true
+    end
+  end
+
+  describe 'instances' do
+    before do
+      @instances = [{ 'instancesSet' => [{ 'ipAddress' => '50.40.30.20', 'privateIpAddress' => '10.1.2.3' }] }]
+      @environment_config_mock.stub(:[])
+    end
+
+    it 'should use the private IP when vpc' do
+      stack = SimpleDeploy::Stack.new :environment => 'test-env',
+                                       :name        => 'test-stack',
+                                       :logger      => 'my-logger',
+                                       :config      => @config_stub,
+                                       :internal    => false
+      stack.stub(:stack) { @stack_mock }
+
+      @instances.first['instancesSet'].first['vpcId'] = 'my-vpc'
+      @stack_mock.stub(:instances).and_return(@instances)
+
+      stack.send(:instances).should == ['10.1.2.3']
+    end
+
+    it 'should use the private IP when internal' do
+      stack = SimpleDeploy::Stack.new :environment => 'test-env',
+                                       :name        => 'test-stack',
+                                       :logger      => 'my-logger',
+                                       :config      => @config_stub,
+                                       :internal    => true
+      stack.stub(:stack) { @stack_mock }
+      @stack_mock.stub(:instances).and_return(@instances)
+
+      stack.send(:instances).should == ['10.1.2.3']
+    end
+
+    it 'should use the public IP when not vpc and not internal' do
+      stack = SimpleDeploy::Stack.new :environment => 'test-env',
+                                       :name        => 'test-stack',
+                                       :logger      => 'my-logger',
+                                       :config      => @config_stub,
+                                       :internal    => false
+      stack.stub(:stack) { @stack_mock }
+      @stack_mock.stub(:instances).and_return(@instances)
+
+      stack.send(:instances).should == ['50.40.30.20']
     end
   end
 end
