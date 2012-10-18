@@ -10,6 +10,11 @@ module SimpleDeploy
       @notifications = @config.notifications || {}
     end
 
+    def send_deployment_start_message
+      message = "Deployment to #{@stack_name} started."
+      send message
+    end
+
     def send_deployment_complete_message
       message = "Deployment to #{@stack_name} complete."
       attributes = stack.attributes
