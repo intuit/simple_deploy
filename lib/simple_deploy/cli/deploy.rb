@@ -67,6 +67,7 @@ EOS
 
           stack.update :force => opts[:force], :attributes => new_attributes if new_attributes.any?
 
+          notifier.send_deployment_start_message unless opts[:quiet]
           if stack.deploy opts[:force]
             notifier.send_deployment_complete_message unless opts[:quiet]
           else

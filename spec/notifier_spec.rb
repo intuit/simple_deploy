@@ -20,7 +20,16 @@ describe SimpleDeploy do
                                              :logger      => @logger_mock
     end
 
-    it "should include the github app & chef links if attributes present" do
+    it "should support a basic start message" do
+      campfire_mock = mock 'campfire mock'
+
+      SimpleDeploy::Notifier::Campfire.should_receive(:new).and_return campfire_mock
+      campfire_mock.should_receive(:send).with "Deployment to stack_name started."
+      
+      @notifier.send_deployment_start_message
+    end
+
+    it "should include the github app & chef links in the completed message" do
       stack_mock = mock 'stack'
       campfire_mock = mock 'campfire mock'
       environment_mock = mock 'environment mock'

@@ -41,6 +41,7 @@ describe SimpleDeploy::CLI::Deploy do
                           and_return(@stack)
 
       @stack.should_receive(:deploy).with(true).and_return(true)
+      @notifier.should_receive(:send_deployment_start_message)
       @notifier.should_receive(:send_deployment_complete_message)
 
       subject.deploy
@@ -74,6 +75,7 @@ describe SimpleDeploy::CLI::Deploy do
                           and_return(@stack)
 
       @stack.should_receive(:deploy).with(true).and_return(false)
+      @notifier.should_receive(:send_deployment_start_message)
 
       begin
         subject.deploy
@@ -110,6 +112,7 @@ describe SimpleDeploy::CLI::Deploy do
 
       @stack.should_receive(:update).with(hash_including(:force => true, :attributes => [{'foo' => 'bah'}]))
       @stack.should_receive(:deploy).with(true).and_return(true)
+      @notifier.should_receive(:send_deployment_start_message)
       @notifier.should_receive(:send_deployment_complete_message)
 
       subject.deploy
