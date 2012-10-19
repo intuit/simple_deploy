@@ -1,3 +1,8 @@
+## HEAD
+
+* Added backoff functionality to updates so they work better with the force option
+* Now publishes a message when the deployment starts
+
 ## v0.5.4
 
 * Added support for internal networking to the deploy and instances commands
