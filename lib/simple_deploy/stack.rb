@@ -23,6 +23,11 @@ module SimpleDeploy
     def update(args)
       if !deployment.clear_for_deployment? && args[:force]
         deployment.clear_deployment_lock true
+
+        Backoff.exp_periods do |p|
+          sleep p
+          break if deployment.clear_for_deployment?
+        end
       end
 
       if deployment.clear_for_deployment?
