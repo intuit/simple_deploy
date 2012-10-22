@@ -35,6 +35,10 @@ module SimpleDeploy
         attributes = stack_attribute_formater.updated_attributes args[:attributes]
         stack.update :attributes => attributes
         @logger.info "Update complete for #{@name}."
+        true
+      else
+        @logger.info "Not clear to update."
+        false
       end
     end
 
