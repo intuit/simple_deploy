@@ -80,7 +80,7 @@ describe SimpleDeploy do
                                             and_return @stack_mock
       @stack_mock.should_receive(:update).with :attributes => @expected_attributes
 
-      @stack.update :attributes => [{ 'chef_repo' => 'test123' }]
+      @stack.update(:attributes => [{ 'chef_repo' => 'test123' }]).should be_true
     end
 
     it "should not update when the deployment is locked and force is not set" do
@@ -90,7 +90,7 @@ describe SimpleDeploy do
       SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
       Stackster::Stack.should_not_receive(:new)
 
-      @stack.update :attributes => { 'arg1' => 'val' }
+      @stack.update(:attributes => { 'arg1' => 'val' }).should_not be_true
     end
 
     it "should update when the deployment is locked and force is set true" do
@@ -106,7 +106,7 @@ describe SimpleDeploy do
                                             and_return @stack_mock
       @stack_mock.should_receive(:update).with :attributes => @expected_attributes
 
-      @stack.update :force => true, :attributes => [{ 'chef_repo' => 'test123' }]
+      @stack.update(:force => true, :attributes => [{ 'chef_repo' => 'test123' }]).should be_true
     end
 
     it "should not update when the deployment is locked and force is set false" do
@@ -116,7 +116,7 @@ describe SimpleDeploy do
       SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
       Stackster::Stack.should_not_receive(:new)
 
-      @stack.update :force => false, :attributes => { 'arg1' => 'val' }
+      @stack.update(:force => false, :attributes => { 'arg1' => 'val' }).should_not be_true
     end
   end
 

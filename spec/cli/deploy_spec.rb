@@ -110,7 +110,75 @@ describe SimpleDeploy::CLI::Deploy do
                                :internal    => false).
                           and_return(@stack)
 
-      @stack.should_receive(:update).with(hash_including(:force => true, :attributes => [{'foo' => 'bah'}]))
+      @stack.should_receive(:update).with(hash_including(:force => true, :attributes => [{'foo' => 'bah'}])).and_return(true)
+      @stack.should_receive(:deploy).with(true).and_return(true)
+      @notifier.should_receive(:send_deployment_start_message)
+      @notifier.should_receive(:send_deployment_complete_message)
+
+      subject.deploy
+    end
+
+    it "should skip the deploy if the attributes update is not successful" do
+      options = { :environment => 'my_env',
+                  :log_level   => 'debug',
+                  :name        => ['my_stack'],
+                  :force       => true,
+                  :internal    => false,
+                  :attributes  => ['foo=bah'] }
+
+      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
+                                with(:provided => options,
+                                     :required => [:environment, :name])
+      Trollop.stub(:options).and_return(options)
+
+      SimpleDeploy::Notifier.should_receive(:new).
+                          with(:stack_name  => 'my_stack',
+                               :environment => 'my_env',
+                               :logger      => @logger).
+                          and_return(@notifier)
+
+      SimpleDeploy::Stack.should_receive(:new).
+                          with(:environment => 'my_env',
+                               :logger      => @logger,
+                               :name        => 'my_stack',
+                               :internal    => false).
+                          and_return(@stack)
+
+      @stack.should_receive(:update).with(hash_including(:force => true, :attributes => [{'foo' => 'bah'}])).and_return(false)
+      @stack.should_not_receive(:deploy)
+      @notifier.should_not_receive(:send_deployment_start_message)
+      @notifier.should_not_receive(:send_deployment_complete_message)
+
+      subject.deploy
+    end
+
+    it "should do the deploy if there are no attributes to update" do
+      options = { :environment => 'my_env',
+                  :log_level   => 'debug',
+                  :name        => ['my_stack'],
+                  :force       => true,
+                  :internal    => false,
+                  :attributes  => [] }
+
+      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
+                                with(:provided => options,
+                                     :required => [:environment, :name])
+      Trollop.stub(:options).and_return(options)
+
+      SimpleDeploy::Notifier.should_receive(:new).
+                          with(:stack_name  => 'my_stack',
+                               :environment => 'my_env',
+                               :logger      => @logger).
+                          and_return(@notifier)
+
+      SimpleDeploy::Stack.should_receive(:new).
+                          with(:environment => 'my_env',
+                               :logger      => @logger,
+                               :name        => 'my_stack',
+                               :internal    => false).
+                          and_return(@stack)
+
+      @stack.should_not_receive(:update)
       @stack.should_receive(:deploy).with(true).and_return(true)
       @notifier.should_receive(:send_deployment_start_message)
       @notifier.should_receive(:send_deployment_complete_message)
