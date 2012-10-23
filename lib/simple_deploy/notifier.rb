@@ -11,12 +11,12 @@ module SimpleDeploy
     end
 
     def send_deployment_start_message
-      message = "Deployment to #{@stack_name} started."
+      message = "Deployment to #{@stack_name} in #{@config.region @environment} started."
       send message
     end
 
     def send_deployment_complete_message
-      message = "Deployment to #{@stack_name} complete."
+      message = "Deployment to #{@stack_name} in #{@config.region @environment} complete."
       attributes = stack.attributes
 
       if attributes['app_github_url']

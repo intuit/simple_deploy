@@ -23,8 +23,10 @@ describe SimpleDeploy do
     it "should support a basic start message" do
       campfire_mock = mock 'campfire mock'
 
+      @config_mock.should_receive(:region).with('test').and_return('us-west-1')
+
       SimpleDeploy::Notifier::Campfire.should_receive(:new).and_return campfire_mock
-      campfire_mock.should_receive(:send).with "Deployment to stack_name started."
+      campfire_mock.should_receive(:send).with "Deployment to stack_name in us-west-1 started."
       
       @notifier.send_deployment_start_message
     end
@@ -36,6 +38,7 @@ describe SimpleDeploy do
       @config_mock.should_receive(:environment).
                    with('test').
                    and_return environment_mock
+      @config_mock.should_receive(:region).with('test').and_return('us-west-1')
       Stackster::Stack.should_receive(:new).
                        with(:environment => 'test',
                             :name        => 'stack_name',
@@ -50,7 +53,7 @@ describe SimpleDeploy do
       SimpleDeploy::Notifier::Campfire.should_receive(:new).
                                        and_return campfire_mock
       campfire_mock.should_receive(:send).
-                    with "Deployment to stack_name complete. App: http://github.com/user/app/commit/appsha Chef: http://github.com/user/chef_repo/commit/chefsha"
+                    with "Deployment to stack_name in us-west-1 complete. App: http://github.com/user/app/commit/appsha Chef: http://github.com/user/chef_repo/commit/chefsha"
       @notifier.send_deployment_complete_message
     end
 
