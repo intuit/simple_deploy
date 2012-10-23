@@ -1,5 +1,6 @@
 ## HEAD
 
+* Added region to the message notifications
 * Fixed deployments so they don't try to deploy if the attributes fail to update
 
 ## v0.5.5
