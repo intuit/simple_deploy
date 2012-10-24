@@ -20,6 +20,7 @@ EOS
           opt :new_name, "Stack name for the new stack", :type => :string
           opt :attributes, "= separated attribute and it's value", :type  => :string,
                                                                    :multi => true
+          opt :template, "Path to a new template file", :type => :string
         end
 
         CLI::Shared.valid_options? :provided => @opts,
@@ -31,8 +32,12 @@ EOS
         cloned_attributes = filter_attributes source_stack.attributes
         new_attributes = merge_attributes cloned_attributes, override_attributes
 
-        template_file = Tempfile.new("#{@opts[:new_name]}_template.json").path
-        File::open(template_file, 'w') { |f| f.write source_stack.template.to_json }
+        if @opts[:template]
+          template_file = @opts[:template]
+        else
+          template_file = Tempfile.new("#{@opts[:new_name]}_template.json").path
+          File::open(template_file, 'w') { |f| f.write source_stack.template.to_json }
+        end
 
         new_stack.create :attributes => new_attributes,
                          :template   => template_file

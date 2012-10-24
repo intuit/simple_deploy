@@ -136,6 +136,27 @@ describe SimpleDeploy::CLI::Clone do
 
         subject.clone
       end
+
+      it 'should create the new stack using a new template' do
+        @options[:template] = 'brand_new_template.json'
+
+        SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
+                                 with(:provided => @options,
+                                      :required => [:environment, :source_name, :new_name])
+        Trollop.stub(:options).and_return(@options)
+
+        @new_stack.should_receive(:create) do |options|
+          options[:attributes].should == [{ 'AmiId' => 'ami-7b6a4e3e' },
+                                          { 'AppEnv' => 'pod-2-cd-1' },
+                                          { 'MaximumAppInstances' => 1 },
+                                          { 'MinimumAppInstances' => 1 },
+                                          { 'chef_repo_bucket_prefix' => 'updated-intu-lc' },
+                                          { 'chef_repo_domain' => 'updated_community_chef_repo' }]
+          options[:template].should match /brand_new_template.json/
+        end
+
+        subject.clone
+      end
     end
   end
 end
