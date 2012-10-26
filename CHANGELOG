@@ -1,5 +1,7 @@
 ## HEAD
 
+* Corrected the instances command so it returns all instances
+* Updated the clone command so it can take a new template for the new stack
 * Added region to the message notifications
 * Fixed deployments so they don't try to deploy if the attributes fail to update
 
