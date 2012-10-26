@@ -76,14 +76,14 @@ module SimpleDeploy
 
     def instances
       stack.instances.map do |instance| 
-        info = instance['instancesSet'].first
-
-        if info['vpcId'] || @use_internal_ips
-          info['privateIpAddress']
-        else
-          info['ipAddress']
+        instance['instancesSet'].map do |info|
+          if info['vpcId'] || @use_internal_ips
+            info['privateIpAddress']
+          else
+            info['ipAddress']
+          end
         end
-      end
+      end.flatten
     end
 
     def status
