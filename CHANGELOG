@@ -1,4 +1,4 @@
-## HEAD
+## v0.5.6
 
 * Corrected the instances command so it returns all instances
 * Updated the clone command so it can take a new template for the new stack
