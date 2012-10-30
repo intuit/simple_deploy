@@ -22,6 +22,10 @@ module SimpleDeploy
       Logger.const_get @log_level.upcase
     end
 
+    def tty?
+      nil
+    end
+
     private
 
     def new_logger(args)
