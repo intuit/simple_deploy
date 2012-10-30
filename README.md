@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/intuit/simple_deploy.png)](http://travis-ci.org/intuit/simple_deploy)
+
 I use the stackster to manage stacks, however I understand how to connect to different regions / accounts as well as kick off a deployment on instances.
 
 Getting Started
