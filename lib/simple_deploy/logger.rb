@@ -22,6 +22,7 @@ module SimpleDeploy
       Logger.const_get @log_level.upcase
     end
 
+    # Added to support capistrano version 2.13.5
     def tty?
       nil
     end
