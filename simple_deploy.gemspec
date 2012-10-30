@@ -19,7 +19,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_development_dependency "rake"
-  s.add_development_dependency "rspec", "~> 2.10.0"
+  s.add_development_dependency "rspec", "~> 2.11.0"
 
   s.add_runtime_dependency "capistrano", "= 2.13.5"
   s.add_runtime_dependency "stackster", '= 0.3.1'
