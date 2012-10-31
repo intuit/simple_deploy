@@ -27,12 +27,11 @@ module SimpleDeploy
 
       def create_execute_task(args)
         if @instances.nil? || @instances.empty?
-          raise "There are no running instances to execute task against."
+          raise "There are no running instances to execute this command."
         end
 
         @task = Capistrano::Configuration.new :output => @logger
         @task.logger.level = 3
-        @logger.info "Creating task for stack: #{@name}."
 
         set_ssh_gateway
         set_ssh_user
