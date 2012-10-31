@@ -16,16 +16,30 @@ module SimpleDeploy
         @attributes  = @stack.attributes
         @logger      = @config.logger
         @region      = @config.region @environment
-
-        create_execute_task
       end
 
       def execute(args)
-        set_execute_command args
+        create_execute_task args
         @task.execute
       end
 
       private
+
+      def create_execute_task(args)
+        if @instances.nil? || @instances.empty?
+          raise "There are no running instances to execute task against."
+        end
+
+        @task = Capistrano::Configuration.new :output => @logger
+        @task.logger.level = 3
+        @logger.info "Creating task for stack: #{@name}."
+
+        set_ssh_gateway
+        set_ssh_user
+        set_ssh_options
+        set_instances
+        set_execute_command args
+      end
 
       def set_execute_command(args)
         command = args[:command]
@@ -43,21 +57,6 @@ module SimpleDeploy
         end
       end
 
-      def create_execute_task
-        if @instances.nil? || @instances.empty?
-          raise "There are no running instances to execute task against."
-        end
-
-        @task = Capistrano::Configuration.new :output => @logger
-        @task.logger.level = 3
-        @logger.info "Creating task for stack: #{@name}."
-
-        set_ssh_gateway
-        set_ssh_user
-        set_ssh_options
-        set_instances
-      end
-
       def set_instances
         @instances.each do |instance| 
           @logger.debug "Executing command on instance #{instance}."
@@ -68,7 +67,7 @@ module SimpleDeploy
       def set_ssh_options
         @logger.debug "Setting key to #{@ssh_key}."
         @task.variables[:ssh_options] = { :keys     => @ssh_key, 
-                                                :paranoid => false }
+                                          :paranoid => false }
       end
 
       def set_ssh_gateway
