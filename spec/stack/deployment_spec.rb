@@ -26,7 +26,6 @@ describe SimpleDeploy do
     @stack_mock.stub(:attributes) { @attributes }
 
     @status_mock = mock 'status mock'
-    
 
     options = { :config      => @config_mock,
                 :instances   => ['1.2.3.4', '4.3.2.1'],
@@ -35,8 +34,8 @@ describe SimpleDeploy do
                 :ssh_key     => 'key',
                 :stack       => @stack_mock,
                 :name        => 'stack-name' }
-    @stack = SimpleDeploy::Stack::Deployment.new options
-    @stack.stub(:sleep) { false }
+    @deployment = SimpleDeploy::Stack::Deployment.new options
+    @deployment.stub(:sleep) { false }
   end
 
   describe "executing a deploy" do
@@ -87,7 +86,7 @@ describe SimpleDeploy do
         @status_mock.stub :clear_for_deployment? => true
         @status_mock.should_receive(:set_deployment_in_progress)
         @status_mock.should_receive(:unset_deployment_in_progress)
-        @stack.exec(false).should be_true
+        @deployment.exec(false).should be_true
       end
 
       it "should deploy if the stack is not clear to deploy but forced and clear in time" do
@@ -100,7 +99,7 @@ describe SimpleDeploy do
                      and_return(true)
         @status_mock.should_receive(:set_deployment_in_progress)
         @status_mock.should_receive(:unset_deployment_in_progress)
-        @stack.exec(true).should be_true
+        @deployment.exec(true).should be_true
       end
 
     end
@@ -110,15 +109,22 @@ describe SimpleDeploy do
         @status_mock.stub(:clear_for_deployment?) { false }
         @status_mock.should_receive(:clear_deployment_lock).
                      with(true)
-        @stack.exec(true).should be_false
+        @deployment.exec(true).should be_false
       end
 
       it "should not deploy if the stack is not clear to deploy and not forced" do
         @status_mock.should_receive(:clear_deployment_lock).
                      exactly(0).times
         @status_mock.stub :clear_for_deployment? => false
-        @stack.exec(false).should be_false
+        @deployment.exec(false).should be_false
       end
+    end
+  end
+
+  describe "clear_for_deployment?" do
+    it "should test the clear_for_deployment method" do
+      @status_mock.stub :clear_for_deployment? => true
+      @deployment.clear_for_deployment?.should be_true
     end
   end
 
@@ -134,7 +140,7 @@ describe SimpleDeploy do
     end
 
     it "should create S3 endpoints" do
-      endpoints = @stack.send :get_artifact_endpoints
+      endpoints = @deployment.send :get_artifact_endpoints
 
       endpoints['CHEF_REPO_URL'].should == 's3://chef_repo_bp-test-us-west-1/chef_repo_d/chef_repo.tar.gz'
       endpoints['APP_URL'].should == 's3://app_bp-test-us-west-1/app_d/app.tar.gz'
