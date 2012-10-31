@@ -6,7 +6,9 @@ require 'simple_deploy/stack/execute'
 
 module SimpleDeploy
   class Stack
+
     class Deployment
+
       def initialize(args)
         @config      = args[:config]
         @instances   = args[:instances]
@@ -117,6 +119,7 @@ module SimpleDeploy
       end
 
     end
+
   end
 end
 
