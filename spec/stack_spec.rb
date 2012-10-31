@@ -98,6 +98,7 @@ describe SimpleDeploy do
       deployment_mock.should_receive(:clear_for_deployment?).and_return(false, true, true)
       deployment_mock.should_receive(:clear_deployment_lock).with(true)
       @stack.stub(:deployment).and_return(deployment_mock)
+      @stack.stub(:sleep).and_return(false)
 
       Stackster::Stack.should_receive(:new).with(:environment => 'test-env',
                                                  :name        => 'test-stack',
