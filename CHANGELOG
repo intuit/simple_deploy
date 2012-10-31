@@ -1,3 +1,9 @@
+## HEAD
+
+* Added execute subcommand to run arbitraty commands against stack
+* Refactored deployment to use ssh library
+* Added specs
+
 ## v0.5.6
 
 * Corrected the instances command so it returns all instances
