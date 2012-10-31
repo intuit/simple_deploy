@@ -49,7 +49,7 @@ describe SimpleDeploy::Stack::SSH do
       end
 
       it "should execute a task as the calling user " do
-        @task_mock.should_receive(:load).with({:string=>"task :execute do\n          'uname'\n          end"})
+        @task_mock.should_receive(:load).with({:string=>"task :execute do\n          run 'uname'\n          end"})
         @task_mock.should_receive(:execute).and_return true
         @ssh.execute(:sudo    => false,
                      :command => 'uname').should be_true

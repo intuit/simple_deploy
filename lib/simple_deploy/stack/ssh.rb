@@ -51,7 +51,7 @@ module SimpleDeploy
           end"
         else
           @task.load :string => "task :execute do
-          '#{command}'
+          run '#{command}'
           end"
         end
       end
