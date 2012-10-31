@@ -167,10 +167,10 @@ describe SimpleDeploy do
 
     it 'should use the private IP when vpc' do
       stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                       :name        => 'test-stack',
-                                       :logger      => 'my-logger',
-                                       :config      => @config_stub,
-                                       :internal    => false
+                                      :name        => 'test-stack',
+                                      :logger      => 'my-logger',
+                                      :config      => @config_stub,
+                                      :internal    => false
       stack.stub(:stack) { @stack_mock }
 
       @instances.first['instancesSet'].first['vpcId'] = 'my-vpc'
@@ -181,10 +181,10 @@ describe SimpleDeploy do
 
     it 'should use the private IP when internal' do
       stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                       :name        => 'test-stack',
-                                       :logger      => 'my-logger',
-                                       :config      => @config_stub,
-                                       :internal    => true
+                                      :name        => 'test-stack',
+                                      :logger      => 'my-logger',
+                                      :config      => @config_stub,
+                                      :internal    => true
       stack.stub(:stack) { @stack_mock }
       @stack_mock.stub(:instances).and_return(@instances)
 
@@ -193,10 +193,10 @@ describe SimpleDeploy do
 
     it 'should use the public IP when not vpc and not internal' do
       stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                       :name        => 'test-stack',
-                                       :logger      => 'my-logger',
-                                       :config      => @config_stub,
-                                       :internal    => false
+                                      :name        => 'test-stack',
+                                      :logger      => 'my-logger',
+                                      :config      => @config_stub,
+                                      :internal    => false
       stack.stub(:stack) { @stack_mock }
       @stack_mock.stub(:instances).and_return(@instances)
 
@@ -209,14 +209,65 @@ describe SimpleDeploy do
         { 'ipAddress' => '50.40.30.21', 'privateIpAddress' => '10.1.2.4' }] }]
 
       stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                       :name        => 'test-stack',
-                                       :logger      => 'my-logger',
-                                       :config      => @config_stub,
-                                       :internal    => false
+                                      :name        => 'test-stack',
+                                      :logger      => 'my-logger',
+                                      :config      => @config_stub,
+                                      :internal    => false
       stack.stub(:stack) { @stack_mock }
       @stack_mock.stub(:instances).and_return(@instances)
 
       stack.instances.should == ['50.40.30.20', '50.40.30.21']
+    end
+  end
+
+  describe 'deploy' do
+    before do
+      @stack = SimpleDeploy::Stack.new :environment => 'test-env',
+                                       :name        => 'test-stack',
+                                       :logger      => 'my-logger',
+                                       :config      => @config_stub,
+                                       :internal    => false
+      @deployment_mock = mock "deployment"
+      @stack.stub(:deployment).and_return(@deployment_mock)
+    end
+
+    it "should call exec on deployment" do
+      @deployment_mock.should_receive(:exec).with(true).and_return true
+      @stack.deploy(true).should be_true
+    end
+
+    it "should not force the deployment by default" do
+      @deployment_mock.should_receive(:exec).with(false).and_return true
+      @stack.deploy.should be_true
+    end
+
+    it "should return false if the deployment fails" do
+      @deployment_mock.should_receive(:exec).with(false).and_return false
+      @stack.deploy.should be_false
+    end
+  end
+
+  describe 'exec' do
+    before do
+      @stack = SimpleDeploy::Stack.new :environment => 'test-env',
+                                       :name        => 'test-stack',
+                                       :logger      => 'my-logger',
+                                       :config      => @config_stub,
+                                       :internal    => false
+      @execute_mock = mock "execute"
+      @stack.stub(:execute).and_return(@execute_mock)
+    end
+
+    it "should call exec with the given args" do
+      @execute_mock.should_receive(:execute).
+                    with(:arg => 'val').and_return true
+      @stack.exec(:arg => 'val').should be_true
+    end
+
+    it "should return false if the exec fails" do
+      @execute_mock.should_receive(:execute).
+                    with(:arg => 'val').and_return false
+      @stack.exec(:arg => 'val').should be_false
     end
   end
 end

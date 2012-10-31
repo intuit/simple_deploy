@@ -8,6 +8,7 @@ require 'simple_deploy/cli/create'
 require 'simple_deploy/cli/deploy'
 require 'simple_deploy/cli/destroy'
 require 'simple_deploy/cli/events'
+require 'simple_deploy/cli/exec'
 require 'simple_deploy/cli/instances'
 require 'simple_deploy/cli/list'
 require 'simple_deploy/cli/outputs'
@@ -39,6 +40,8 @@ module SimpleDeploy
         CLI::List.new.environments
       when 'events'
         CLI::Events.new.show
+      when 'exec'
+        CLI::Exec.new.exec
       when 'instances'
         CLI::Instances.new.list
       when 'list'
@@ -60,13 +63,13 @@ module SimpleDeploy
       when 'update'
         CLI::Update.new.update
       when '-h'
-        puts "simple_deploy [attributes|clone|create|destroy|environments|events|instances|list|template|outputs|parameters|protect|resources|ssh|status|update] [options]"
+        puts "simple_deploy [attributes|clone|create|destroy|environments|events|exec|instances|list|template|outputs|parameters|protect|resources|ssh|status|update] [options]"
         puts "Append -h for help on specific subcommand."
       when '-v'
         puts SimpleDeploy::VERSION
       else
         puts "Unknown command: '#{cmd}'."
-        puts "simple_deploy [attributes|clone|create|destroy|environments|events|instances|list|template|outputs|parameters|protect|resources|ssh|status|update] [options]"
+        puts "simple_deploy [attributes|clone|create|destroy|environments|events|exec|instances|list|template|outputs|parameters|protect|resources|ssh|status|update] [options]"
         puts "Append -h for help on specific subcommand."
         exit 1
       end
