@@ -1,5 +1,6 @@
 require 'stackster'
 require 'simple_deploy/stack/deployment'
+require 'simple_deploy/stack/execute'
 require 'simple_deploy/stack/stack_attribute_formater'
 
 module SimpleDeploy
@@ -43,8 +44,11 @@ module SimpleDeploy
     end
 
     def deploy(force = false)
-      deployment.create_deployment
       deployment.execute force
+    end
+
+    def execute(args)
+      executer.execute args
     end
 
     def ssh
@@ -116,6 +120,16 @@ module SimpleDeploy
       @saf ||= StackAttributeFormater.new :config      => @config,
                                           :environment => @environment,
                                           :main_attributes => attributes
+    end
+
+    def executer
+      @executer ||= Stack::Execute.new :config      => @config,
+                                       :environment => @environment,
+                                       :name        => @name,
+                                       :stack       => stack,
+                                       :instances   => instances,
+                                       :ssh_user    => ssh_user,
+                                       :ssh_key     => ssh_key
     end
 
     def deployment
