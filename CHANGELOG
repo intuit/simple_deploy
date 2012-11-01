@@ -1,6 +1,8 @@
-## HEAD
+## v0.6.0
 
-* Added execute subcommand to run arbitraty commands against stack
+* Updated so it no longer caches simpledb attributes so it works better with stackster changes
+* Upgraded to stackster 0.3.2
+* Added execute subcommand to run arbitray commands against stack
 * Refactored deployment to use ssh library
 * Added specs
 
