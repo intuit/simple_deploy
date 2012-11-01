@@ -44,11 +44,11 @@ module SimpleDeploy
     end
 
     def deploy(force = false)
-      deployment.exec force
+      deployment.execute force
     end
 
-    def exec(args)
-      execute.execute args
+    def execute(args)
+      executer.execute args
     end
 
     def ssh
@@ -122,14 +122,14 @@ module SimpleDeploy
                                           :main_attributes => attributes
     end
 
-    def execute
-      @execute ||= Stack::Execute.new :config      => @config,
-                                      :environment => @environment,
-                                      :name        => @name,
-                                      :stack       => stack,
-                                      :instances   => instances,
-                                      :ssh_user    => ssh_user,
-                                      :ssh_key     => ssh_key
+    def executer
+      @executer ||= Stack::Execute.new :config      => @config,
+                                       :environment => @environment,
+                                       :name        => @name,
+                                       :stack       => stack,
+                                       :instances   => instances,
+                                       :ssh_user    => ssh_user,
+                                       :ssh_key     => ssh_key
     end
 
     def deployment

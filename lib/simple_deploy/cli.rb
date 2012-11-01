@@ -8,7 +8,7 @@ require 'simple_deploy/cli/create'
 require 'simple_deploy/cli/deploy'
 require 'simple_deploy/cli/destroy'
 require 'simple_deploy/cli/events'
-require 'simple_deploy/cli/exec'
+require 'simple_deploy/cli/execute'
 require 'simple_deploy/cli/instances'
 require 'simple_deploy/cli/list'
 require 'simple_deploy/cli/outputs'
@@ -40,8 +40,8 @@ module SimpleDeploy
         CLI::List.new.environments
       when 'events'
         CLI::Events.new.show
-      when 'exec', 'execute'
-        CLI::Exec.new.exec
+      when 'execute'
+        CLI::Execute.new.execute
       when 'instances'
         CLI::Instances.new.list
       when 'list'

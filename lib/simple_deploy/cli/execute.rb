@@ -2,15 +2,15 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
-    class Exec
-      def exec
+    class Execute
+      def execute
         opts = Trollop::options do
           version SimpleDeploy::VERSION
           banner <<-EOS
 
 Execute command on given stack(s).
 
-simple_deploy excute -n STACK_NAME -n STACK_NAME -e ENVIRONMENT -c "COMMAND"
+simple_deploy execute -n STACK_NAME -n STACK_NAME -e ENVIRONMENT -c "COMMAND"
 
 Using Internal IP for SSH:
 
@@ -25,7 +25,6 @@ EOS
                                                                    :multi => true
           opt :command, "Command to execute.", :type => :string
           opt :environment, "Set the target environment", :type => :string
-          opt :force, "Force a deployment to proceed"
           opt :internal, "Use internal IP for ssh commands"
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
@@ -49,8 +48,8 @@ EOS
                             :logger      => logger,
                             :internal    => opts[:internal]
 
-          stack.exec :command => opts[:command],
-                     :sudo    => opts[:sudo]
+          stack.execute :command => opts[:command],
+                        :sudo    => opts[:sudo]
         end
       end
     end

@@ -233,22 +233,22 @@ describe SimpleDeploy do
     end
 
     it "should call exec on deployment" do
-      @deployment_mock.should_receive(:exec).with(true).and_return true
+      @deployment_mock.should_receive(:execute).with(true).and_return true
       @stack.deploy(true).should be_true
     end
 
     it "should not force the deployment by default" do
-      @deployment_mock.should_receive(:exec).with(false).and_return true
+      @deployment_mock.should_receive(:execute).with(false).and_return true
       @stack.deploy.should be_true
     end
 
     it "should return false if the deployment fails" do
-      @deployment_mock.should_receive(:exec).with(false).and_return false
+      @deployment_mock.should_receive(:execute).with(false).and_return false
       @stack.deploy.should be_false
     end
   end
 
-  describe 'exec' do
+  describe 'execute' do
     before do
       @stack = SimpleDeploy::Stack.new :environment => 'test-env',
                                        :name        => 'test-stack',
@@ -256,19 +256,19 @@ describe SimpleDeploy do
                                        :config      => @config_stub,
                                        :internal    => false
       @execute_mock = mock "execute"
-      @stack.stub(:execute).and_return(@execute_mock)
+      @stack.stub(:executer).and_return(@execute_mock)
     end
 
     it "should call exec with the given args" do
       @execute_mock.should_receive(:execute).
                     with(:arg => 'val').and_return true
-      @stack.exec(:arg => 'val').should be_true
+      @stack.execute(:arg => 'val').should be_true
     end
 
     it "should return false if the exec fails" do
       @execute_mock.should_receive(:execute).
                     with(:arg => 'val').and_return false
-      @stack.exec(:arg => 'val').should be_false
+      @stack.execute(:arg => 'val').should be_false
     end
   end
 end

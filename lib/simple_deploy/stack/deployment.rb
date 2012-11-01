@@ -22,14 +22,14 @@ module SimpleDeploy
         @region      = @config.region @environment
       end
 
-      def exec(force)
+      def execute(force=false)
         wait_for_clear_to_deploy(force)
 
         if clear_for_deployment?
           status.set_deployment_in_progress
 
           @logger.info 'Starting deployment.'
-          execute.execute :sudo    => true,
+          executer.execute :sudo    => true,
                           :command => deploy_command
           @logger.info 'Deployment complete.'
 
@@ -47,7 +47,7 @@ module SimpleDeploy
 
       private
 
-      def wait_for_clear_to_deploy(force = false)
+      def wait_for_clear_to_deploy(force)
         if !clear_for_deployment? && force
           clear_deployment_lock true
 
@@ -98,7 +98,7 @@ module SimpleDeploy
         @config.deploy_script
       end
 
-      def execute
+      def executer
         options = { :config      => @config,
                     :instances   => @instances,
                     :environment => @environment,
@@ -106,7 +106,7 @@ module SimpleDeploy
                     :ssh_key     => @ssh_key,
                     :stack       => @stack,
                     :name        => @name }
-        @execute ||= SimpleDeploy::Stack::Execute.new options
+        @executer ||= SimpleDeploy::Stack::Execute.new options
       end
 
       def status
