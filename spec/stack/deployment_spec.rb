@@ -38,6 +38,36 @@ describe SimpleDeploy do
     @deployment.stub(:sleep) { false }
   end
 
+  context "manage locks" do
+    before do
+      status_options = { :name        => 'stack-name',
+                         :environment => 'test-us-west-1',
+                         :ssh_user    => 'user',
+                         :config      => @config_mock,
+                         :stack       => @stack_mock }
+      SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
+                                              with(status_options).
+                                              and_return @status_mock
+    end
+
+    describe "clear_for_deployment?" do
+      it "should test the clear_for_deployment method" do
+        @status_mock.stub :clear_for_deployment? => true
+        @deployment.clear_for_deployment?.should be_true
+      end
+    end
+
+    describe "clear_deployment_lock" do
+      it "should test the clear_deployment_lock" do
+        @status_mock.should_receive(:clear_deployment_lock).
+                     with(true).
+                     and_return true
+        @deployment.clear_deployment_lock(true).should be_true
+      end
+    end
+
+  end
+
   describe "executing a deploy" do
     before do
       @config_mock.stub(:artifacts) { ['chef_repo', 'cookbooks', 'app'] }
@@ -45,7 +75,6 @@ describe SimpleDeploy do
       @stack_mock.stub(:instances) { [ { 'instancesSet' =>
                                      [ { 'privateIpAddress' => '10.1.2.3' } ] } ] }
  
-
       status_options = { :name        => 'stack-name',
                          :environment => 'test-us-west-1',
                          :ssh_user    => 'user',
@@ -113,18 +142,10 @@ describe SimpleDeploy do
       end
 
       it "should not deploy if the stack is not clear to deploy and not forced" do
-        @status_mock.should_receive(:clear_deployment_lock).
-                     exactly(0).times
+        @status_mock.should_receive(:clear_deployment_lock).never
         @status_mock.stub :clear_for_deployment? => false
         @deployment.execute(false).should be_false
       end
-    end
-  end
-
-  describe "clear_for_deployment?" do
-    it "should test the clear_for_deployment method" do
-      @status_mock.stub :clear_for_deployment? => true
-      @deployment.clear_for_deployment?.should be_true
     end
   end
 
