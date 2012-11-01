@@ -41,6 +41,10 @@ module SimpleDeploy
         end
       end
 
+      def clear_deployment_lock(force = false)
+        status.clear_deployment_lock force
+      end
+
       def clear_for_deployment?
         status.clear_for_deployment?
       end
@@ -56,10 +60,6 @@ module SimpleDeploy
             break if clear_for_deployment?
           end
         end
-      end
-
-      def clear_deployment_lock(force = false)
-        status.clear_deployment_lock force
       end
 
       def deploy_command
