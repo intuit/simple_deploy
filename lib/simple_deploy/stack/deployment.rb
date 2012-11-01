@@ -17,7 +17,6 @@ module SimpleDeploy
         @ssh_key     = args[:ssh_key]
         @stack       = args[:stack]
         @name        = args[:name]
-        @attributes  = @stack.attributes
         @logger      = @config.logger
         @region      = @config.region @environment
       end
@@ -74,11 +73,11 @@ module SimpleDeploy
         h = {}
         @config.artifacts.each do |artifact|
           variable      = @config.artifact_deploy_variable artifact
-          bucket_prefix = @attributes["#{artifact}_bucket_prefix"]
-          domain        = @attributes["#{artifact}_domain"]
+          bucket_prefix = attributes["#{artifact}_bucket_prefix"]
+          domain        = attributes["#{artifact}_domain"]
 
           artifact = Artifact.new :name          => artifact,
-                                  :id            => @attributes[artifact],
+                                  :id            => attributes[artifact],
                                   :region        => @region,
                                   :domain        => domain,
                                   :bucket_prefix => bucket_prefix
@@ -116,6 +115,10 @@ module SimpleDeploy
                     :config      => @config,
                     :stack       => @stack }
         @status ||= SimpleDeploy::Stack::Deployment::Status.new options
+      end
+
+      def attributes
+        @stack.attributes
       end
 
     end

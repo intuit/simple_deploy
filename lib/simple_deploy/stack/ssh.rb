@@ -13,7 +13,6 @@ module SimpleDeploy
         @ssh_key     = args[:ssh_key]
         @stack       = args[:stack]
         @name        = args[:name]
-        @attributes  = @stack.attributes
         @logger      = @config.logger
         @region      = @config.region @environment
       end
@@ -70,7 +69,7 @@ module SimpleDeploy
       end
 
       def set_ssh_gateway
-        ssh_gateway = @attributes['ssh_gateway']
+        ssh_gateway = attributes['ssh_gateway']
         if ssh_gateway && !ssh_gateway.empty?
           @task.set :gateway, ssh_gateway
           @logger.info "Proxying via gateway #{ssh_gateway}."
@@ -82,6 +81,10 @@ module SimpleDeploy
       def set_ssh_user
         @logger.debug "Setting user to #{@ssh_user}."
         @task.set :user, @ssh_user
+      end
+
+      def attributes
+        @stack.attributes
       end
 
     end
