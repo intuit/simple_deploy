@@ -1,3 +1,8 @@
+## head
+
+* Added ability to pass config data into Config class which avoids having to
+have a .simple_deploy.yml file.
+
 ## v0.6.0
 
 * Updated so it no longer caches simpledb attributes so it works better with stackster changes
