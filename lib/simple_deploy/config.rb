@@ -53,7 +53,7 @@ module SimpleDeploy
       config_file = "#{ENV['HOME']}/.simple_deploy.yml"
 
       begin
-        self.config = YAML::load( File.open( config_file ) )
+        YAML::load( File.open( config_file ) )
       rescue Errno::ENOENT
         raise "#{config_file} not found"
       rescue Psych::SyntaxError => e
