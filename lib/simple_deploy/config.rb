@@ -4,7 +4,7 @@ module SimpleDeploy
     attr_accessor :config, :logger
 
     def initialize(args = {})
-      load_config_file
+      self.config = args.fetch(:config) { load_config_file }
       self.logger = args[:logger] ||= SimpleDeployLogger.new
     end
 
@@ -24,7 +24,7 @@ module SimpleDeploy
                           'app'       => 'AppArtifactURL',
                           'cookbooks' => 'CookbooksURL' }
       name_to_url_map[artifact]
-    end 
+    end
 
     def deploy_script
       '/opt/intu/admin/bin/configure.sh'
@@ -53,7 +53,7 @@ module SimpleDeploy
       config_file = "#{ENV['HOME']}/.simple_deploy.yml"
 
       begin
-        self.config = YAML::load( File.open( config_file ) )
+        YAML::load( File.open( config_file ) )
       rescue Errno::ENOENT
         raise "#{config_file} not found"
       rescue Psych::SyntaxError => e
