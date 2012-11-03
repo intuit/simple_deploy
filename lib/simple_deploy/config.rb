@@ -24,7 +24,7 @@ module SimpleDeploy
                           'app'       => 'AppArtifactURL',
                           'cookbooks' => 'CookbooksURL' }
       name_to_url_map[artifact]
-    end 
+    end
 
     def deploy_script
       '/opt/intu/admin/bin/configure.sh'
