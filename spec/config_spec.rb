@@ -4,7 +4,7 @@ describe SimpleDeploy do
 
   describe "after creating a configuration" do
     before do
-      @config_data = { 'artifacts' => { 
+      @config_data = { 'artifacts' => {
                          'test_repo' => {
                            'bucket_prefix' => 'test_prefix',
                            'domain' => 'test_domain'
@@ -12,7 +12,7 @@ describe SimpleDeploy do
                          'test_repo2' => { },
                         },
                         'environments' => {
-                          'test_env' => { 
+                          'test_env' => {
                             'secret_key' => 'secret',
                             'access_key' => 'access',
                             'region'     => 'us-west-1'
@@ -20,7 +20,7 @@ describe SimpleDeploy do
                         },
                         'notifications' => {
                           'campfire' => {
-                            'token' => 'my_token' 
+                            'token' => 'my_token'
                           }
                         }
                       }
