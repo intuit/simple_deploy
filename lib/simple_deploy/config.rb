@@ -4,7 +4,7 @@ module SimpleDeploy
     attr_accessor :config, :logger
 
     def initialize(args = {})
-      load_config_file
+      self.config = args.fetch(:config) { load_config_file }
       self.logger = args[:logger] ||= SimpleDeployLogger.new
     end
 

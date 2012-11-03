@@ -1,33 +1,39 @@
 require 'spec_helper'
 
 describe SimpleDeploy do
+  let(:config_data) do
+    { 'environments' => {
+        'test_env' => {
+          'secret_key' => 'secret',
+          'access_key' => 'access',
+          'region'     => 'us-west-1'
+      } },
+      'notifications' => {
+        'campfire' => {
+          'token' => 'my_token'
+      } } }
+  end
+
+  describe 'new' do
+    it 'should accept config data as an argument' do
+      YAML.should_not_receive(:load)
+
+      @config = SimpleDeploy::Config.new :config => config_data
+      @config.config.should == config_data
+    end
+
+    it 'should load the config from ~/.simple_deploy.yml by default' do
+      File.should_receive(:open).with("#{ENV['HOME']}/.simple_deploy.yml").
+                                 and_return(config_data.to_yaml)
+      @config = SimpleDeploy::Config.new
+      @config.config.should == config_data
+    end
+
+  end
 
   describe "after creating a configuration" do
     before do
-      @config_data = { 'artifacts' => {
-                         'test_repo' => {
-                           'bucket_prefix' => 'test_prefix',
-                           'domain' => 'test_domain'
-                          },
-                         'test_repo2' => { },
-                        },
-                        'environments' => {
-                          'test_env' => {
-                            'secret_key' => 'secret',
-                            'access_key' => 'access',
-                            'region'     => 'us-west-1'
-                          }
-                        },
-                        'notifications' => {
-                          'campfire' => {
-                            'token' => 'my_token'
-                          }
-                        }
-                      }
-
-      File.should_receive(:open).with("#{ENV['HOME']}/.simple_deploy.yml").
-                                 and_return(@config_data.to_yaml)
-      @config = SimpleDeploy::Config.new
+      @config = SimpleDeploy::Config.new :config => config_data
     end
 
     it "should return the default artifacts to deploy" do
