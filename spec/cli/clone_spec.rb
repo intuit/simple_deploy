@@ -19,7 +19,6 @@ describe SimpleDeploy::CLI::Clone do
 
       it 'should filter out deployment attributes' do
         new_attributes = subject.send(:filter_attributes, @source_attributes)
-
         new_attributes.size.should == 6
 
         new_attributes[0].has_key?('AmiId').should be_true
@@ -57,7 +56,6 @@ describe SimpleDeploy::CLI::Clone do
 
       it 'should merge the override attributes' do
         merged_attributes = subject.send(:merge_attributes, @cloned_attributes, @override_attributes)
-
         merged_attributes.size.should == 7
 
         merged_attributes[0].has_key?('AmiId').should be_true
@@ -77,6 +75,46 @@ describe SimpleDeploy::CLI::Clone do
       end
     end
 
+    context 'add_attributes' do
+      before do
+        @cloned_attributes = [
+          { 'AmiId' => 'ami-7b6a4e3e' },
+          { 'AppEnv' => 'pod-2-cd-1' },
+          { 'MaximumAppInstances' => 1 },
+          { 'MinimumAppInstances' => 1 },
+          { 'chef_repo_bucket_prefix' => 'intu-lc' },
+          { 'chef_repo_domain' => 'live_community_chef_repo' },
+          { 'deployment_user' => 'rmendes' }
+        ]
+
+        @new_attributes = [
+          { 'chef_repo_bucket_prefix' => 'updated-intu-lc' },
+          { 'SolrClientTrafficContainer' => 'solr-client-traffic-container' },
+          { 'SolrReplicationTrafficContainer' => 'solr-replication-traffic-container' }
+        ]
+      end
+
+      it 'should add new override attributes' do
+        add_attributes = subject.send(:add_attributes, @cloned_attributes, @new_attributes)
+        add_attributes.size.should == 2
+
+        add_attributes[0].has_key?('SolrClientTrafficContainer').should be_true
+        add_attributes[0]['SolrClientTrafficContainer'].should == 'solr-client-traffic-container'
+        add_attributes[1].has_key?('SolrReplicationTrafficContainer').should be_true
+        add_attributes[1]['SolrReplicationTrafficContainer'].should == 'solr-replication-traffic-container'
+      end
+
+      it 'should return an empty array if there are no new attributes' do
+        new_attributes = [
+          { 'chef_repo_bucket_prefix' => 'updated-intu-lc' },
+          { 'chef_repo_domain' => 'updated_community_chef_repo' }
+        ]
+
+        add_attributes = subject.send(:add_attributes, @cloned_attributes, new_attributes)
+        add_attributes.should be_empty
+      end
+    end
+
     context 'stack creation' do
       before do
         @config  = mock 'config'
@@ -85,7 +123,9 @@ describe SimpleDeploy::CLI::Clone do
                      :log_level   => 'debug',
                      :source_name => 'source_stack',
                      :new_name    => 'new_stack',
-                     :attributes  => ['chef_repo_bucket_prefix=updated-intu-lc', 'chef_repo_domain=updated_community_chef_repo'] }
+                     :attributes  => ['chef_repo_bucket_prefix=updated-intu-lc',
+                                      'chef_repo_domain=updated_community_chef_repo',
+                                      'SolrClientTrafficContainer=solr-client-traffic-container'] }
 
         @source_stack   = stub :attributes => {
           'AmiId' => 'ami-7b6a4e3e',
@@ -118,7 +158,7 @@ describe SimpleDeploy::CLI::Clone do
                                       and_return(@new_stack)
       end
       
-      it 'should create the new stack using the filtered and merged attributes' do
+      it 'should create the new stack using the filtered, merged and added attributes' do
         SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
                                  with(:provided => @options,
                                       :required => [:environment, :source_name, :new_name])
@@ -130,7 +170,8 @@ describe SimpleDeploy::CLI::Clone do
                                           { 'MaximumAppInstances' => 1 },
                                           { 'MinimumAppInstances' => 1 },
                                           { 'chef_repo_bucket_prefix' => 'updated-intu-lc' },
-                                          { 'chef_repo_domain' => 'updated_community_chef_repo' }]
+                                          { 'chef_repo_domain' => 'updated_community_chef_repo' },
+                                          { 'SolrClientTrafficContainer' => 'solr-client-traffic-container' }]
           options[:template].should match /new_stack_template.json/
         end
 
@@ -151,7 +192,8 @@ describe SimpleDeploy::CLI::Clone do
                                           { 'MaximumAppInstances' => 1 },
                                           { 'MinimumAppInstances' => 1 },
                                           { 'chef_repo_bucket_prefix' => 'updated-intu-lc' },
-                                          { 'chef_repo_domain' => 'updated_community_chef_repo' }]
+                                          { 'chef_repo_domain' => 'updated_community_chef_repo' },
+                                          { 'SolrClientTrafficContainer' => 'solr-client-traffic-container' }]
           options[:template].should match /brand_new_template.json/
         end
 
