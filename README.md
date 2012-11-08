@@ -2,8 +2,8 @@
 
 I use the stackster to manage stacks, however I understand how to connect to different regions / accounts as well as kick off a deployment on instances.
 
-Getting Started
----------------
+Installation
+------------
 
 Install the gem
 
@@ -15,11 +15,15 @@ Create a file **~/.simple_deploy.yml** and include within it:
 
 ```
 environments:
-  preprod_shared_us_west_1:
+  preprod:
     access_key: XXX
     secret_key: yyy
     region: us-west-1
+```
 
+To enable notifications on deployment to a Campfire room. Append the below to the **~/.simple_deploy.yml**.
+
+```
 notifications:
   campfire:
     token: XXX
