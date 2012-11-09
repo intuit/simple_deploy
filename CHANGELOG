@@ -1,5 +1,6 @@
 ## head
 
+* Corrected the clone command so it accepts new attributes
 * Added ability to pass config data into Config class which avoids having to
 have a .simple_deploy.yml file.
 

@@ -31,6 +31,7 @@ EOS
 
         cloned_attributes = filter_attributes source_stack.attributes
         new_attributes = merge_attributes cloned_attributes, override_attributes
+        new_attributes += add_attributes cloned_attributes, override_attributes
 
         if @opts[:template]
           template_file = @opts[:template]
@@ -56,6 +57,14 @@ EOS
           override = override_attributes.find { |o| o.has_key? key }
           override ? override : clone
         end
+      end
+
+      def add_attributes(cloned_attributes, override_attributes)
+        override_attributes.map do |override|
+          key = override.keys.first
+          clone = cloned_attributes.find { |c| c.has_key? key }
+          clone ? nil : override
+        end.compact
       end
 
       def config
