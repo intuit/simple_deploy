@@ -50,8 +50,6 @@ module SimpleDeploy
     private
 
     def load_config_file
-      config_file = "#{ENV['HOME']}/.simple_deploy.yml"
-
       begin
         YAML::load( File.open( config_file ) )
       rescue Errno::ENOENT
@@ -62,11 +60,27 @@ module SimpleDeploy
     end
 
     def env_home
-      ENV['HOME']
+      env.load 'HOME'
     end
 
     def env_user
-      ENV['USER']
+      env.load 'USER'
+    end
+
+    def config_file
+      env_config_file || default_config_file
+    end
+
+    def env_config_file
+      env.load 'SIMPLE_DEPLOY_CONFIG_FILE'
+    end
+
+    def default_config_file
+      "#{env.load 'HOME'}/.simple_deploy.yml"
+    end
+
+    def env
+      @env ||= SimpleDeploy::Env.new
     end
 
   end

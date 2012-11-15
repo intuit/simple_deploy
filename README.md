@@ -53,3 +53,10 @@ By default simple deploy will use your user name and id_rsa key for deployments.
 ```
 export SIMPLE_DEPLOY_SSH_USER=user
 export SIMPLE_DEPLOY_SSH_KEY=path_to_ssh_key
+```
+
+An alternate config file can be supplied by setting the **SIMPLE_DEPLOY_CONFIG_FILE** variable.
+
+```
+export SIMPLE_DEPLOY_CONFIG_FILE=/secret/my-config.yml
+```

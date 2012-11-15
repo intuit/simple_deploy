@@ -1,3 +1,4 @@
+require 'simple_deploy/env'
 require 'simple_deploy/config'
 require 'simple_deploy/artifact'
 require 'simple_deploy/stack'
