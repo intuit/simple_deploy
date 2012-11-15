@@ -1,8 +1,8 @@
 ## head
 
 * Corrected the clone command so it accepts new attributes
-* Added ability to pass config data into Config class which avoids having to
-have a .simple_deploy.yml file.
+* Added ability to pass config data into Config class which avoids having to have a .simple_deploy.yml file.
+* Config file reads SIMPLE_DEPLOY_CONFIG_FILE for alternate config file location.
 
 ## v0.6.0
 
