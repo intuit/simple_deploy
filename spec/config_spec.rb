@@ -29,6 +29,18 @@ describe SimpleDeploy do
       @config.config.should == config_data
     end
 
+    it 'should load the config from SIMPLE_DEPLOY_CONFIG_FILE if supplied' do
+      File.should_receive(:open).with("/my/config/file").
+                                 and_return(config_data.to_yaml)
+      env_mock = mock 'env'
+      SimpleDeploy::Env.stub :new => env_mock
+      env_mock.should_receive(:load).exactly(2).times.
+               with('SIMPLE_DEPLOY_CONFIG_FILE').
+               and_return "/my/config/file"
+      @config = SimpleDeploy::Config.new
+      @config.config.should == config_data
+    end
+
   end
 
   describe "after creating a configuration" do
