@@ -34,7 +34,7 @@ describe SimpleDeploy do
                                  and_return(config_data.to_yaml)
       env_mock = mock 'env'
       SimpleDeploy::Env.stub :new => env_mock
-      env_mock.should_receive(:load).exactly(2).times.
+      env_mock.should_receive(:load).
                with('SIMPLE_DEPLOY_CONFIG_FILE').
                and_return "/my/config/file"
       @config = SimpleDeploy::Config.new

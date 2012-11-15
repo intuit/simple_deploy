@@ -68,7 +68,7 @@ module SimpleDeploy
     end
 
     def config_file
-      env_config_file ? env_config_file : default_config_file
+      env_config_file || default_config_file
     end
 
     def env_config_file
