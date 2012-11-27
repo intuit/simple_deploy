@@ -1,3 +1,7 @@
+## HEAD
+
+* Refactored the outputs command to show less whitespace
+
 ## v0.6.1
 
 * Corrected the clone command so it accepts new attributes
