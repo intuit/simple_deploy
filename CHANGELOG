@@ -1,3 +1,7 @@
+## HEAD
+
+* Fixed help so it shows all commands
+
 ## v0.6.1
 
 * Corrected the clone command so it accepts new attributes
