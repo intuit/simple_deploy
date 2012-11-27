@@ -76,6 +76,9 @@ EOS
               logger.error "Deployment to #{name} did not complete succesfully."
               exit 1
             end
+          else
+            logger.error "Update of #{name} did not complete succesfully."
+            exit 1
           end
 
         end

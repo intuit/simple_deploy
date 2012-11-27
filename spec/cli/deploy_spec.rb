@@ -118,7 +118,7 @@ describe SimpleDeploy::CLI::Deploy do
       subject.deploy
     end
 
-    it "should skip the deploy if the attributes update is not successful" do
+    it "should exit with a status of 1 if the attributes update is not successful" do
       options = { :environment => 'my_env',
                   :log_level   => 'debug',
                   :name        => ['my_stack'],
@@ -144,12 +144,14 @@ describe SimpleDeploy::CLI::Deploy do
                                :internal    => false).
                           and_return(@stack)
 
-      @stack.should_receive(:update).with(hash_including(:force => true, :attributes => [{'foo' => 'bah'}])).and_return(false)
-      @stack.should_not_receive(:deploy)
-      @notifier.should_not_receive(:send_deployment_start_message)
-      @notifier.should_not_receive(:send_deployment_complete_message)
+      @stack.should_receive(:update).with(hash_including(:force => true,
+                                                         :attributes => [{'foo' => 'bah'}])).and_return(false)
 
-      subject.deploy
+      begin
+        subject.deploy
+      rescue SystemExit => e
+        e.status.should == 1
+      end
     end
 
     it "should do the deploy if there are no attributes to update" do
