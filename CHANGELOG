@@ -1,3 +1,7 @@
+## HEAD
+
+* Corrected the deploy command so it exits if a stack update fails
+
 ## v0.6.1
 
 * Corrected the clone command so it accepts new attributes
