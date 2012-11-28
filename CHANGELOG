@@ -1,6 +1,7 @@
 ## HEAD
 
 * Fixed help so it shows all commands
+* Refactored the outputs command to show less whitespace
 
 ## v0.6.1
 
