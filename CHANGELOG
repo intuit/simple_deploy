@@ -1,4 +1,4 @@
-## HEAD
+## v0.6.2
 
 * Corrected the deploy command so it exits if a stack update fails
 * Fixed help so it shows all commands
