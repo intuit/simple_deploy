@@ -271,4 +271,31 @@ describe SimpleDeploy do
       @stack.execute(:arg => 'val').should be_false
     end
   end
+
+  describe "exists?" do
+    before do
+      @stack = SimpleDeploy::Stack.new :environment => 'test-env',
+                                       :name        => 'test-stack',
+                                       :logger      => 'my-logger',
+                                       :config      => @config_stub,
+                                       :internal    => false
+      @stack_mock.stub(:attributes).and_return({})
+      Stackster::Stack.should_receive(:new).
+                       with(:environment => 'test-env',
+                            :name        => 'test-stack',
+                            :config      => @environment_config_mock,
+                            :logger      => @logger_stub).
+                       and_return @stack_mock
+    end
+
+    it "should return true if stack exists" do
+      @stack_mock.stub :status => 'CREATE_COMPLTE'
+      @stack.exists?.should be_true
+    end
+
+    it "should raise an exception if the stack does not exist" do
+      @stack_mock.should_receive(:status).and_raise SystemExit
+      lambda { @stack.exists? }.should raise_error SystemExit
+    end
+  end
 end

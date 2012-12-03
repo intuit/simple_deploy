@@ -94,6 +94,10 @@ module SimpleDeploy
       stack.status
     end
 
+    def exists?
+      stack.status
+    end
+
     def attributes
       stack.attributes 
     end
