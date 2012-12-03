@@ -293,9 +293,9 @@ describe SimpleDeploy do
       @stack.exists?.should be_true
     end
 
-    it "should raise an exception if the stack does not exist" do
+    it "should return false if the stack does not exist" do
       @stack_mock.should_receive(:status).and_raise SystemExit
-      lambda { @stack.exists? }.should raise_error SystemExit
+      @stack.exists?.should be_false
     end
   end
 end

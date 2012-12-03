@@ -96,6 +96,9 @@ module SimpleDeploy
 
     def exists?
       stack.status
+      true
+    rescue SystemExit
+      false
     end
 
     def attributes
