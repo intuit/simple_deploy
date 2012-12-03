@@ -1,3 +1,7 @@
+## HEAD:
+
+* Instances return different message when no instances vs non existent stack
+
 ## v0.6.2
 
 * Corrected the deploy command so it exits if a stack update fails
