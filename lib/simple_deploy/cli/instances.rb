@@ -32,9 +32,12 @@ EOS
                           :logger      => logger,
                           :internal    => opts[:internal]
 
+        exit 1 unless stack.exists?
+
         instances = stack.instances
+
         if instances.nil? || instances.empty?
-          puts "stack '#{opts[:name]}' does not exist"
+          logger.info "Stack '#{opts[:name]}' does not have any instances."
         else
           jj stack.instances
         end

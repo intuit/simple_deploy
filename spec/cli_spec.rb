@@ -5,9 +5,9 @@ describe SimpleDeploy do
 
   it "should call the given sub command" do
     status_mock = mock 'status mock'
-    ARGV = ['status', '-h']
+    ARGV.stub :shift => 'status'
     status_mock.should_receive(:show)
-    SimpleDeploy::CLI::Status.should_receive(:new).and_return status_mock
+    SimpleDeploy::CLI::Status.stub :new => status_mock
     SimpleDeploy::CLI.start
   end
 
