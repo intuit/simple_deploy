@@ -1,4 +1,4 @@
-## HEAD:
+## v0.6.3:
 
 * Instances return different message when no instances vs non existent stack
 * Updating rvm to ruby 1.9.3-p327
