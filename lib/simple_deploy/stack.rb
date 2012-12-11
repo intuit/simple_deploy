@@ -97,7 +97,7 @@ module SimpleDeploy
     def exists?
       stack.status
       true
-    rescue Stackster::Exception
+    rescue Stackster::UnknownStack
       false
     end
 
