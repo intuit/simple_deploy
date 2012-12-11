@@ -1,6 +1,8 @@
 ## HEAD:
 
 * Instances return different message when no instances vs non existent stack
+* Updating rvm to ruby 1.9.3-p327
+* Updated to stackster version 0.4.0
 
 ## v0.6.2
 

@@ -294,7 +294,8 @@ describe SimpleDeploy do
     end
 
     it "should return false if the stack does not exist" do
-      @stack_mock.should_receive(:status).and_raise SystemExit
+      @stack_mock.should_receive(:status).
+                  and_raise Stackster::Exceptions::UnknownStack.new 'Stack:test-stack does not exist'
       @stack.exists?.should be_false
     end
   end

@@ -97,7 +97,7 @@ module SimpleDeploy
     def exists?
       stack.status
       true
-    rescue SystemExit
+    rescue Stackster::Exceptions::UnknownStack
       false
     end
 
