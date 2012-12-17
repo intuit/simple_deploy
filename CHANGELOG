@@ -1,3 +1,7 @@
+## HEAD:
+
+* Check for artifact attribute _encrypted to determine path to download
+
 ## v0.6.3:
 
 * Instances return different message when no instances vs non existent stack

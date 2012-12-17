@@ -86,51 +86,83 @@ describe SimpleDeploy do
     end
 
     describe "when succesful" do
-      before do
-        @execute_mock = mock "execute"
-        execute_options = { :name        => 'stack-name',
-                            :environment => 'test-us-west-1',
-                            :instances   => ['1.2.3.4', '4.3.2.1'],
-                            :ssh_user    => 'user',
-                            :ssh_key     => 'key',
-                            :config      => @config_mock,
-                            :stack       => @stack_mock }
-        SimpleDeploy::Stack::Execute.should_receive(:new).
-                                     with(execute_options).
-                                     and_return @execute_mock
-        @config_mock.should_receive(:artifact_deploy_variable).
-                     with("cookbooks").
-                     and_return('CHEF_REPO_URL')
-        @config_mock.should_receive(:artifact_deploy_variable).
-                     with("app").
-                     and_return('APP_URL')
-        @config_mock.should_receive(:artifact_deploy_variable).
-                     with("chef_repo").
-                     and_return('CHEF_REPO_URL')
-        @execute_mock.should_receive(:execute).
-                      with( {:sudo=>true, :command=>"env CHEF_REPO_URL=s3://cookbooks_bp-test-us-west-1/cookbooks_d/cookbooks.tar.gz APP_URL=s3://app_bp-test-us-west-1/app_d/app.tar.gz PRIMARY_HOST=10.1.2.3 /tmp/script"} )
+        before do
+          @execute_mock = mock "execute"
+          execute_options = { :name        => 'stack-name',
+                              :environment => 'test-us-west-1',
+                              :instances   => ['1.2.3.4', '4.3.2.1'],
+                              :ssh_user    => 'user',
+                              :ssh_key     => 'key',
+                              :config      => @config_mock,
+                              :stack       => @stack_mock }
+          SimpleDeploy::Stack::Execute.should_receive(:new).
+                                       with(execute_options).
+                                       and_return @execute_mock
+          @config_mock.should_receive(:artifact_deploy_variable).
+                       with("cookbooks").
+                       and_return('CHEF_REPO_URL')
+          @config_mock.should_receive(:artifact_deploy_variable).
+                       with("app").
+                       and_return('APP_URL')
+          @config_mock.should_receive(:artifact_deploy_variable).
+                       with("chef_repo").
+                       and_return('CHEF_REPO_URL')
+        end
+
+      context "when app encrypted" do
+        before do
+          @attributes['app_encrypted'] = 'true'
+          @execute_mock.should_receive(:execute).
+                        with( {:sudo=>true, :command=>"env CHEF_REPO_URL=s3://cookbooks_bp-test-us-west-1/cookbooks_d/cookbooks.tar.gz APP_URL=s3://app_bp-test-us-west-1/app_d/app.tar.gz.gpg PRIMARY_HOST=10.1.2.3 /tmp/script"} )
+        end
+
+        it "should deploy if the stack is clear to deploy" do
+          @status_mock.stub :clear_for_deployment? => true
+          @status_mock.should_receive(:set_deployment_in_progress)
+          @status_mock.should_receive(:unset_deployment_in_progress)
+          @deployment.execute(false).should be_true
+        end
+
+        it "should deploy if the stack is not clear to deploy but forced and clear in time" do
+          @status_mock.should_receive(:clear_for_deployment?).
+                       and_return(false)
+          @status_mock.should_receive(:clear_deployment_lock).
+                       with(true)
+          @status_mock.should_receive(:clear_for_deployment?).
+                       exactly(2).times.
+                       and_return(true)
+          @status_mock.should_receive(:set_deployment_in_progress)
+          @status_mock.should_receive(:unset_deployment_in_progress)
+          @deployment.execute(true).should be_true
+        end
       end
 
-      it "should deploy if the stack is clear to deploy" do
-        @status_mock.stub :clear_for_deployment? => true
-        @status_mock.should_receive(:set_deployment_in_progress)
-        @status_mock.should_receive(:unset_deployment_in_progress)
-        @deployment.execute(false).should be_true
-      end
+      context "when unencrypted" do
+        before do
+          @execute_mock.should_receive(:execute).
+                        with( {:sudo=>true, :command=>"env CHEF_REPO_URL=s3://cookbooks_bp-test-us-west-1/cookbooks_d/cookbooks.tar.gz APP_URL=s3://app_bp-test-us-west-1/app_d/app.tar.gz PRIMARY_HOST=10.1.2.3 /tmp/script"} )
+        end
 
-      it "should deploy if the stack is not clear to deploy but forced and clear in time" do
-        @status_mock.should_receive(:clear_for_deployment?).
-                     and_return(false)
-        @status_mock.should_receive(:clear_deployment_lock).
-                     with(true)
-        @status_mock.should_receive(:clear_for_deployment?).
-                     exactly(2).times.
-                     and_return(true)
-        @status_mock.should_receive(:set_deployment_in_progress)
-        @status_mock.should_receive(:unset_deployment_in_progress)
-        @deployment.execute(true).should be_true
-      end
+        it "should deploy if the stack is clear to deploy" do
+          @status_mock.stub :clear_for_deployment? => true
+          @status_mock.should_receive(:set_deployment_in_progress)
+          @status_mock.should_receive(:unset_deployment_in_progress)
+          @deployment.execute(false).should be_true
+        end
 
+        it "should deploy if the stack is not clear to deploy but forced and clear in time" do
+          @status_mock.should_receive(:clear_for_deployment?).
+                       and_return(false)
+          @status_mock.should_receive(:clear_deployment_lock).
+                       with(true)
+          @status_mock.should_receive(:clear_for_deployment?).
+                       exactly(2).times.
+                       and_return(true)
+          @status_mock.should_receive(:set_deployment_in_progress)
+          @status_mock.should_receive(:unset_deployment_in_progress)
+          @deployment.execute(true).should be_true
+        end
+      end
     end
 
     describe "when unsuccesful" do

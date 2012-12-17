@@ -75,12 +75,14 @@ module SimpleDeploy
           variable      = @config.artifact_deploy_variable artifact
           bucket_prefix = attributes["#{artifact}_bucket_prefix"]
           domain        = attributes["#{artifact}_domain"]
+          encrypted     = attributes["#{artifact}_encrypted"] == 'true'
 
           artifact = Artifact.new :name          => artifact,
                                   :id            => attributes[artifact],
                                   :region        => @region,
                                   :domain        => domain,
-                                  :bucket_prefix => bucket_prefix
+                                  :bucket_prefix => bucket_prefix,
+                                  :encrypted     => encrypted
 
           h[variable] = artifact.endpoints['s3']
         end

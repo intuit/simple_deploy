@@ -3,13 +3,14 @@ module SimpleDeploy
 
     def initialize(args)
       @bucket_prefix = args[:bucket_prefix]
-      @id = args[:id]
-      @name = args[:name]
-      @region = args[:region]
-      @domain = args[:domain]
+      @id            = args[:id]
+      @name          = args[:name]
+      @region        = args[:region]
+      @domain        = args[:domain]
+      @encrypted     = args[:encrypted]
 
       @bucket = "#{@bucket_prefix}-#{@region}"
-      @key = "#{@id}.tar.gz"
+      @key = @encrypted ? "#{@id}.tar.gz.gpg" : "#{@id}.tar.gz"
     end
 
     def endpoints
