@@ -19,7 +19,7 @@ describe SimpleDeploy do
       @formater = SimpleDeploy::StackAttributeFormater.new options
     end
 
-    it 'should return updated attributes including the cloud formation url' do
+    it 'should return updated attributes including the un encrypted cloud formation url' do
       updates = @formater.updated_attributes([ { 'chef_repo' => 'test123' } ])
       updates.should == [{ 'chef_repo' => 'test123' }, 
                          { 'ChefRepoURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz' }]
@@ -38,14 +38,14 @@ describe SimpleDeploy do
       @formater = SimpleDeploy::StackAttributeFormater.new options
     end
 
-    it 'should return updated attributes including the cloud formation url with encrypted url' do
+    it 'should return updated attributes including the encrypted cloud formation url ' do
       updates = @formater.updated_attributes([ { 'chef_repo' => 'test123' } ])
       updates.should == [{ 'chef_repo' => 'test123' }, 
                          { 'ChefRepoURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz.gpg' }]
     end
   end
 
-  context "when updated_attributes set chef_repo encrypted" do
+  context "when provided attributes set chef_repo encrypted" do
     before do
       options = { :config      => @config_mock,
                   :environment => 'preprod',
@@ -56,7 +56,7 @@ describe SimpleDeploy do
       @formater = SimpleDeploy::StackAttributeFormater.new options
     end
 
-    it 'should return updated attributes including the cloud formation url with encrypted url' do
+    it 'should return updated attributes including the encrypted cloud formation url ' do
       updates = @formater.updated_attributes([ { 'chef_repo' => 'test123' }, 
                                                { 'chef_repo_encrypted' => 'true' } ])
       updates.should == [{ 'chef_repo' => 'test123' },

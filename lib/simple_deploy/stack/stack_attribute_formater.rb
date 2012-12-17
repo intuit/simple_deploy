@@ -10,18 +10,18 @@ module SimpleDeploy
     end
 
     def updated_attributes(attributes)
-      @updated_attributes = attributes
+      @provided_attributes = attributes
 
       updates = []
-      @updated_attributes.each do |attrhash|
+      @provided_attributes.each do |attrhash|
         key = attrhash.keys.first
         if artifact_names.include? key
-          url_hash = cloud_formation_url attrhash, @updated_attributes
+          url_hash = cloud_formation_url attrhash, @provided_attributes
           updates << url_hash
           @logger.info "Adding artifact attribute: #{url_hash}"
         end
       end
-      @updated_attributes + updates
+      @provided_attributes + updates
     end
 
     private
@@ -51,12 +51,12 @@ module SimpleDeploy
     end
 
     def artifact_encrypted?(name)
-      updated_attributes_encrypted = @updated_attributes.select do |attribute|
+      provided_attributes_encrypted = @provided_attributes.select do |attribute|
         attribute["#{name}_encrypted"] == 'true'
       end.any?
       main_attributes_encrypted = @main_attributes["#{name}_encrypted"] == 'true'
 
-      updated_attributes_encrypted || main_attributes_encrypted
+      provided_attributes_encrypted || main_attributes_encrypted
     end
 
     def find_bucket_prefix_and_domain(selected_attribute, updated_attributes)
