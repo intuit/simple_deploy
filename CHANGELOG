@@ -1,6 +1,7 @@
 ## HEAD:
 
-* Check for artifact attribute _encrypted to determine path to download
+* Check for artifact encryption via attribute name_encrypted (where name is name of archive)
+* Appendes .gpg to URL for encrypted archives
 
 ## v0.6.3:
 
