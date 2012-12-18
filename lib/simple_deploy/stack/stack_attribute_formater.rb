@@ -2,24 +2,26 @@ module SimpleDeploy
   class StackAttributeFormater
 
     def initialize(args)
-      @config = args[:config]
-      @environment = args[:environment]
+      @config          = args[:config]
+      @environment     = args[:environment]
       @main_attributes = args[:main_attributes]
-      @region = @config.region @environment
-      @logger = @config.logger
+      @region          = @config.region @environment
+      @logger          = @config.logger
     end
 
     def updated_attributes(attributes)
+      @provided_attributes = attributes
+
       updates = []
-      attributes.each do |attrhash|
+      @provided_attributes.each do |attrhash|
         key = attrhash.keys.first
         if artifact_names.include? key
-          url_hash = cloud_formation_url attrhash, attributes
+          url_hash = cloud_formation_url attrhash, @provided_attributes
           updates << url_hash
           @logger.info "Adding artifact attribute: #{url_hash}"
         end
       end
-      attributes + updates
+      @provided_attributes + updates
     end
 
     private
@@ -33,15 +35,28 @@ module SimpleDeploy
       id = selected_attribute[name]
 
       bucket_prefix, domain = find_bucket_prefix_and_domain selected_attribute, updated_attributes
+
       artifact = Artifact.new :name          => name,
                               :id            => id,
                               :region        => @region,
                               :config        => @config,
                               :domain        => domain,
+                              :encrypted     => artifact_encrypted?(name),
                               :bucket_prefix => bucket_prefix
 
       url_parameter = @config.artifact_cloud_formation_url name
-      { url_parameter => artifact.endpoints['s3'] }
+      url_value = artifact.endpoints['s3']
+
+      { url_parameter => url_value }
+    end
+
+    def artifact_encrypted?(name)
+      provided_attributes_encrypted = @provided_attributes.select do |attribute|
+        attribute["#{name}_encrypted"] == 'true'
+      end.any?
+      main_attributes_encrypted = @main_attributes["#{name}_encrypted"] == 'true'
+
+      provided_attributes_encrypted || main_attributes_encrypted
     end
 
     def find_bucket_prefix_and_domain(selected_attribute, updated_attributes)
