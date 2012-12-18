@@ -1,4 +1,4 @@
-## HEAD:
+## v0.6.4:
 
 * Check for artifact encryption via attribute name_encrypted (where name is name of archive)
 * Appendes .gpg to URL for encrypted archives
