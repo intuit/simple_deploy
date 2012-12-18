@@ -124,13 +124,9 @@ describe SimpleDeploy do
         end
 
         it "should deploy if the stack is not clear to deploy but forced and clear in time" do
-          @status_mock.should_receive(:clear_for_deployment?).
-                       and_return(false)
-          @status_mock.should_receive(:clear_deployment_lock).
-                       with(true)
-          @status_mock.should_receive(:clear_for_deployment?).
-                       exactly(2).times.
-                       and_return(true)
+          @status_mock.stub :clear_for_deployment? => false,
+                            :clear_deployment_lock => true,
+                            :clear_for_deployment? => true
           @status_mock.should_receive(:set_deployment_in_progress)
           @status_mock.should_receive(:unset_deployment_in_progress)
           @deployment.execute(true).should be_true
@@ -151,13 +147,9 @@ describe SimpleDeploy do
         end
 
         it "should deploy if the stack is not clear to deploy but forced and clear in time" do
-          @status_mock.should_receive(:clear_for_deployment?).
-                       and_return(false)
-          @status_mock.should_receive(:clear_deployment_lock).
-                       with(true)
-          @status_mock.should_receive(:clear_for_deployment?).
-                       exactly(2).times.
-                       and_return(true)
+          @status_mock.stub :clear_for_deployment? => false,
+                            :clear_deployment_lock => true,
+                            :clear_for_deployment? => true
           @status_mock.should_receive(:set_deployment_in_progress)
           @status_mock.should_receive(:unset_deployment_in_progress)
           @deployment.execute(true).should be_true
