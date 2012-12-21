@@ -51,8 +51,13 @@ EOS
                             :logger      => logger,
                             :internal    => opts[:internal]
 
-          stack.execute :command => opts[:command],
-                        :sudo    => opts[:sudo]
+          begin
+            stack.execute :command => opts[:command],
+                          :sudo    => opts[:sudo]
+          rescue SimpleDeploy::Exceptions::NoInstances
+            logger.error "Stack has no running instances."
+            exit 1
+          end
         end
       end
 

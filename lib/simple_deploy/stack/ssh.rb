@@ -26,7 +26,7 @@ module SimpleDeploy
 
       def create_execute_task(args)
         if @instances.nil? || @instances.empty?
-          raise "There are no running instances to execute this command."
+          raise SimpleDeploy::Exceptions::NoInstances
         end
 
         @task = Capistrano::Configuration.new :output => @logger

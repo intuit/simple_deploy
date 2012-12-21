@@ -41,8 +41,10 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        stack.create :attributes => attributes,
-                     :template   => opts[:template]
+        rescue_stackster_exceptions_and_exit do
+          stack.create :attributes => attributes,
+                       :template   => opts[:template]
+        end
       end
 
       def command_summary

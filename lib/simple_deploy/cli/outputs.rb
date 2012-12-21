@@ -35,8 +35,14 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        stack.outputs.each do |hash|
-          puts "%s: %s" % [hash['OutputKey'], hash['OutputValue']]
+        rescue_stackster_exceptions_and_exit do
+          outputs = stack.outputs
+
+          logger.info "No outputs." unless outputs.any?
+
+          outputs.each do |hash|
+            puts "%s: %s" % [hash['OutputKey'], hash['OutputValue']]
+          end
         end
       end
 

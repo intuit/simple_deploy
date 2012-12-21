@@ -38,7 +38,9 @@ EOS
                             :name        => name,
                             :config      => config,
                             :logger      => logger
-          stack.update :attributes => [{ 'protection' => opts[:protection] }]
+          rescue_stackster_exceptions_and_exit do
+            stack.update :attributes => [{ 'protection' => opts[:protection] }]
+          end
         end
       end
 

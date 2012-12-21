@@ -36,8 +36,11 @@ EOS
       end
 
       private
+
       def attribute_data
-        Hash[stack.attributes.sort]
+        rescue_stackster_exceptions_and_exit do
+          Hash[stack.attributes.sort]
+        end
       end
 
       def command_args_output

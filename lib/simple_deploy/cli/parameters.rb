@@ -35,7 +35,9 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        puts stack.parameters
+        rescue_stackster_exceptions_and_exit do
+          puts stack.parameters.sort
+        end
       end
 
       def command_summary

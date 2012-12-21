@@ -35,11 +35,7 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        if stack.destroy
-          exit 0
-        else
-          exit 1
-        end
+        stack.destroy ? exit(0) : exit(1)
       end
 
       def command_summary

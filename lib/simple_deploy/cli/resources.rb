@@ -35,7 +35,9 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        jj stack.resources
+        rescue_stackster_exceptions_and_exit do
+          jj stack.resources
+        end
       end
 
       def command_summary

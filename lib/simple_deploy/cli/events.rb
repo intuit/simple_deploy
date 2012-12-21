@@ -34,7 +34,9 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        jj stack.events opts[:count]
+        rescue_stackster_exceptions_and_exit do
+          jj stack.events opts[:count]
+        end
       end
 
       def command_summary

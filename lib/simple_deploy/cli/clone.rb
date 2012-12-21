@@ -43,8 +43,10 @@ EOS
           File::open(template_file, 'w') { |f| f.write source_stack.template.to_json }
         end
 
-        new_stack.create :attributes => new_attributes,
-                         :template   => template_file
+        rescue_stackster_exceptions_and_exit do
+          new_stack.create :attributes => new_attributes,
+                           :template   => template_file
+        end
       end
 
       def command_summary

@@ -42,7 +42,9 @@ EOS
                             :name        => name,
                             :config      => config,
                             :logger      => logger
-          stack.update :force => opts[:force], :attributes => attributes
+          rescue_stackster_exceptions_and_exit do
+            stack.update :force => opts[:force], :attributes => attributes
+          end
         end
       end
 

@@ -69,11 +69,20 @@ EOS
                             :internal    => opts[:internal]
 
           proceed = true
-          proceed = stack.update :force => opts[:force], :attributes => new_attributes if new_attributes.any?
+
+          if new_attributes.any?
+            rescue_stackster_exceptions_and_exit do
+              proceed = stack.update :force      => opts[:force], 
+                                     :attributes => new_attributes
+            end
+          end
 
           if proceed
             notifier.send_deployment_start_message unless opts[:quiet]
-            if stack.deploy opts[:force]
+
+            result = stack.deploy opts[:force]
+
+            if result
               notifier.send_deployment_complete_message unless opts[:quiet]
             else
               logger.error "Deployment to #{name} did not complete succesfully."
