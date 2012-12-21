@@ -38,10 +38,6 @@ EOS
         jj stack.resources
       end
 
-      def command_name
-        short_class_name
-      end
-
       def command_summary
         'Show resources of a stack'
       end

@@ -36,7 +36,7 @@ module SimpleDeploy
         end
       end
 
-      def short_class_name
+      def command_name
         self.class.name.split('::').last.downcase
       end
 

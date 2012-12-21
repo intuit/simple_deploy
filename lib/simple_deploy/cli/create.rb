@@ -45,10 +45,6 @@ EOS
                      :template   => opts[:template]
       end
 
-      def command_name
-        short_class_name
-      end
-
       def command_summary
         'Create a new stack'
       end

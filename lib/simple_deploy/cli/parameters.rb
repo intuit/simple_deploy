@@ -38,10 +38,6 @@ EOS
         puts stack.parameters
       end
 
-      def command_name
-        short_class_name
-      end
-
       def command_summary
         'Show parameters of a stack'
       end

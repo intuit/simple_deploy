@@ -37,10 +37,6 @@ EOS
         jj stack.events opts[:count]
       end
 
-      def command_name
-        short_class_name
-      end
-
       def command_summary
         "Show events for a stack"
       end

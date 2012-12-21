@@ -56,10 +56,6 @@ EOS
         end
       end
 
-      def command_name
-        short_class_name
-      end
-
       def command_summary
         'Execute command on given stack(s)'
       end

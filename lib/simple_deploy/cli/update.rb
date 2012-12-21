@@ -46,10 +46,6 @@ EOS
         end
       end
 
-      def command_name
-        short_class_name
-      end
-
       def command_summary
         'Update the attributes for one more stacks'
       end

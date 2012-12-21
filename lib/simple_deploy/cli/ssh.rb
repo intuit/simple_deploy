@@ -38,10 +38,6 @@ EOS
         puts stack.ssh
       end
 
-      def command_name
-        short_class_name
-      end
-
       def command_summary
         'Show ssh connection string'
       end

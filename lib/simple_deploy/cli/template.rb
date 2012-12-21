@@ -36,10 +36,6 @@ EOS
         jj stack.template
       end
 
-      def command_name
-        short_class_name
-      end
-
       def command_summary
         'Show current template for stack'
       end

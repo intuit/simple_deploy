@@ -87,10 +87,6 @@ EOS
         end
       end
 
-      def command_name
-        short_class_name
-      end
-
       def command_summary
         'Execute deployment on given stack(s)'
       end

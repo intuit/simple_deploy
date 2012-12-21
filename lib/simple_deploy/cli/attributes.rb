@@ -31,10 +31,6 @@ EOS
         @opts[:as_command_args] ? command_args_output : default_output
       end
 
-      def command_name
-        short_class_name
-      end
-
       def command_summary
         'Show attributes for stack'
       end
