@@ -18,6 +18,7 @@ module SimpleDeploy
       end
 
       def execute(args)
+        return false if @instances.nil? || @instances.empty?
         create_execute_task args
         @task.execute
       end
@@ -25,9 +26,6 @@ module SimpleDeploy
       private
 
       def create_execute_task(args)
-        if @instances.nil? || @instances.empty?
-          raise SimpleDeploy::Exceptions::NoInstances
-        end
 
         @task = Capistrano::Configuration.new :output => @logger
         @task.logger.level = 3
