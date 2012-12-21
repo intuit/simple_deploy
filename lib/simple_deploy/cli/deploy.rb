@@ -75,6 +75,8 @@ EOS
             end
           end
 
+          stack.wait_for_stable
+
           if proceed
             notifier.send_deployment_start_message unless @opts[:quiet]
 

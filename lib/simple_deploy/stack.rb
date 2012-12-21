@@ -94,6 +94,10 @@ module SimpleDeploy
       stack.status
     end
 
+    def wait_for_stable
+      stack.wait_for_stable
+    end
+
     def exists?
       stack.status
       true
@@ -112,13 +116,12 @@ module SimpleDeploy
     def template
       JSON.parse stack.template
     end
-    
+
     private
 
     def stack
       stackster_config = @config.environment @environment
-      @stack ||= Stackster::Stack.new :environment => @environment,
-                                      :name        => @name,
+      @stack ||= Stackster::Stack.new :name        => @name,
                                       :config      => stackster_config,
                                       :logger      => @logger
     end

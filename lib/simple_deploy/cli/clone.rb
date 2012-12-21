@@ -19,6 +19,8 @@ simple_deploy clone -s SOURCE_STACK_NAME -n NEW_STACK_NAME -e ENVIRONMENT -a ATT
 EOS
           opt :help, "Display Help"
           opt :environment, "Set the target environment", :type => :string
+          opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
+                                                                  :default => 'info'
           opt :source_name, "Stack name for the stack to clone", :type => :string
           opt :new_name, "Stack name for the new stack", :type => :string
           opt :attributes, "= separated attribute and it's value", :type  => :string,
