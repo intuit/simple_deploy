@@ -16,7 +16,7 @@ describe SimpleDeploy::Stack::SSH do
   end
 
   context "when unsuccessful" do
-    it "should notify the user there are no running instances" do
+    it "should raise an execption when no running instances" do
       options = { :config      => @config_mock,
                   :instances   => [],
                   :environment => 'test-env',
@@ -25,9 +25,9 @@ describe SimpleDeploy::Stack::SSH do
                   :stack       => @stack_mock,
                   :name        => 'test-stack' }
       @ssh = SimpleDeploy::Stack::SSH.new options
-      error = 'There are no running instances to execute this command.'
       expect { @ssh.execute(:sudo    => true,
-                   :command => 'uname') }.to raise_error(RuntimeError, error)
+                            :command => 'uname') }.
+                    to raise_error(SimpleDeploy::Exceptions::NoInstances)
  
     end
   end
