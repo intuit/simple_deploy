@@ -51,11 +51,11 @@ EOS
           opt :internal, "Use internal IP for ssh commands"
         end
 
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :name]
+        valid_options? :provided => @opts,
+                       :required => [:environment, :name]
 
-        new_attributes = CLI::Shared.parse_attributes :attributes => @opts[:attributes],
-                                                      :logger     => logger
+        new_attributes = parse_attributes :attributes => @opts[:attributes]
+
         @opts[:name].each do |name|
           notifier = Notifier.new :stack_name  => name,
                                   :environment => @opts[:environment],

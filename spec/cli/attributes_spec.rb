@@ -26,9 +26,9 @@ describe SimpleDeploy::CLI::Attributes do
     end
 
     it 'should output the attributes' do
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => @options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => @options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(@options)
       subject.should_receive(:puts).with('foo: bar')
       subject.should_receive(:puts).with('baz: blah')
@@ -39,9 +39,9 @@ describe SimpleDeploy::CLI::Attributes do
       before do
         @options[:as_command_args] = true
         Trollop.stub(:options).and_return(@options)
-        SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                  with(:provided => @options,
-                                       :required => [:environment, :name])
+        subject.should_receive(:valid_options?).
+                with(:provided => @options,
+                     :required => [:environment, :name])
       end
 
       it 'should output the attributes as command arguments' do

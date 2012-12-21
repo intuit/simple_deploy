@@ -159,9 +159,9 @@ describe SimpleDeploy::CLI::Clone do
       end
       
       it 'should create the new stack using the filtered, merged and added attributes' do
-        SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                 with(:provided => @options,
-                                      :required => [:environment, :source_name, :new_name])
+        subject.should_receive(:valid_options?).
+                with(:provided => @options,
+                     :required => [:environment, :source_name, :new_name])
         Trollop.stub(:options).and_return(@options)
 
         @new_stack.should_receive(:create) do |options|
@@ -181,9 +181,9 @@ describe SimpleDeploy::CLI::Clone do
       it 'should create the new stack using a new template' do
         @options[:template] = 'brand_new_template.json'
 
-        SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                 with(:provided => @options,
-                                      :required => [:environment, :source_name, :new_name])
+        subject.should_receive(:valid_options?).
+                with(:provided => @options,
+                      :required => [:environment, :source_name, :new_name])
         Trollop.stub(:options).and_return(@options)
 
         @new_stack.should_receive(:create) do |options|

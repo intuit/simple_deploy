@@ -26,11 +26,10 @@ EOS
           opt :template, "Path to a new template file", :type => :string
         end
 
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :source_name, :new_name]
+        valid_options? :provided => @opts,
+                       :required => [:environment, :source_name, :new_name]
 
-        override_attributes = CLI::Shared.parse_attributes :attributes => @opts[:attributes],
-                                                           :logger     => logger
+        override_attributes = parse_attributes :attributes => @opts[:attributes]
 
         cloned_attributes = filter_attributes source_stack.attributes
         new_attributes = merge_attributes cloned_attributes, override_attributes

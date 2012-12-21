@@ -3,9 +3,8 @@ module SimpleDeploy
 
     module Shared
 
-      def self.parse_attributes(args)
+      def parse_attributes(args)
         attributes = args[:attributes]
-        logger     = args[:logger]
         attrs      = []
 
         attributes.each do |attribs|
@@ -17,20 +16,20 @@ module SimpleDeploy
         attrs
       end
 
-      def self.valid_options?(args)
+      def valid_options?(args)
         provided = args[:provided]
         required = args[:required]
 
         required.each do |opt|
           unless provided[opt]
-            logger "Option '#{opt} (-#{opt[0]})' required but not specified."
+            logger.error "Option '#{opt} (-#{opt[0]})' required but not specified."
             exit 1
           end
         end
 
         if required.include? :environment
           unless Config.new.environments.keys.include? provided[:environment]
-            logger "Environment '#{provided[:environment]}' does not exist."
+            logger.error "Environment '#{provided[:environment]}' does not exist."
             exit 1
           end
         end

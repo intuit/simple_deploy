@@ -22,9 +22,8 @@ EOS
           opt :internal, "Use internal IP for ssh commands"
         end
 
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :name],
-                                   :logger   => logger
+        valid_options? :provided => @opts,
+                       :required => [:environment, :name]
 
         config = Config.new.environment @opts[:environment]
 

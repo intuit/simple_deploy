@@ -26,13 +26,12 @@ EOS
           opt :template, "Path to the template file", :type => :string
         end
 
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :name, :template]
+        valid_options? :provided => @opts,
+                       :required => [:environment, :name, :template]
 
         config = Config.new.environment @opts[:environment]
 
-        attributes = CLI::Shared.parse_attributes :attributes => @opts[:attributes],
-                                                  :logger     => logger
+        attributes = parse_attributes :attributes => @opts[:attributes]
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],

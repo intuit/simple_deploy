@@ -4,6 +4,7 @@ module SimpleDeploy
   module CLI
 
     class Resources
+
       include Shared
 
       def show
@@ -19,12 +20,12 @@ EOS
           opt :help, "Display Help"
           opt :environment, "Set the target environment", :type => :string
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
-                                                                  :default => 'warn'
+                                                                  :default => 'info'
           opt :name, "Stack name to manage", :type => :string
         end
 
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :name]
+        valid_options? :provided => @opts,
+                       :required => [:environment, :name]
 
         config = Config.new.environment @opts[:environment]
 

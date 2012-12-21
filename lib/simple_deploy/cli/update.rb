@@ -27,13 +27,12 @@ EOS
                                                          :multi => true
         end
 
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :name]
+        valid_options? :provided => @opts,
+                       :required => [:environment, :name]
 
         config = Config.new.environment @opts[:environment]
 
-        attributes = CLI::Shared.parse_attributes :attributes => @opts[:attributes],
-                                                  :logger     => logger
+        attributes = parse_attributes :attributes => @opts[:attributes]
 
         @opts[:name].each do |name|
           stack = Stack.new :environment => @opts[:environment],

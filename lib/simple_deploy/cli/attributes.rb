@@ -25,8 +25,8 @@ EOS
           opt :name, "Stack name to manage", :type => :string
         end
 
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :name]
+        valid_options? :provided => @opts,
+                       :required => [:environment, :name]
 
         @opts[:as_command_args] ? command_args_output : default_output
       end

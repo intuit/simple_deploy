@@ -22,8 +22,8 @@ EOS
           opt :help, "Display Help"
         end
 
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment]
+        valid_options? :provided => @opts,
+                       :required => [:environment]
 
         config = Config.new.environment @opts[:environment]
         stacks = Stackster::StackLister.new(:config => config).all.sort

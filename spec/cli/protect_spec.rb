@@ -6,11 +6,11 @@ describe SimpleDeploy::CLI::Protect do
 
   describe 'protect' do
     before do
-      @config  = mock 'config'
+      @config_mock  = mock 'config'
       @logger  = stub 'logger', 'info' => 'true'
 
-      SimpleDeploy::Config.stub(:new).and_return(@config)
-      @config.should_receive(:environment).with('my_env').and_return(@config)
+      SimpleDeploy::Config.stub(:new).and_return(@config_mock)
+      @config_mock.should_receive(:environment).with('my_env').and_return(@config)
       SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                        with(:log_level => 'debug').
                                        and_return(@logger)
@@ -22,9 +22,9 @@ describe SimpleDeploy::CLI::Protect do
                   :name        => ['my_stack'],
                   :protection  => 'on' }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       stack   = stub :attributes => { 'protection' => 'on' }
@@ -46,9 +46,9 @@ describe SimpleDeploy::CLI::Protect do
                   :name        => ['my_stack1', 'my_stack2'],
                   :protection  => 'on' }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       stack   = stub :attributes => { 'protection' => 'on' }
@@ -77,9 +77,9 @@ describe SimpleDeploy::CLI::Protect do
                   :name        => ['my_stack'],
                   :protection  => 'off' }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       stack   = stub :attributes => { 'protection' => 'off' }
@@ -101,9 +101,9 @@ describe SimpleDeploy::CLI::Protect do
                   :name        => ['my_stack1', 'my_stack2'],
                   :protection  => 'off' }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       stack   = stub :attributes => { 'protection' => 'off' }

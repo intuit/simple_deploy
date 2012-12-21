@@ -10,8 +10,10 @@ describe SimpleDeploy::CLI::Shared do
     logger_stub = stub 'logger stub', :info => true
     attributes  = [ 'test1=value1', 'test2=value2==' ]
 
-    SimpleDeploy::CLI::Shared.parse_attributes(:logger     => logger_stub,
-                                               :attributes => attributes).
+    @object.stub :logger => logger_stub
+
+    @object.parse_attributes(:logger     => logger_stub,
+                             :attributes => attributes).
            should == [ { "test1" => "value1" }, 
                        { "test2" => "value2==" } ]
   end
@@ -22,12 +24,11 @@ describe SimpleDeploy::CLI::Shared do
 
       provided = { :test1 => 'test1', :test2 => 'test2' }
       required = [:test1, :test2, :test3]
-      SimpleDeploy::CLI::Shared.stub :logger => logger_stub
+      @object.stub :logger => logger_stub
 
       lambda { 
-        SimpleDeploy::CLI::Shared.valid_options? :provided => provided,
-                                                 :required => required,
-                                                 :logger   => logger_stub
+        @object.valid_options? :provided => provided,
+                               :required => required
              }.should raise_error SystemExit
     end
 
@@ -39,12 +40,11 @@ describe SimpleDeploy::CLI::Shared do
       required = [:environment]
 
       SimpleDeploy::Config.stub :new => config_stub
-      SimpleDeploy::CLI::Shared.stub :logger => logger_stub
+      @object.stub :logger => logger_stub
 
       lambda { 
-        SimpleDeploy::CLI::Shared.valid_options? :provided => provided,
-                                                 :required => required,
-                                                 :logger   => logger_stub
+        @object.valid_options? :provided => provided,
+                               :required => required
              }.should raise_error SystemExit
     end
 
@@ -57,9 +57,9 @@ describe SimpleDeploy::CLI::Shared do
 
       SimpleDeploy::Config.stub :new => config_stub
 
-      SimpleDeploy::CLI::Shared.valid_options? :provided => provided,
-                                               :required => required,
-                                               :logger   => logger_stub
+      @object.valid_options? :provided => provided,
+                             :required => required,
+                             :logger   => logger_stub
     end
   end
 

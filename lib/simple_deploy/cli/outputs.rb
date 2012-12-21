@@ -23,10 +23,8 @@ EOS
           opt :name, "Stack name to manage", :type => :string
         end
 
-        logger = SimpleDeployLogger.new :log_level => @opts[:log_level]
-
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :name]
+        valid_options? :provided => @opts,
+                       :required => [:environment, :name]
 
         config = Config.new.environment @opts[:environment]
 

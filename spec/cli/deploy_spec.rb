@@ -22,9 +22,9 @@ describe SimpleDeploy::CLI::Deploy do
                   :internal    => false,
                   :attributes  => [] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -56,9 +56,9 @@ describe SimpleDeploy::CLI::Deploy do
                   :internal    => false,
                   :attributes  => [] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -92,9 +92,9 @@ describe SimpleDeploy::CLI::Deploy do
                   :internal    => false,
                   :attributes  => ['foo=bah'] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -126,9 +126,9 @@ describe SimpleDeploy::CLI::Deploy do
                   :internal    => false,
                   :attributes  => ['foo=bah'] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -162,9 +162,9 @@ describe SimpleDeploy::CLI::Deploy do
                   :internal    => false,
                   :attributes  => [] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
