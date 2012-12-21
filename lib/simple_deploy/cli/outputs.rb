@@ -32,11 +32,7 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        # we need a little whitespace
-        puts
-
-        outputs = stack.outputs
-        outputs.each do |hash|
+        stack.outputs.each do |hash|
           puts "%s: %s" % [hash['OutputKey'], hash['OutputValue']]
         end
       end
