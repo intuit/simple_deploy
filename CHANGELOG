@@ -1,3 +1,9 @@
+## head
+* Remove 'ssh' command
+* Update output format for 'attributes', 'instances', 'parameters' commands
+* Update help output
+* Minor internal cli refactor
+
 ## v0.6.4:
 
 * Check for artifact encryption via attribute name_encrypted (where name is name of archive)
