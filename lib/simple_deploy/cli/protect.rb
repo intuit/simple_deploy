@@ -3,7 +3,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Protect
+      include Shared
+
       def protect
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -38,6 +41,12 @@ EOS
           stack.update :attributes => [{ 'protection' => opts[:protection] }]
         end
       end
+
+      def command_summary
+        'Protect/Unprotect one or more stacks'
+      end
+
     end
+
   end
 end

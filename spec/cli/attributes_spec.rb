@@ -30,8 +30,8 @@ describe SimpleDeploy::CLI::Attributes do
                                 with(:provided => @options,
                                      :required => [:environment, :name])
       Trollop.stub(:options).and_return(@options)
-      subject.should_receive(:puts).with("foo=bar")
-      subject.should_receive(:puts).with("baz=blah")
+      subject.should_receive(:puts).with('foo: bar')
+      subject.should_receive(:puts).with('baz: blah')
       subject.show
     end
 

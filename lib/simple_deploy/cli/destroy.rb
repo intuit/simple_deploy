@@ -2,7 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Destroy
+      include Shared
+
       def destroy
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -38,6 +41,12 @@ EOS
           exit 1
         end
       end
+
+      def command_summary
+        'Destroy a stack'
+      end
+
     end
+
   end
 end

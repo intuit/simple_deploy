@@ -2,7 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Template
+      include Shared
+
       def show
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -32,6 +35,12 @@ EOS
 
         jj stack.template
       end
+
+      def command_summary
+        'Show current template for stack'
+      end
+
     end
+
   end
 end

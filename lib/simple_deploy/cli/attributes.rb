@@ -4,6 +4,8 @@ module SimpleDeploy
   module CLI
 
     class Attributes
+      include Shared
+
       def show
         @opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -29,6 +31,10 @@ EOS
         @opts[:as_command_args] ? command_args_output : default_output
       end
 
+      def command_summary
+        'Show attributes for stack'
+      end
+
       private
       def attribute_data
         Hash[stack.attributes.sort]
@@ -43,7 +49,7 @@ EOS
       end
 
       def default_output
-        attribute_data.each_pair { |k, v| puts "#{k}=#{v}" }
+        attribute_data.each_pair { |k, v| puts "#{k}: #{v}" }
       end
 
       def logger

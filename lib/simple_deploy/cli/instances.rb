@@ -2,7 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Instances
+      include Shared
+
       def list
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -39,9 +42,15 @@ EOS
         if instances.nil? || instances.empty?
           logger.info "Stack '#{opts[:name]}' does not have any instances."
         else
-          jj stack.instances
+          puts stack.instances
         end
       end
+
+      def command_summary
+        'List instances for stack'
+      end
+
     end
+
   end
 end

@@ -2,13 +2,16 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Events
+      include Shared
+
       def show
         opts = Trollop::options do
           version SimpleDeploy::VERSION
           banner <<-EOS
 
-Show attributes for stack.
+Show events for stack.
 
 simple_deploy attributes -n STACK_NAME -e ENVIRONMENT
 
@@ -33,6 +36,12 @@ EOS
 
         jj stack.events opts[:count]
       end
+
+      def command_summary
+        "Show events for a stack"
+      end
+
     end
+
   end
 end

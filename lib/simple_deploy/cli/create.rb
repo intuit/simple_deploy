@@ -2,7 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Create
+      include Shared
+
       def create
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -41,6 +44,12 @@ EOS
         stack.create :attributes => attributes,
                      :template   => opts[:template]
       end
+
+      def command_summary
+        'Create a new stack'
+      end
+
     end
+
   end
 end
