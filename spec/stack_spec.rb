@@ -15,8 +15,7 @@ describe SimpleDeploy do
                          at_least(:once).
                          with(:logger => 'my-logger').
                          and_return @config_stub
-    @stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                     :name        => 'test-stack',
+    @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
                                      :logger      => 'my-logger',
                                      :config      => @config_stub
 
@@ -39,8 +38,7 @@ describe SimpleDeploy do
     end
 
     it "should set the attributes using what is passed to the create command" do
-      Stackster::Stack.should_receive(:new).with(:environment => 'test-env',
-                                                 :name        => 'test-stack',
+      Stackster::Stack.should_receive(:new).with(:name        => 'test-stack',
                                                  :config      => @environment_config_mock,
                                                  :logger      => @logger_stub).
                                             and_return @stack_mock
@@ -73,8 +71,7 @@ describe SimpleDeploy do
       deployment_stub = stub 'deployment', :clear_for_deployment? => true
       @stack.stub(:deployment).and_return(deployment_stub)
 
-      Stackster::Stack.should_receive(:new).with(:environment => 'test-env',
-                                                 :name        => 'test-stack',
+      Stackster::Stack.should_receive(:new).with(:name        => 'test-stack',
                                                  :config      => @environment_config_mock,
                                                  :logger      => @logger_stub).
                                             and_return @stack_mock
@@ -100,8 +97,7 @@ describe SimpleDeploy do
       @stack.stub(:deployment).and_return(deployment_mock)
       @stack.stub(:sleep).and_return(false)
 
-      Stackster::Stack.should_receive(:new).with(:environment => 'test-env',
-                                                 :name        => 'test-stack',
+      Stackster::Stack.should_receive(:new).with(:name        => 'test-stack',
                                                  :config      => @environment_config_mock,
                                                  :logger      => @logger_stub).
                                             and_return @stack_mock
@@ -272,17 +268,35 @@ describe SimpleDeploy do
     end
   end
 
-  describe "exists?" do
+  describe "wait_for_stable" do
     before do
-      @stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                       :name        => 'test-stack',
+      @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
                                        :logger      => 'my-logger',
                                        :config      => @config_stub,
                                        :internal    => false
       @stack_mock.stub(:attributes).and_return({})
       Stackster::Stack.should_receive(:new).
-                       with(:environment => 'test-env',
-                            :name        => 'test-stack',
+                       with(:name        => 'test-stack',
+                            :config      => @environment_config_mock,
+                            :logger      => @logger_stub).
+                       and_return @stack_mock
+    end
+
+    it "should call wait_for_stable on stackster stack" do
+      @stack_mock.should_receive(:wait_for_stable)
+      @stack.wait_for_stable
+    end
+  end
+
+  describe "exists?" do
+    before do
+      @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
+                                       :logger      => 'my-logger',
+                                       :config      => @config_stub,
+                                       :internal    => false
+      @stack_mock.stub(:attributes).and_return({})
+      Stackster::Stack.should_receive(:new).
+                       with(:name        => 'test-stack',
                             :config      => @environment_config_mock,
                             :logger      => @logger_stub).
                        and_return @stack_mock

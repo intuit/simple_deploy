@@ -25,8 +25,8 @@ EOS
           opt :name, "Stack name to manage", :type => :string
         end
 
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :name]
+        valid_options? :provided => @opts,
+                       :required => [:environment, :name]
 
         @opts[:as_command_args] ? command_args_output : default_output
       end
@@ -36,8 +36,11 @@ EOS
       end
 
       private
+
       def attribute_data
-        Hash[stack.attributes.sort]
+        rescue_stackster_exceptions_and_exit do
+          Hash[stack.attributes.sort]
+        end
       end
 
       def command_args_output

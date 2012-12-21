@@ -23,9 +23,10 @@ describe SimpleDeploy::CLI::Update do
                   :force       => true,
                   :attributes  => ['chef_repo_bucket_prefix=intu-lc'] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
+
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Stack.should_receive(:new).
@@ -47,9 +48,10 @@ describe SimpleDeploy::CLI::Update do
                   :force       => false,
                   :attributes  => ['chef_repo_bucket_prefix=intu-lc'] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
+
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Stack.should_receive(:new).

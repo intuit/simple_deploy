@@ -7,7 +7,7 @@ module SimpleDeploy
       include Shared
 
       def create
-        opts = Trollop::options do
+        @opts = Trollop::options do
           version SimpleDeploy::VERSION
           banner <<-EOS
 
@@ -26,23 +26,26 @@ EOS
           opt :template, "Path to the template file", :type => :string
         end
 
-        CLI::Shared.valid_options? :provided => opts,
-                                   :required => [:environment, :name, :template]
+        valid_options? :provided => @opts,
+                       :required => [:environment, :name, :template]
 
-        config = Config.new.environment opts[:environment]
+        config = Config.new.environment @opts[:environment]
 
-        logger = SimpleDeployLogger.new :log_level => opts[:log_level]
+        attributes = parse_attributes :attributes => @opts[:attributes]
 
-        attributes = CLI::Shared.parse_attributes :attributes => opts[:attributes],
-                                                  :logger     => logger
-
-        stack = Stack.new :environment => opts[:environment],
-                          :name        => opts[:name],
+        stack = Stack.new :environment => @opts[:environment],
+                          :name        => @opts[:name],
                           :config      => config,
                           :logger      => logger
 
-        stack.create :attributes => attributes,
-                     :template   => opts[:template]
+        rescue_stackster_exceptions_and_exit do
+          stack.create :attributes => attributes,
+                       :template   => @opts[:template]
+        end
+      end
+
+      def logger
+        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
       end
 
       def command_summary

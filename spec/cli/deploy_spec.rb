@@ -22,9 +22,9 @@ describe SimpleDeploy::CLI::Deploy do
                   :internal    => false,
                   :attributes  => [] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -40,13 +40,13 @@ describe SimpleDeploy::CLI::Deploy do
                                :internal    => false).
                           and_return(@stack)
 
+      @stack.should_receive(:wait_for_stable)
       @stack.should_receive(:deploy).with(true).and_return(true)
       @notifier.should_receive(:send_deployment_start_message)
       @notifier.should_receive(:send_deployment_complete_message)
 
       subject.deploy
     end
-
 
     it "should exit on error with a status of 1" do
       options = { :environment => 'my_env',
@@ -56,9 +56,9 @@ describe SimpleDeploy::CLI::Deploy do
                   :internal    => false,
                   :attributes  => [] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -74,6 +74,7 @@ describe SimpleDeploy::CLI::Deploy do
                                :internal    => false).
                           and_return(@stack)
 
+      @stack.should_receive(:wait_for_stable)
       @stack.should_receive(:deploy).with(true).and_return(false)
       @notifier.should_receive(:send_deployment_start_message)
 
@@ -92,9 +93,9 @@ describe SimpleDeploy::CLI::Deploy do
                   :internal    => false,
                   :attributes  => ['foo=bah'] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -111,6 +112,7 @@ describe SimpleDeploy::CLI::Deploy do
                           and_return(@stack)
 
       @stack.should_receive(:update).with(hash_including(:force => true, :attributes => [{'foo' => 'bah'}])).and_return(true)
+      @stack.should_receive(:wait_for_stable)
       @stack.should_receive(:deploy).with(true).and_return(true)
       @notifier.should_receive(:send_deployment_start_message)
       @notifier.should_receive(:send_deployment_complete_message)
@@ -126,9 +128,9 @@ describe SimpleDeploy::CLI::Deploy do
                   :internal    => false,
                   :attributes  => ['foo=bah'] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -146,6 +148,7 @@ describe SimpleDeploy::CLI::Deploy do
 
       @stack.should_receive(:update).with(hash_including(:force => true,
                                                          :attributes => [{'foo' => 'bah'}])).and_return(false)
+      @stack.should_receive(:wait_for_stable)
 
       begin
         subject.deploy
@@ -162,9 +165,9 @@ describe SimpleDeploy::CLI::Deploy do
                   :internal    => false,
                   :attributes  => [] }
 
-      SimpleDeploy::CLI::Shared.should_receive(:valid_options?).
-                                with(:provided => options,
-                                     :required => [:environment, :name])
+      subject.should_receive(:valid_options?).
+              with(:provided => options,
+                   :required => [:environment, :name])
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -181,6 +184,7 @@ describe SimpleDeploy::CLI::Deploy do
                           and_return(@stack)
 
       @stack.should_not_receive(:update)
+      @stack.should_receive(:wait_for_stable)
       @stack.should_receive(:deploy).with(true).and_return(true)
       @notifier.should_receive(:send_deployment_start_message)
       @notifier.should_receive(:send_deployment_complete_message)

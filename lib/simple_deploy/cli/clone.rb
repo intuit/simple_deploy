@@ -19,6 +19,8 @@ simple_deploy clone -s SOURCE_STACK_NAME -n NEW_STACK_NAME -e ENVIRONMENT -a ATT
 EOS
           opt :help, "Display Help"
           opt :environment, "Set the target environment", :type => :string
+          opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
+                                                                  :default => 'info'
           opt :source_name, "Stack name for the stack to clone", :type => :string
           opt :new_name, "Stack name for the new stack", :type => :string
           opt :attributes, "= separated attribute and it's value", :type  => :string,
@@ -26,11 +28,10 @@ EOS
           opt :template, "Path to a new template file", :type => :string
         end
 
-        CLI::Shared.valid_options? :provided => @opts,
-                                   :required => [:environment, :source_name, :new_name]
+        valid_options? :provided => @opts,
+                       :required => [:environment, :source_name, :new_name]
 
-        override_attributes = CLI::Shared.parse_attributes :attributes => @opts[:attributes],
-                                                           :logger     => logger
+        override_attributes = parse_attributes :attributes => @opts[:attributes]
 
         cloned_attributes = filter_attributes source_stack.attributes
         new_attributes = merge_attributes cloned_attributes, override_attributes
@@ -43,8 +44,10 @@ EOS
           File::open(template_file, 'w') { |f| f.write source_stack.template.to_json }
         end
 
-        new_stack.create :attributes => new_attributes,
-                         :template   => template_file
+        rescue_stackster_exceptions_and_exit do
+          new_stack.create :attributes => new_attributes,
+                           :template   => template_file
+        end
       end
 
       def command_summary
