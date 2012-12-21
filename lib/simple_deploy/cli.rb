@@ -7,6 +7,7 @@ require 'simple_deploy/cli/clone'
 require 'simple_deploy/cli/create'
 require 'simple_deploy/cli/deploy'
 require 'simple_deploy/cli/destroy'
+require 'simple_deploy/cli/environments'
 require 'simple_deploy/cli/events'
 require 'simple_deploy/cli/execute'
 require 'simple_deploy/cli/instances'
@@ -38,7 +39,7 @@ module SimpleDeploy
       when 'deploy'
         CLI::Deploy.new.deploy
       when 'environments'
-        CLI::List.new.environments
+        CLI::Environments.new.environments
       when 'events'
         CLI::Events.new.show
       when 'execute'
