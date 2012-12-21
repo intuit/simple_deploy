@@ -1,7 +1,7 @@
 ## HEAD:
 
 * Removed unused env argument passed into Stackster::Stack
-* Added clone to log level
+* Added log_level to clone cli class
 * Catching stackster exceptions in CLI
 * Refactored shared specs
 
