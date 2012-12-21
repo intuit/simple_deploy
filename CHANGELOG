@@ -1,4 +1,6 @@
 ## head
+
+* Upgraded to stackster 0.4.1
 * Remove 'ssh' command
 * Update output format for 'attributes', 'instances', 'parameters' commands
 * Update help output
