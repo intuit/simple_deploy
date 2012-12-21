@@ -33,7 +33,7 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        stack.destroy ? exit(0) : exit(1)
+        exit 1 unless stack.destroy
       end
 
       def logger
