@@ -4,19 +4,18 @@ module SimpleDeploy
   module CLI
 
     class Attributes
+      include Shared
 
       def show
-        summary_text = command_summary
-
         @opts = Trollop::options do
           version SimpleDeploy::VERSION
-          banner %{
+          banner <<-EOS
 
-#{command_text}
+Show attributes for stack.
 
 simple_deploy attributes -n STACK_NAME -e ENVIRONMENT
 
-}
+EOS
           opt :help, "Display Help"
           opt :as_command_args,
               "Displays the attributes in a format suitable for using on the command line"
@@ -32,6 +31,14 @@ simple_deploy attributes -n STACK_NAME -e ENVIRONMENT
         @opts[:as_command_args] ? command_args_output : default_output
       end
 
+      def command_name
+        short_class_name
+      end
+
+      def command_summary
+        'Show attributes for stack'
+      end
+
       private
       def attribute_data
         Hash[stack.attributes.sort]
@@ -39,10 +46,6 @@ simple_deploy attributes -n STACK_NAME -e ENVIRONMENT
 
       def command_args_output
         puts attribute_data.map { |k, v| "-a #{k}=#{v}" }.join(' ')
-      end
-
-      def command_summary
-        'Show attributes for stack.'
       end
 
       def config

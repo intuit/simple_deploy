@@ -2,7 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Status
+      include Shared
+
       def show
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -32,6 +35,16 @@ EOS
 
         puts stack.status
       end
+
+      def command_name
+        short_class_name
+      end
+
+      def command_summary
+        'Show status of a stack'
+      end
+
     end
+
   end
 end

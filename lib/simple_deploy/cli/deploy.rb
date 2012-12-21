@@ -2,7 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Deploy
+      include Shared
+
       def deploy
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -83,6 +86,16 @@ EOS
 
         end
       end
+
+      def command_name
+        short_class_name
+      end
+
+      def command_summary
+        'Execute deployment on given stack(s)'
+      end
+
     end
+
   end
 end

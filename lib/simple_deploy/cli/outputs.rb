@@ -2,7 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Outputs
+      include Shared
+
       def show
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -36,6 +39,16 @@ EOS
           puts "%s: %s" % [hash['OutputKey'], hash['OutputValue']]
         end
       end
+
+      def command_name
+        short_class_name
+      end
+
+      def command_summary
+        'Show outputs of a stack'
+      end
+
     end
+
   end
 end

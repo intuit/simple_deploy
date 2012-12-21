@@ -22,6 +22,7 @@ require 'simple_deploy/cli/update'
 
 module SimpleDeploy
   module CLI
+
     def self.start
       cmd = ARGV.shift
 
@@ -63,16 +64,39 @@ module SimpleDeploy
       when 'update'
         CLI::Update.new.update
       when '-h'
-        puts "simple_deploy [attributes|clone|create|deploy|destroy|environments|events|execute|instances|list|outputs|parameters|protect|resources|ssh|status|template|update] [options]"
-        puts "Append -h for help on specific subcommand."
+        usage
       when '-v'
         puts SimpleDeploy::VERSION
       else
         puts "Unknown command: '#{cmd}'."
-        puts "simple_deploy [attributes|clone|create|deploy|destroy|environments|events|execute|instances|list|outputs|parameters|protect|resources|ssh|status|template|update] [options]"
-        puts "Append -h for help on specific subcommand."
+        puts ''
+        usage
         exit 1
       end
+    end
+
+    def self.usage
+      puts 'Usage: simple_deploy command'
+      puts ''
+      puts 'Append -h for help on specific subcommand.'
+      puts ''
+
+      puts 'Commands:'
+      commands.each do |cmd|
+        $stdout.printf "    %-#{length_of_longest_command}s      %s\n",
+                       cmd.command_name,
+                       cmd.command_summary
+      end
+    end
+
+    def self.commands
+      return @commands if @commands
+      klasses   = SimpleDeploy::CLI.constants.reject { |c| c == :Shared }
+      @commands = klasses.map { |klass| SimpleDeploy::CLI.const_get(klass).new }
+    end
+
+    def self.length_of_longest_command
+      commands.map { |c| c.command_name.length }.max
     end
 
   end

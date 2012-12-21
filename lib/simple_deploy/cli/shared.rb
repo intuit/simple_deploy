@@ -1,5 +1,6 @@
 module SimpleDeploy
   module CLI
+
     module Shared
 
       def self.parse_attributes(args)
@@ -33,9 +34,13 @@ module SimpleDeploy
             exit 1
           end
         end
+      end
 
+      def short_class_name
+        self.class.name.split('::').last.downcase
       end
 
     end
+
   end
 end

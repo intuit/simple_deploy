@@ -3,7 +3,10 @@ require 'tempfile'
 
 module SimpleDeploy
   module CLI
+
     class Clone
+      include Shared
+
       def clone
         @opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -44,8 +47,15 @@ EOS
                          :template   => template_file
       end
 
-      private
+      def command_name
+        short_class_name
+      end
 
+      def command_summary
+        'Clone a stack'
+      end
+
+      private
       def filter_attributes(source_attributes)
         selected = source_attributes.select { |k| k !~ /^deployment/ }
         selected.map { |k,v| { k => v } }
@@ -88,6 +98,8 @@ EOS
                                  :config      => config,
                                  :logger      => logger
       end
+
     end
+
   end
 end

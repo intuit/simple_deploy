@@ -2,7 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Update
+      include Shared
+
       def update
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -42,6 +45,16 @@ EOS
           stack.update :force => opts[:force], :attributes => attributes
         end
       end
+
+      def command_name
+        short_class_name
+      end
+
+      def command_summary
+        'Update the attributes for one more stacks'
+      end
+
     end
+
   end
 end

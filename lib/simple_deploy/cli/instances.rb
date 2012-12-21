@@ -2,7 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Instances
+      include Shared
+
       def list
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -42,6 +45,16 @@ EOS
           puts stack.instances
         end
       end
+
+      def command_name
+        short_class_name
+      end
+
+      def command_summary
+        'List instances for stack'
+      end
+
     end
+
   end
 end

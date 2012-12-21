@@ -2,7 +2,10 @@ require 'trollop'
 
 module SimpleDeploy
   module CLI
+
     class Parameters
+      include Shared
+
       def show
         opts = Trollop::options do
           version SimpleDeploy::VERSION
@@ -34,6 +37,16 @@ EOS
 
         puts stack.parameters
       end
+
+      def command_name
+        short_class_name
+      end
+
+      def command_summary
+        'Show parameters of a stack'
+      end
+
     end
+
   end
 end
