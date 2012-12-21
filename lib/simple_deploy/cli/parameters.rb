@@ -32,7 +32,7 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-        jj stack.parameters
+        puts stack.parameters
       end
     end
   end
