@@ -22,7 +22,7 @@ EOS
         Config.new.environments.keys.each { |e| puts e }
       end
 
-      def command_summar
+      def command_summary
         'List environments'
       end
 
