@@ -7,7 +7,7 @@ module SimpleDeploy
       include Shared
 
       def environments
-        opts = Trollop::options do
+        @opts = Trollop::options do
           version SimpleDeploy::VERSION
           banner <<-EOS
 

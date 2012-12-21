@@ -7,7 +7,7 @@ module SimpleDeploy
       include Shared
 
       def execute
-        opts = Trollop::options do
+        @opts = Trollop::options do
           version SimpleDeploy::VERSION
           banner <<-EOS
 
@@ -36,29 +36,33 @@ EOS
           opt :sudo, "Execute command with sudo"
         end
 
-        CLI::Shared.valid_options? :provided => opts,
+        logger = SimpleDeployLogger.new :log_level => @opts[:log_level]
+
+        CLI::Shared.valid_options? :provided => @opts,
                                    :required => [:environment, :name]
 
-        logger = SimpleDeployLogger.new :log_level => opts[:log_level]
-
-        opts[:name].each do |name|
+        @opts[:name].each do |name|
           notifier = Notifier.new :stack_name  => name,
-                                  :environment => opts[:environment],
+                                  :environment => @opts[:environment],
                                   :logger      => logger
 
-          stack = Stack.new :environment => opts[:environment],
+          stack = Stack.new :environment => @opts[:environment],
                             :name        => name,
                             :logger      => logger,
-                            :internal    => opts[:internal]
+                            :internal    => @opts[:internal]
 
           begin
-            stack.execute :command => opts[:command],
-                          :sudo    => opts[:sudo]
+            stack.execute :command => @opts[:command],
+                          :sudo    => @opts[:sudo]
           rescue SimpleDeploy::Exceptions::NoInstances
             logger.error "Stack has no running instances."
             exit 1
           end
         end
+      end
+
+      def logger
+        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
       end
 
       def command_summary

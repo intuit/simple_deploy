@@ -8,7 +8,7 @@ module SimpleDeploy
       include Shared
 
       def protect
-        opts = Trollop::options do
+        @opts = Trollop::options do
           version SimpleDeploy::VERSION
           banner <<-EOS
 
@@ -26,22 +26,24 @@ EOS
                                                            :multi => true
         end
 
-        CLI::Shared.valid_options? :provided => opts,
+        CLI::Shared.valid_options? :provided => @opts,
                                    :required => [:environment, :name]
 
-        config = Config.new.environment opts[:environment]
+        config = Config.new.environment @opts[:environment]
 
-        logger = SimpleDeployLogger.new :log_level => opts[:log_level]
-
-        opts[:name].each do |name|
-          stack = Stack.new :environment => opts[:environment],
+        @opts[:name].each do |name|
+          stack = Stack.new :environment => @opts[:environment],
                             :name        => name,
                             :config      => config,
                             :logger      => logger
           rescue_stackster_exceptions_and_exit do
-            stack.update :attributes => [{ 'protection' => opts[:protection] }]
+            stack.update :attributes => [{ 'protection' => @opts[:protection] }]
           end
         end
+      end
+
+      def logger
+        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
       end
 
       def command_summary
