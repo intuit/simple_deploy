@@ -87,7 +87,7 @@ module SimpleDeploy
             info['ipAddress']
           end
         end
-      end.flatten
+      end.flatten.compact
     end
 
     def status
