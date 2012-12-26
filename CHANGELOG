@@ -1,4 +1,4 @@
-## head
+## v0.6.5:
 
 * Fixed instances command handling of nil IP addresses
 * Upgraded to stackster 0.4.1
