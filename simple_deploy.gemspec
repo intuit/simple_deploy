@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Brett Weaver"]
   s.email       = ["brett@weav.net"]
   s.homepage    = ""
-  s.summary     = %q{I help with deployments}
-  s.description = %q{I am designed to deploy artifacts uploaded by Heirloom}
+  s.summary     = %q{Opinionated gem for AWS resource management.}
+  s.description = %q{Opinionated gem for Managing AWS Cloud Formation stacks and deploying updates to Instances.}
 
   s.rubyforge_project = "simple_deploy"
 
@@ -23,6 +23,6 @@ Gem::Specification.new do |s|
 
   s.add_runtime_dependency "capistrano", "= 2.13.5"
   s.add_runtime_dependency "stackster", '= 0.4.1'
-  s.add_runtime_dependency "tinder", "= 1.9.1"
+  s.add_runtime_dependency "tinder", "= 1.8.0"
   s.add_runtime_dependency "trollop", "= 2.0"
 end
