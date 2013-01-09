@@ -1,3 +1,7 @@
+## v0.6.6:
+
+* Downreving tinder to play nice w/ berkshelf
+
 ## v0.6.5:
 
 * Fixed instances command handling of nil IP addresses
