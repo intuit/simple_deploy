@@ -3,7 +3,7 @@ require 'spec_helper'
 describe SimpleDeploy::StackOutputMapper do
   before do
     @config_mock = mock 'config'
-    @logger_stub = stub 'logger'
+    @logger_stub = stub 'logger', :debug => true, :info => true
 
     stack1_outputs = [ { 'OutputKey' => 'Test1', 'OutputValue' => 'val1' },
                        { 'OutputKey' => 'Nother', 'OutputValue' => 'another' } ]
