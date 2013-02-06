@@ -38,10 +38,7 @@ EOS
                           :config      => config,
                           :logger      => logger
 
-
         provided_attributes = parse_attributes :attributes => @opts[:attributes]
-
-        merger = SimpleDeploy::CLI::Misc::AttributeMerger.new
 
         attributes = merger.merge :attributes  => provided_attributes,
                                   :config      => @config,
@@ -54,6 +51,10 @@ EOS
           stack.create :attributes => attributes,
                        :template   => @opts[:template]
         end
+      end
+
+      def merger
+        SimpleDeploy::CLI::Misc::AttributeMerger.new
       end
 
       def logger
