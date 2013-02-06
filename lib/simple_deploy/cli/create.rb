@@ -31,30 +31,29 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name, :template]
 
-        @config = Config.new.environment @opts[:environment]
+        config = Config.new.environment @opts[:environment]
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],
-                          :config      => @config,
+                          :config      => config,
                           :logger      => logger
 
+
+        provided_attributes = parse_attributes :attributes => @opts[:attributes]
+
+        merger = SimpleDeploy::CLI::Misc::AttributeMerger.new
+
+        attributes = merger.merge :attributes  => provided_attributes,
+                                  :config      => @config,
+                                  :logger      => @logger,
+                                  :environment => @opts[:environment],
+                                  :stacks      => @opts[:stacks],
+                                  :template    => @opts[:template]
+
         rescue_stackster_exceptions_and_exit do
-          stack.create :attributes => merged_outputs_and_provided_attributes,
+          stack.create :attributes => attributes,
                        :template   => @opts[:template]
         end
-      end
-
-      def merged_outputs_and_provided_attributes
-        mapped = output_mapper.map_outputs_from_stacks(:stacks   => @opts[:stacks],
-                                                       :template => @opts[:template])
-        provided = parse_attributes :attributes => @opts[:attributes] 
-        provided + mapped
-      end
-
-      def output_mapper
-        @mapper ||= StackOutputMapper.new :environment => @opts[:environment],
-                                          :config      => @config,
-                                          :logger      => logger
       end
 
       def logger

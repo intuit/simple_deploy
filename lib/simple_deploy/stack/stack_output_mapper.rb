@@ -14,15 +14,16 @@ module SimpleDeploy
 
       merge_stacks_outputs
 
-      prune_relevant_parameters
+      prune_unused_parameters
 
-      @results.map {|x| { x.first => x.last } }
+      @results.map { |x| { x.first => x.last } }
     end
 
     private
 
     def merge_stacks_outputs
       @stacks.each do |s|
+        @logger.debug "Reading outputs from stack '#{s}'."
         stack = Stack.new :environment => @environment,
                           :config      => @config,
                           :logger      => @logger,
@@ -36,6 +37,8 @@ module SimpleDeploy
         key   = output['OutputKey']
         value = output['OutputValue']
 
+        @logger.debug "Read output #{key}=#{value}."
+
         if @results.has_key? key
           @results[key] += ",#{value}"
         else
@@ -44,10 +47,18 @@ module SimpleDeploy
       end
     end
 
-    def prune_relevant_parameters
-      @results.each_key do |key|
-        @results.delete key unless template_parameters.include? key
+    def prune_unused_parameters
+      @results.each_pair do |key,value|
+        if template_includes_parameter? key
+          @logger.info "Passing output '#{key}' as input parameter with value '#{value}'."
+        else
+          @results.delete key
+        end
       end
+    end
+
+    def template_includes_parameter?(key)
+      template_parameters.include? key
     end
 
     def template_parameters
