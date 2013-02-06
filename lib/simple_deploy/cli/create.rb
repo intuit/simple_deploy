@@ -40,12 +40,12 @@ EOS
 
         provided_attributes = parse_attributes :attributes => @opts[:attributes]
 
-        attributes = merger.merge :attributes  => provided_attributes,
-                                  :config      => @config,
-                                  :logger      => @logger,
-                                  :environment => @opts[:environment],
-                                  :stacks      => @opts[:stacks],
-                                  :template    => @opts[:template]
+        attributes = attribute_merger.merge :attributes  => provided_attributes,
+                                            :config      => @config,
+                                            :logger      => @logger,
+                                            :environment => @opts[:environment],
+                                            :stacks      => @opts[:stacks],
+                                            :template    => @opts[:template]
 
         rescue_stackster_exceptions_and_exit do
           stack.create :attributes => attributes,
@@ -53,7 +53,7 @@ EOS
         end
       end
 
-      def merger
+      def attribute_merger
         SimpleDeploy::CLI::Misc::AttributeMerger.new
       end
 
