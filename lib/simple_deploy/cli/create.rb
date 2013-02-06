@@ -19,6 +19,8 @@ EOS
           opt :help, "Display Help"
           opt :attributes, "= seperated attribute and it's value", :type  => :string,
                                                                    :multi => true
+          opt :stacks, "Read outputs from existing stacks", :type  => :string,
+                                                            :mulit => true
           opt :environment, "Set the target environment", :type => :string
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
@@ -32,6 +34,13 @@ EOS
         config = Config.new.environment @opts[:environment]
 
         attributes = parse_attributes :attributes => @opts[:attributes]
+
+        mapper = StackOutputMapper.new :environment => @opts[:environment],
+                                       :config      => config,
+                                       :logger      => logger
+
+        attributes.merge! mapper.map_outputs_from_stacks(:stacks   => stacks, 
+                                                         :template => @opts[:template])
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],

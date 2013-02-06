@@ -2,6 +2,7 @@ require 'stackster'
 require 'simple_deploy/stack/deployment'
 require 'simple_deploy/stack/execute'
 require 'simple_deploy/stack/stack_attribute_formater'
+require 'simple_deploy/stack/stack_output_mapper'
 
 module SimpleDeploy
   class Stack
