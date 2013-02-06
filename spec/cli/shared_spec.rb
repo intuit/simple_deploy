@@ -73,5 +73,4 @@ describe SimpleDeploy::CLI::Shared do
              end 
            }.should raise_error SystemExit
   end
-
 end
