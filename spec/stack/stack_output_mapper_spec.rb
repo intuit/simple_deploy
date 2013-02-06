@@ -33,7 +33,7 @@ describe SimpleDeploy::StackOutputMapper do
                            and_return @template_stub
     @mapper.map_outputs_from_stacks(:stacks   => ['stack1'],
                                     :template => '/tmp/file.json').
-            should == { 'Test1' => 'val1' }
+            should == [{ 'Test1' => 'val1' }]
   end 
 
   it "should return the outputs which match parameters from multiple stacks" do
@@ -54,7 +54,7 @@ describe SimpleDeploy::StackOutputMapper do
                            and_return @template_stub
     @mapper.map_outputs_from_stacks(:stacks   => ['stack1', 'stack2'],
                                     :template => '/tmp/file.json').
-            should == { 'Test1' => 'val1', 'Test2' => 'val2' }
+            should == [{ 'Test1' => 'val1' }, {'Test2' => 'val2' }]
   end 
 
   it "should concatenate multiple outputs of same name into CSV" do
@@ -75,7 +75,13 @@ describe SimpleDeploy::StackOutputMapper do
                            and_return @template_stub
     @mapper.map_outputs_from_stacks(:stacks   => ['stack1', 'stack3'],
                                     :template => '/tmp/file.json').
-            should == { 'Test1' => 'val1,valA' }
+            should == [{ 'Test1' => 'val1,valA' }]
   end 
+
+  it "should return an empty hash if no stacks are specified" do
+    @mapper.map_outputs_from_stacks(:stacks   => [],
+                                    :template => '/tmp/file.json').
+            should == []
+  end
 
 end

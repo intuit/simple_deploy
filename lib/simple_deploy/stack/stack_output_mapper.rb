@@ -16,7 +16,7 @@ module SimpleDeploy
 
       prune_relevant_parameters
 
-      @results
+      @results.map {|x| { x.first => x.last } }
     end
 
     private
