@@ -13,9 +13,9 @@ describe SimpleDeploy::StackOutputMapper do
 
     stack3_outputs = [ { 'OutputKey' => 'Test1', 'OutputValue' => 'valA' } ]
 
-    @stack1_stub = stub 'stack1', :outputs => stack1_outputs
-    @stack2_stub = stub 'stack2', :outputs => stack2_outputs
-    @stack3_stub = stub 'stack2', :outputs => stack3_outputs
+    @stack1_stub = stub 'stack1', :outputs => stack1_outputs, :wait_for_stable => true
+    @stack2_stub = stub 'stack2', :outputs => stack2_outputs, :wait_for_stable => true
+    @stack3_stub = stub 'stack2', :outputs => stack3_outputs, :wait_for_stable => true
 
     @template_stub = stub 'template', :parameters => ["Test1", "Test2"]
 

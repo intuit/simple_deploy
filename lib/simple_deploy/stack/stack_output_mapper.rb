@@ -28,6 +28,7 @@ module SimpleDeploy
                           :config      => @config,
                           :logger      => @logger,
                           :name        => s
+        stack.wait_for_stable
         merge_outputs stack
       end
     end
