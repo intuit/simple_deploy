@@ -22,7 +22,6 @@ Gem::Specification.new do |s|
   s.add_development_dependency "rspec", "~> 2.11.0"
 
   s.add_runtime_dependency "capistrano", "= 2.13.5"
-  s.add_runtime_dependency "cloud_formation_template", "= 0.0.1"
   s.add_runtime_dependency "stackster", '= 0.4.1'
   s.add_runtime_dependency "tinder", "= 1.8.0"
   s.add_runtime_dependency "trollop", "= 2.0"

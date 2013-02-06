@@ -1,3 +1,7 @@
+## v0.6.7:
+
+* Added support to read stack parameters from other stack outputs
+
 ## v0.6.6:
 
 * Downreving tinder to play nice w/ berkshelf
