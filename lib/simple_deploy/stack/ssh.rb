@@ -20,7 +20,13 @@ module SimpleDeploy
       def execute(args)
         return false if @instances.nil? || @instances.empty?
         create_execute_task args
-        @task.execute
+        begin
+          @task.execute
+        rescue
+          @logger.error "Command executed against instance(s) unsuccessfully."
+        else
+          @logger.info "Command executed against instance(s) successfully."
+        end
       end
 
       private
