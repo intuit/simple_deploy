@@ -22,8 +22,8 @@ module SimpleDeploy
         create_execute_task args
         begin
           @task.execute
-        rescue
-          @logger.error "Command executed against instance(s) unsuccessfully."
+        rescue StandardError => bang
+          @logger.error "Error running execute statement: #{bang}"
         else
           @logger.info "Command executed against instance(s) successfully."
         end
