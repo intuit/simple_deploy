@@ -22,11 +22,11 @@ module SimpleDeploy
         create_execute_task args
         begin
           @task.execute
-        rescue StandardError => bang
-          @logger.error "Error running execute statement: #{bang}"
-        else
-          @logger.info "Command executed against instance(s) successfully."
+        rescue ::Capistrano::CommandError => error
+          @logger.error "Error running execute statement: #{error}"
+          exit 1
         end
+        @logger.info "Command executed against instance(s) successfully."
       end
 
       private
