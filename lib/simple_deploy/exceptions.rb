@@ -8,6 +8,9 @@ module SimpleDeploy
         @message = message
       end
     end
+    
+    class Exceptions::NoInstances < Base
+    end
 
   end
 end
