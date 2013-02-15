@@ -24,7 +24,7 @@ module SimpleDeploy
           @task.execute
         rescue ::Capistrano::CommandError => error
           @logger.error "Error running execute statement: #{error}"
-          exit 1
+          return false
         end
         @logger.info "Command executed against instance(s) successfully."
       end
