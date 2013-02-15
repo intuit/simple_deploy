@@ -45,9 +45,8 @@ EOS
       end
 
       def command_args_output(output)
-	print "-a "
 	@outputs.each do |hash| 
-          print "%s=%s " % [hash['OutputKey'], hash['OutputValue']]
+          print "-a %s=%s " % [hash['OutputKey'], hash['OutputValue']]
         end
 	puts ""
       end
