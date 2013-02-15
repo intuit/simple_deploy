@@ -25,6 +25,12 @@ module SimpleDeploy
         rescue ::Capistrano::CommandError => error
           @logger.error "Error running execute statement: #{error}"
           return false
+        rescue ::Capistrano::ConnectionError => error
+          @logger.error "Error connecting to instances: #{error}"
+          return false
+        rescue ::Capistrano::Error => error
+          @logger.error "Error: #{error}"
+          return false
         end
         @logger.info "Command executed against instance(s) successfully."
       end
