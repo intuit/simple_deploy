@@ -36,7 +36,6 @@ module SimpleDeploy
         end
 
         status
-        end
       end
 
       private
