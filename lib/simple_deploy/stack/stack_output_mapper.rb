@@ -22,14 +22,18 @@ module SimpleDeploy
     private
 
     def merge_stacks_outputs
+      backoff = 3
+
       @stacks.each do |s|
-        @logger.debug "Reading outputs from stack '#{s}'."
+        @logger.info "Reading outputs from stack '#{s}'."
         stack = Stack.new :environment => @environment,
                           :config      => @config,
                           :logger      => @logger,
                           :name        => s
         stack.wait_for_stable
         merge_outputs stack
+        @logger.info "Backing off for #{backoff} seconds."
+        sleep backoff
       end
     end
 

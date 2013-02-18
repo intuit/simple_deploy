@@ -9,5 +9,8 @@ module SimpleDeploy
       end
     end
 
+    class Exceptions::NoInstances < Base
+    end
+
   end
 end

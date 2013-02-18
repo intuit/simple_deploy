@@ -38,6 +38,7 @@ describe SimpleDeploy::StackOutputMapper do
                                :logger      => @logger_stub,
                                :name        => 'stack1').
                           and_return @stack1_stub
+      @mapper.should_receive(:sleep)
       @mapper.map_outputs_from_stacks(:stacks   => ['stack1'],
                                       :template => '/tmp/file.json').
               should == [{ 'Test1' => 'val1' }]
@@ -56,6 +57,7 @@ describe SimpleDeploy::StackOutputMapper do
                                :logger      => @logger_stub,
                                :name        => 'stack2').
                           and_return @stack2_stub
+      @mapper.should_receive(:sleep).twice
       @mapper.map_outputs_from_stacks(:stacks   => ['stack1', 'stack2'],
                                       :template => '/tmp/file.json').
               should == [{ 'Test1' => 'val1' }, {'Test2' => 'val2' }]
@@ -74,6 +76,7 @@ describe SimpleDeploy::StackOutputMapper do
                                :logger      => @logger_stub,
                                :name        => 'stack3').
                           and_return @stack3_stub
+      @mapper.should_receive(:sleep).twice
       @mapper.map_outputs_from_stacks(:stacks   => ['stack1', 'stack3'],
                                       :template => '/tmp/file.json').
               should == [{ 'Test1' => 'val1,valA' }]
