@@ -27,6 +27,40 @@ describe SimpleDeploy::Stack::SSH do
       @ssh = SimpleDeploy::Stack::SSH.new options
       @ssh.execute(:sudo    => true, :command => 'uname').should be_false
     end
+
+    it "should return false when Capistrano command error" do
+      task_logger_mock = mock 'task_logger'
+      @ssh_options = Hash.new
+      options = { :config      => @config_mock,
+                  :instances   => ['1.2.3.4', '4.3.2.1'],
+                  :environment => 'test-env',
+                  :ssh_user    => 'user',
+                  :ssh_key     => 'key',
+                  :stack       => @stack_mock,
+                  :name        => 'test-stack' }
+      @ssh = SimpleDeploy::Stack::SSH.new options
+      Capistrano::Configuration.should_receive(:new).
+                                with(:output => @logger_stub).
+                                and_return @task_mock
+      @task_mock.stub :logger    => task_logger_mock,
+                      :variables => @ssh_options
+
+      task_logger_mock.should_receive(:level=).with(3)
+      @task_mock.should_receive(:set).with :user, 'user'
+      @task_mock.should_receive(:server).with('1.2.3.4', :instances)
+      @task_mock.should_receive(:server).with('4.3.2.1', :instances)
+      @task_mock.should_receive(:load).with({:string=>"task :execute do\n          sudo 'a_badcommand'\n          end"})
+      @task_mock.should_receive(:execute).and_raise Capistrano::CommandError.new 'command error'
+
+      @ssh.execute(:sudo => true, :command => 'a_badcommand').should be_false
+
+
+    end
+
+    it "should return false when Capistrano connection error"
+    it "should return false when Capistrano generic error"
+    
+
   end
 
   context "when successful" do
