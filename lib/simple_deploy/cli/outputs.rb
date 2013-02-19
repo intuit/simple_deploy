@@ -40,7 +40,7 @@ EOS
 
           logger.info "No outputs." unless @outputs.any?
 
-	  @opts[:as_command_args] ? command_args_output(@outputs) : default_output(@outputs)
+	  @opts[:as_command_args] ? command_args_output : default_output
         end
       end
 
@@ -50,15 +50,15 @@ EOS
 
       private
 
-      def command_args_output(outputs)
-	outputs.each do |hash| 
+      def command_args_output
+	@outputs.each do |hash| 
           print "-a %s=%s " % [hash['OutputKey'], hash['OutputValue']]
         end
 	puts ""
       end
 
-      def default_output(outputs)
-        outputs.each do |hash|
+      def default_output
+        @outputs.each do |hash|
           puts "%s: %s" % [hash['OutputKey'], hash['OutputValue']]
         end
       end
