@@ -17,6 +17,8 @@ simple_deploy outputs -n STACK_NAME -e ENVIRONMENT
 
 EOS
           opt :help, "Display Help"
+          opt :as_command_args,
+              "Displays the attributes in a format suitable for using on the command line"
           opt :environment, "Set the target environment", :type => :string
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'warn'
@@ -34,13 +36,30 @@ EOS
                           :logger      => logger
 
         rescue_stackster_exceptions_and_exit do
-          outputs = stack.outputs
+          @outputs = stack.outputs
 
-          logger.info "No outputs." unless outputs.any?
+          logger.info "No outputs." unless @outputs.any?
 
-          outputs.each do |hash|
-            puts "%s: %s" % [hash['OutputKey'], hash['OutputValue']]
-          end
+          @opts[:as_command_args] ? command_args_output : default_output
+        end
+      end
+
+      def command_summary
+        'Show outputs of a stack'
+      end
+
+      private
+
+      def command_args_output
+        @outputs.each do |hash|
+          print "-a %s=%s " % [hash['OutputKey'], hash['OutputValue']]
+        end
+        puts ""
+      end
+
+      def default_output
+        @outputs.each do |hash|
+          puts "%s: %s" % [hash['OutputKey'], hash['OutputValue']]
         end
       end
 
@@ -48,11 +67,6 @@ EOS
         @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
       end
 
-      def command_summary
-        'Show outputs of a stack'
-      end
-
     end
-
   end
 end
