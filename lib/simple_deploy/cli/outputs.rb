@@ -44,6 +44,12 @@ EOS
         end
       end
 
+      def command_summary
+        'Show outputs of a stack'
+      end
+
+      private
+
       def command_args_output(outputs)
 	outputs.each do |hash| 
           print "-a %s=%s " % [hash['OutputKey'], hash['OutputValue']]
@@ -61,11 +67,6 @@ EOS
         @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
       end
 
-      def command_summary
-        'Show outputs of a stack'
-      end
-
     end
-
   end
 end
