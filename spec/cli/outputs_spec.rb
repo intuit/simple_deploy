@@ -11,9 +11,9 @@ describe SimpleDeploy::CLI::Outputs do
     @options       = { :environment => 'test',
                        :log_level   => 'info',
                        :name        => 'mytest' }
-    @data          = [{ 'OutputKey' => 'key1', 'OutputValue' => 'value1' }, 
+    @data          = [{ 'OutputKey' => 'key1', 'OutputValue' => 'value1' },
                       { 'OutputKey' => 'key2', 'OutputValue' => 'value2' }]
-    Trollop.stub :options => @options 
+    Trollop.stub :options => @options
     @config_object.stub(:environments => { 'test' => 'data' })
     SimpleDeploy::Config.stub :new => @config_object
     SimpleDeploy::SimpleDeployLogger.should_receive(:new).
@@ -26,7 +26,8 @@ describe SimpleDeploy::CLI::Outputs do
                              :logger      => @logger).
                         and_return(@stack)
     @stack.stub :outputs => @data
-    @config_object.should_receive(:environment).with('test').and_return @config_env
+    @config_object.should_receive(:environment).with('test').
+                                                and_return @config_env
     @outputs = SimpleDeploy::CLI::Outputs.new
   end
 
@@ -35,7 +36,7 @@ describe SimpleDeploy::CLI::Outputs do
     @outputs.should_receive(:puts).with('key2: value2')
     @outputs.show
   end
- 
+
   it "should successfully return the show command with as_command_args" do
     @options[:as_command_args] = true
     @outputs.should_receive(:print).with('-a key1=value1 ')
