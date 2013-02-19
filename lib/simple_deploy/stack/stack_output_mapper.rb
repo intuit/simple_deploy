@@ -24,9 +24,10 @@ module SimpleDeploy
     private
 
     def merge_stacks_outputs
-      backoff = 3
+      count = 0
 
       @stacks.each do |s|
+        count += 1
         @logger.info "Reading outputs from stack '#{s}'."
         stack = Stack.new :environment => @environment,
                           :config      => @config,
@@ -34,6 +35,7 @@ module SimpleDeploy
                           :name        => s
         stack.wait_for_stable
         merge_outputs stack
+        backoff = count * count
         @logger.info "Backing off for #{backoff} seconds."
         sleep backoff
       end
@@ -60,7 +62,7 @@ module SimpleDeploy
       @results.each_pair do |key,value|
         pluralized_key = "#{key}s"
         if template_includes_parameter? pluralized_key
-          @logger.info "Passing output '#{key}' as input parameter with value '#{value}' as '#{pluralized_key}'."
+          @logger.info "Passing '#{key}' as input parameter '#{pluralized_key}'."
           pluralized_keys[pluralized_key] = @results.fetch key
         end
       end

@@ -19,8 +19,9 @@ EOS
           opt :help, "Display Help"
           opt :attributes, "= seperated attribute and it's value", :type  => :string,
                                                                    :multi => true
-          opt :stacks, "Read outputs from existing stacks", :type  => :string,
-                                                            :multi => true
+          opt :stacks, "Read outputs from existing stacks. \
+These will be passed to inputs with matching or pluralized names.", :type  => :string,
+                                                                    :multi => true
           opt :environment, "Set the target environment", :type => :string
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
