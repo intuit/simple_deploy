@@ -1,3 +1,7 @@
+## head
+
+* Added --as-command-args argument to outputs command
+
 ## v0.6.7:
 
 * Upgraded to stackster 0.4.2
