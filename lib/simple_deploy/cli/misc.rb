@@ -11,10 +11,6 @@ module SimpleDeploy
           @stacks      = args[:stacks]
           @template    = args[:template]
 
-          if @stacks.any?
-            @logger.info "Reading outputs from stacks '#{@stacks.join(", ")}'." 
-          end
-
           combine_provided_and_mapped_attributes 
         end
 
