@@ -14,6 +14,8 @@ module SimpleDeploy
 
       merge_stacks_outputs
 
+      pluralize_keys
+
       prune_unused_parameters
 
       @results.map { |x| { x.first => x.last } }
@@ -50,6 +52,20 @@ module SimpleDeploy
           @results[key] = value
         end
       end
+    end
+
+    def pluralize_keys
+      pluralized_keys = {}
+
+      @results.each_pair do |key,value|
+        pluralized_key = "#{key}s"
+        if template_includes_parameter? pluralized_key
+          @logger.info "Passing output '#{key}' as input parameter with value '#{value}' as '#{pluralized_key}'."
+          pluralized_keys[pluralized_key] = @results.fetch key
+        end
+      end
+
+      @results.merge! pluralized_keys
     end
 
     def prune_unused_parameters

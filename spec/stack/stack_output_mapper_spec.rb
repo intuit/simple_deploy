@@ -13,11 +13,14 @@ describe SimpleDeploy::StackOutputMapper do
 
     stack3_outputs = [ { 'OutputKey' => 'Test1', 'OutputValue' => 'valA' } ]
 
+    stack4_outputs = [ { 'OutputKey' => 'Test', 'OutputValue' => 'val' } ]
+
     @stack1_stub = stub 'stack1', :outputs => stack1_outputs, :wait_for_stable => true
     @stack2_stub = stub 'stack2', :outputs => stack2_outputs, :wait_for_stable => true
-    @stack3_stub = stub 'stack2', :outputs => stack3_outputs, :wait_for_stable => true
+    @stack3_stub = stub 'stack3', :outputs => stack3_outputs, :wait_for_stable => true
+    @stack4_stub = stub 'stack4', :outputs => stack4_outputs, :wait_for_stable => true
 
-    @template_stub = stub 'template', :parameters => ["Test1", "Test2"]
+    @template_stub = stub 'template', :parameters => ["Test1", "Test2", "Tests"]
 
     @mapper = SimpleDeploy::StackOutputMapper.new :config      => @config_mock,
                                                   :environment => 'default',
@@ -42,6 +45,19 @@ describe SimpleDeploy::StackOutputMapper do
       @mapper.map_outputs_from_stacks(:stacks   => ['stack1'],
                                       :template => '/tmp/file.json').
               should == [{ 'Test1' => 'val1' }]
+    end 
+
+    it "should return the outputs which match pluralized parameters" do
+      SimpleDeploy::Stack.should_receive(:new).
+                          with(:environment => 'default',
+                               :config      => @config_mock,
+                               :logger      => @logger_stub,
+                               :name        => 'stack4').
+                          and_return @stack4_stub
+      @mapper.should_receive(:sleep)
+      @mapper.map_outputs_from_stacks(:stacks   => ['stack4'],
+                                      :template => '/tmp/file.json').
+              should == [{ 'Tests' => 'val' }]
     end 
 
     it "should return the outputs which match parameters from multiple stacks" do
