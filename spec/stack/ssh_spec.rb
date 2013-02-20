@@ -109,11 +109,15 @@ describe SimpleDeploy::Stack::SSH do
           @ssh.execute(:sudo    => false,
                        :command => 'uname').should be_true
         end
-      end
 
-      after do
-        @ssh_options.should == { :ssh_options => { :keys => 'key',
-                                                   :paranoid => false } }
+        it "sets the ssh options" do
+          @task_mock.stub(:load)
+          @task_mock.stub(:execute).and_return(true)
+          @ssh.execute :sudo => false, :command => 'uname'
+
+          @ssh_options.should == { :ssh_options => { :keys     => 'key',
+                                                     :paranoid => false } }
+        end
       end
     end
   end
