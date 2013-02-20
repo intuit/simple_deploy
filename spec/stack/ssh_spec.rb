@@ -28,10 +28,9 @@ describe SimpleDeploy::Stack::SSH do
 
   context "when unsuccessful" do
     it "should return false when no running instances running" do
-
       @ssh = SimpleDeploy::Stack::SSH.new @options.merge({ :instances   => [] })
-      @ssh.execute(:sudo    => true, :command => 'uname').should be_false
 
+      @ssh.execute(:sudo    => true, :command => 'uname').should be_false
     end
 
     context "with capistrano configured" do
