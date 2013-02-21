@@ -39,7 +39,6 @@ module SimpleDeploy
           @om ||= Stack::OutputMapper.new :environment => @environment,
                                           :config      => @config,
                                           :logger      => @logger
-
         end
 
       end
