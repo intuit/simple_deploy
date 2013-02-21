@@ -46,6 +46,12 @@ These will be passed to inputs with matching or pluralized names.", :type  => :s
         end
       end
 
+      def command_summary
+        'Create a new stack'
+      end
+
+      private
+
       def merged_attributes
           provided_attributes = parse_attributes :attributes => @opts[:attributes]
 
@@ -63,10 +69,6 @@ These will be passed to inputs with matching or pluralized names.", :type  => :s
 
       def logger
         @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
-      end
-
-      def command_summary
-        'Create a new stack'
       end
 
     end
