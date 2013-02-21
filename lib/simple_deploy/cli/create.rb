@@ -32,13 +32,12 @@ These will be passed to inputs with matching or pluralized names.", :type  => :s
         valid_options? :provided => @opts,
                        :required => [:environment, :name, :template]
 
-        config = Config.new.environment @opts[:environment]
+        @config = Config.new.environment @opts[:environment]
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],
-                          :config      => config,
+                          :config      => @config,
                           :logger      => logger
-
 
         rescue_stackster_exceptions_and_exit do
           stack.create :attributes => merged_attributes,
