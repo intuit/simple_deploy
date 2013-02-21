@@ -2,6 +2,10 @@
 
 * Added support to read stack parameters from other stack outputs
 
+## v0.6.7:
+
+* Upgraded to stackster 0.4.2
+
 ## v0.6.6:
 
 * Downreving tinder to play nice w/ berkshelf
