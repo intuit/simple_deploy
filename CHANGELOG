@@ -1,6 +1,7 @@
 ## head
 
 * Added --as-command-args argument to outputs command
+* Better handling of errors for deploy/execute commands (#149, #150, #155)
 
 ## v0.6.7:
 
