@@ -91,7 +91,7 @@ module SimpleDeploy
 
     def self.commands
       return @commands if @commands
-      klasses   = SimpleDeploy::CLI.constants.reject { |c| c == :Shared || c == :Misc }
+      klasses   = SimpleDeploy::CLI.constants.reject { |c| c == :Shared }
       @commands = klasses.map { |klass| SimpleDeploy::CLI.const_get(klass).new }
     end
 
