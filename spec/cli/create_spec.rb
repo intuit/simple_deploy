@@ -29,7 +29,7 @@ describe SimpleDeploy::CLI::Create do
                              :config      => 'config_data',
                              :logger      => @logger).
                         and_return(@stack_mock)
-    SimpleDeploy::CLI::Misc::AttributeMerger.stub :new => @attribute_merger_mock
+    SimpleDeploy::Misc::AttributeMerger.stub :new => @attribute_merger_mock
     merge_options = { :attributes => [ { "attr1" => "val1" } ], 
                       :config     => 'config_data', 
                       :logger     => @logger,

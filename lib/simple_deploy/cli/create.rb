@@ -19,9 +19,10 @@ EOS
           opt :help, "Display Help"
           opt :attributes, "= seperated attribute and it's value", :type  => :string,
                                                                    :multi => true
-          opt :stacks, "Read outputs from existing stacks. \
-These will be passed to inputs with matching or pluralized names.", :type  => :string,
-                                                                    :multi => true
+          opt :map_outputs, "Read outputs from given stacks and map them \
+to parameter inputs in the new stack. These will be passed to inputs with \
+matching or pluralized names.", :type  => :string,
+                                :multi => true
           opt :environment, "Set the target environment", :type => :string
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
@@ -52,18 +53,18 @@ These will be passed to inputs with matching or pluralized names.", :type  => :s
       private
 
       def merged_attributes
-          provided_attributes = parse_attributes :attributes => @opts[:attributes]
+        provided_attributes = parse_attributes :attributes => @opts[:attributes]
 
-          attribute_merger.merge :attributes  => provided_attributes,
-                                 :config      => @config,
-                                 :logger      => @logger,
-                                 :environment => @opts[:environment],
-                                 :stacks      => @opts[:stacks],
-                                 :template    => @opts[:template]
+        attribute_merger.merge :attributes  => provided_attributes,
+                               :config      => @config,
+                               :logger      => @logger,
+                               :environment => @opts[:environment],
+                               :stacks      => @opts[:stacks],
+                               :template    => @opts[:template]
       end
 
       def attribute_merger
-        SimpleDeploy::CLI::Misc::AttributeMerger.new
+        SimpleDeploy::Misc::AttributeMerger.new
       end
 
       def logger
