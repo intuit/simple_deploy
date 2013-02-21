@@ -11,7 +11,7 @@ module SimpleDeploy
           @stacks      = args[:stacks]
           @template    = args[:template]
 
-          combine_provided_and_mapped_attributes 
+          combine_provided_and_mapped_attributes
         end
 
         private
@@ -20,14 +20,14 @@ module SimpleDeploy
           @attributes + mapped_attributes_not_provided
         end
 
-        def mapped_attributes 
+        def mapped_attributes
           mapper.map_outputs_from_stacks :stacks   => @stacks,
                                          :template => @template
         end
 
         def mapped_attributes_not_provided
-          mapped_attributes.select do |a| 
-            ! provided_attribute_keys.include? a.keys.first
+          mapped_attributes.reject do |a|
+            provided_attribute_keys.include? a.keys.first
           end
         end
 
@@ -36,9 +36,9 @@ module SimpleDeploy
         end
 
         def mapper
-          @om ||= StackOutputMapper.new :environment => @environment,
-                                        :config      => @config,
-                                        :logger      => @logger
+          @om ||= Stack::OutputMapper.new :environment => @environment,
+                                          :config      => @config,
+                                          :logger      => @logger
 
         end
 

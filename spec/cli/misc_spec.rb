@@ -14,7 +14,7 @@ describe SimpleDeploy::CLI::Misc::AttributeMerger do
                  :attributes  => [ { 'attrib1' => 'val1' } ],
                  :stacks      => @stacks,
                  :template    => '/tmp/file.json' }
-    SimpleDeploy::StackOutputMapper.should_receive(:new).
+    SimpleDeploy::Stack::OutputMapper.should_receive(:new).
                                     with(:environment => @options[:environment],
                                          :config      => @options[:config],
                                          :logger      => @options[:logger]).
