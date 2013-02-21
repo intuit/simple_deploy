@@ -1,10 +1,8 @@
 require 'spec_helper'
 
-require 'json'
-
 describe SimpleDeploy::Template do
   before do
-    @contents = { 
+    @contents = {
                   "Parameters" => {
                     "Test1" => {
                       "Type"        => "String",

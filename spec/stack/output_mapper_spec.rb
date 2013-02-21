@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SimpleDeploy::StackOutputMapper do
+describe SimpleDeploy::Stack::OutputMapper do
   before do
     @config_mock = mock 'config'
     @logger_stub = stub 'logger', :debug => true, :info => true
@@ -22,9 +22,9 @@ describe SimpleDeploy::StackOutputMapper do
 
     @template_stub = stub 'template', :parameters => ["Test1", "Test2", "Tests"]
 
-    @mapper = SimpleDeploy::StackOutputMapper.new :config      => @config_mock,
-                                                  :environment => 'default',
-                                                  :logger      => @logger_stub
+    @mapper = SimpleDeploy::Stack::OutputMapper.new :config      => @config_mock,
+                                                    :environment => 'default',
+                                                    :logger      => @logger_stub
   end
 
   context "when provided stacks" do
@@ -45,7 +45,7 @@ describe SimpleDeploy::StackOutputMapper do
       @mapper.map_outputs_from_stacks(:stacks   => ['stack1'],
                                       :template => '/tmp/file.json').
               should == [{ 'Test1' => 'val1' }]
-    end 
+    end
 
     it "should return the outputs which match pluralized parameters" do
       SimpleDeploy::Stack.should_receive(:new).
@@ -58,7 +58,7 @@ describe SimpleDeploy::StackOutputMapper do
       @mapper.map_outputs_from_stacks(:stacks   => ['stack4'],
                                       :template => '/tmp/file.json').
               should == [{ 'Tests' => 'val' }]
-    end 
+    end
 
     it "should return the outputs which match parameters from multiple stacks" do
       SimpleDeploy::Stack.should_receive(:new).
@@ -73,11 +73,11 @@ describe SimpleDeploy::StackOutputMapper do
                                :logger      => @logger_stub,
                                :name        => 'stack2').
                           and_return @stack2_stub
-      @mapper.should_receive(:sleep).twice
+      @mapper.should_receive(:sleep).exactly(3).times
       @mapper.map_outputs_from_stacks(:stacks   => ['stack1', 'stack2'],
                                       :template => '/tmp/file.json').
               should == [{ 'Test1' => 'val1' }, {'Test2' => 'val2' }]
-    end 
+    end
 
     it "should concatenate multiple outputs of same name into CSV" do
       SimpleDeploy::Stack.should_receive(:new).
@@ -92,11 +92,11 @@ describe SimpleDeploy::StackOutputMapper do
                                :logger      => @logger_stub,
                                :name        => 'stack3').
                           and_return @stack3_stub
-      @mapper.should_receive(:sleep).twice
+      @mapper.should_receive(:sleep).exactly(3).times
       @mapper.map_outputs_from_stacks(:stacks   => ['stack1', 'stack3'],
                                       :template => '/tmp/file.json').
               should == [{ 'Test1' => 'val1,valA' }]
-    end 
+    end
   end
 
   it "should return an empty hash if no stacks are specified" do

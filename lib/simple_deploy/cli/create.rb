@@ -39,18 +39,22 @@ These will be passed to inputs with matching or pluralized names.", :type  => :s
                           :config      => config,
                           :logger      => logger
 
-        provided_attributes = parse_attributes :attributes => @opts[:attributes]
 
         rescue_stackster_exceptions_and_exit do
-          attributes = attribute_merger.merge :attributes  => provided_attributes,
-                                              :config      => @config,
-                                              :logger      => @logger,
-                                              :environment => @opts[:environment],
-                                              :stacks      => @opts[:stacks],
-                                              :template    => @opts[:template]
-          stack.create :attributes => attributes,
+          stack.create :attributes => merged_attributes,
                        :template   => @opts[:template]
         end
+      end
+
+      def merged_attributes
+          provided_attributes = parse_attributes :attributes => @opts[:attributes]
+
+          attribute_merger.merge :attributes  => provided_attributes,
+                                 :config      => @config,
+                                 :logger      => @logger,
+                                 :environment => @opts[:environment],
+                                 :stacks      => @opts[:stacks],
+                                 :template    => @opts[:template]
       end
 
       def attribute_merger
