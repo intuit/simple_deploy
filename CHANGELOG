@@ -1,6 +1,7 @@
 ## head
 
 * Added --as-command-args argument to outputs command
+* Added support to read stack parameters from other stack outputs
 
 ## v0.6.7:
 
