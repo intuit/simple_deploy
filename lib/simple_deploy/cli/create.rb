@@ -17,7 +17,8 @@ simple_deploy create -n STACK_NAME -t PATH_TO_TEMPLATE -e ENVIRONMENT -a KEY1=VA
 
 EOS
           opt :help, "Display Help"
-          opt :attributes, "= seperated attribute(s) and it's value. Can be specified multiple time.", :type  => :string,
+          opt :attributes, "= seperated attribute(s) and it's value. \
+Can be specified multiple time.", :type  => :string,
                                                                    :multi => true
           opt :input_stack, "Read outputs from given stack(s) and map them \
 to parameter inputs in the new stack. These will be passed to inputs with \
