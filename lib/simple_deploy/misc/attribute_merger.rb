@@ -3,12 +3,12 @@ module SimpleDeploy
     class AttributeMerger
 
       def merge(args)
-        @attributes  = args[:attributes]
-        @config      = args[:config]
-        @environment = args[:environment]
-        @logger      = args[:logger]
-        @stacks      = args[:stacks]
-        @template    = args[:template]
+        @attributes   = args[:attributes]
+        @config       = args[:config]
+        @environment  = args[:environment]
+        @logger       = args[:logger]
+        @input_stacks = args[:input_stacks]
+        @template     = args[:template]
 
         combine_provided_and_mapped_attributes
       end
@@ -20,7 +20,7 @@ module SimpleDeploy
       end
 
       def mapped_attributes
-        mapper.map_outputs_from_stacks :stacks   => @stacks,
+        mapper.map_outputs_from_stacks :stacks   => @input_stacks,
                                        :template => @template
       end
 

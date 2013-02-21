@@ -10,7 +10,7 @@ describe SimpleDeploy::CLI::Create do
     @logger                = stub 'logger', :info => true
 
     @options = { :attributes  => [ 'attr1=val1' ],
-                 :stacks      => [ 'stack1' ],
+                 :input_stack => [ 'stack1' ],
                  :environment => 'test',
                  :name        => 'mytest',
                  :log_level   => 'info',
@@ -30,12 +30,12 @@ describe SimpleDeploy::CLI::Create do
                              :logger      => @logger).
                         and_return(@stack_mock)
     SimpleDeploy::Misc::AttributeMerger.stub :new => @attribute_merger_mock
-    merge_options = { :attributes => [ { "attr1" => "val1" } ], 
-                      :config     => 'config_data', 
-                      :logger     => @logger,
-                      :environment => 'test',
-                      :template   => '/tmp/test.json',
-                      :stacks     => ["stack1"] }
+    merge_options = { :attributes   => [ { "attr1" => "val1" } ], 
+                      :config       => 'config_data', 
+                      :logger       => @logger,
+                      :environment  => 'test',
+                      :template     => '/tmp/test.json',
+                      :input_stacks => ["stack1"] }
     @attribute_merger_mock.should_receive(:merge).with(merge_options).
                            and_return({ "attr1" => "val1",
                                         "attr2" => "val2" })

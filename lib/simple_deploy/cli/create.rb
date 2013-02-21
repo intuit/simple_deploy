@@ -19,7 +19,7 @@ EOS
           opt :help, "Display Help"
           opt :attributes, "= seperated attribute and it's value", :type  => :string,
                                                                    :multi => true
-          opt :map_outputs, "Read outputs from given stacks and map them \
+          opt :input_stack, "Read outputs from given stacks and map them \
 to parameter inputs in the new stack. These will be passed to inputs with \
 matching or pluralized names.", :type  => :string,
                                 :multi => true
@@ -55,12 +55,12 @@ matching or pluralized names.", :type  => :string,
       def merged_attributes
         provided_attributes = parse_attributes :attributes => @opts[:attributes]
 
-        attribute_merger.merge :attributes  => provided_attributes,
-                               :config      => @config,
-                               :logger      => @logger,
-                               :environment => @opts[:environment],
-                               :stacks      => @opts[:stacks],
-                               :template    => @opts[:template]
+        attribute_merger.merge :attributes   => provided_attributes,
+                               :config       => @config,
+                               :logger       => @logger,
+                               :environment  => @opts[:environment],
+                               :input_stacks => @opts[:input_stack],
+                               :template     => @opts[:template]
       end
 
       def attribute_merger
