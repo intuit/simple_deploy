@@ -19,6 +19,10 @@ module SimpleDeploy
 
         prune_unused_parameters
 
+        @results.each_pair do |key, value|
+          @logger.info "Mapping output '#{key}' to input parameter with value '#{value}'."
+        end
+
         @results.map { |x| { x.first => x.last } }
       end
 
@@ -59,27 +63,20 @@ module SimpleDeploy
       end
 
       def pluralize_keys
-        pluralized_keys = {}
-
-        @results.each_pair do |key,value|
+        plural_params = @results.each_with_object({}) do |results, new|
+          key            = results.first
           pluralized_key = "#{key}s"
+
           if template_parameters.include? pluralized_key
-            @logger.info "Passing '#{key}' as input parameter '#{pluralized_key}'."
-            pluralized_keys[pluralized_key] = @results.fetch key
+            new[pluralized_key] = results[1]
           end
         end
 
-        @results.merge! pluralized_keys
+        @results.merge! plural_params
       end
 
       def prune_unused_parameters
-        @results.each_pair do |key,value|
-          if template_parameters.include? key
-            @logger.info "Passing output '#{key}' as input parameter with value '#{value}'."
-          else
-            @results.delete key
-          end
-        end
+        @results.select! { |key| template_parameters.include? key }
       end
 
       def template_parameters
