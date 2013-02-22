@@ -20,7 +20,22 @@ module SimpleDeploy
       def execute(args)
         return false if @instances.nil? || @instances.empty?
         create_execute_task args
-        @task.execute
+
+        status = false
+
+        begin
+          @task.execute
+          status = true
+          @logger.info "Command executed against instances successfully."
+        rescue ::Capistrano::CommandError => error
+          @logger.error "Error running execute statement: #{error}"
+        rescue ::Capistrano::ConnectionError => error
+          @logger.error "Error connecting to instances: #{error}"
+        rescue ::Capistrano::Error => error
+          @logger.error "Error: #{error}"
+        end
+
+        status
       end
 
       private
