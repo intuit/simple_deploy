@@ -12,5 +12,8 @@ module SimpleDeploy
     class NoInstances < Base
     end
 
+    class Exceptions::NoInstances < Base
+    end
+
   end
 end
