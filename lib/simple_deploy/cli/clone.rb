@@ -37,17 +37,21 @@ EOS
         new_attributes = merge_attributes cloned_attributes, override_attributes
         new_attributes += add_attributes cloned_attributes, override_attributes
 
+        template_file = Tempfile.new("#{@opts[:new_name]}_template.json")
+        template_file_path = template_file.path
+
         if @opts[:template]
-          template_file = @opts[:template]
+          template_file_path = @opts[:template]
         else
-          template_file = Tempfile.new("#{@opts[:new_name]}_template.json").path
-          File::open(template_file, 'w') { |f| f.write source_stack.template.to_json }
+          template_file.write source_stack.template.to_json
         end
 
         rescue_stackster_exceptions_and_exit do
           new_stack.create :attributes => new_attributes,
-                           :template   => template_file
+                           :template   => template_file_path
         end
+
+        template_file.close
       end
 
       def command_summary
