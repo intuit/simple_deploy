@@ -1,3 +1,7 @@
+## v0.7.1:
+
+* Updated template download logic in clone to fix issu #160
+
 ## v0.7.0:
 
 * Added --as-command-args argument to outputs command
