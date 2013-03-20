@@ -1,3 +1,10 @@
+## head:
+
+## v0.7.2.beta.1:
+
+* Upgrade to stackster 0.4.4 to address issue with getting instances
+* Modified backoff to help prevent exceeding API limits
+
 ## v0.7.1:
 
 * Updated template download logic in clone to fix issu #160
