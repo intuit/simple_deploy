@@ -54,8 +54,8 @@ module SimpleDeploy
         YAML::load( File.open( config_file ) )
       rescue Errno::ENOENT
         raise "#{config_file} not found"
-      rescue Psych::SyntaxError => e
-        raise "#{config_file} is corrupt"
+      # rescue Psych::SyntaxError => e
+      #   raise "#{config_file} is corrupt"
       end
     end
 
