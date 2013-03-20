@@ -97,7 +97,7 @@ describe SimpleDeploy do
     end
 
     it "should handle a corrupt file gracefully" do
-      s = "--\nport:\t80\t80"
+      s = "---\nport: | 80"
       File.open(@config_file_path, 'w') do |out|
         out.write(s)
       end
