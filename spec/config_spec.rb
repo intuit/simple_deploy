@@ -80,35 +80,31 @@ describe SimpleDeploy do
 
   describe "gracefully handling yaml file errors" do
     before do
-      if File.exists? "#{ENV['HOME']}/.simple_deploy.yml"
-        FileUtils.mv("#{ENV['HOME']}/.simple_deploy.yml",
-                     "#{ENV['HOME']}/.simple_deploy.yml.bak")
-      end
+      FakeFS.activate!
+      @config_file_path = "#{ENV['HOME']}/.simple_deploy.yml"
+      FileUtils.mkdir_p File.dirname(@config_file_path)
     end
 
     after do
-      if File.exists? "#{ENV['HOME']}/.simple_deploy.yml.bak"
-        FileUtils.mv("#{ENV['HOME']}/.simple_deploy.yml.bak",
-                     "#{ENV['HOME']}/.simple_deploy.yml")
-      end
+      FakeFS.deactivate!
+      FakeFS::FileSystem.clear
     end
 
     it "should handle a missing file gracefully" do
       expect {
         config = SimpleDeploy::Config.new
-      }.to raise_error(RuntimeError, "#{ENV['HOME']}/.simple_deploy.yml not found")
+      }.to raise_error(RuntimeError, "#{@config_file_path} not found")
     end
 
     it "should handle a corrupt file gracefully" do
       s = "--\nport:\t80\t80"
-      File.open("#{ENV['HOME']}/.simple_deploy.yml", 'w') do |out|
+      File.open(@config_file_path, 'w') do |out|
         out.write(s)
       end
 
       expect {
         config = SimpleDeploy::Config.new
-      }.to raise_error(RuntimeError, "#{ENV['HOME']}/.simple_deploy.yml is corrupt")
-      FileUtils.rm "#{ENV['HOME']}/.simple_deploy.yml"
+      }.to raise_error(RuntimeError, "#{@config_file_path} is corrupt")
     end
   end
 end

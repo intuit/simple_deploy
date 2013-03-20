@@ -1,5 +1,6 @@
 require 'rubygems'
 require 'bundler/setup'
+require 'fakefs/safe'
 
 require 'simple_deploy'
 
