@@ -59,8 +59,6 @@ module SimpleDeploy
         CLI::Status.new.show
       when 'template'
         CLI::Template.new.show
-      when 'ssh'
-        CLI::SSH.new.show
       when 'update'
         CLI::Update.new.update
       when '-h'

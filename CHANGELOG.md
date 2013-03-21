@@ -1,6 +1,10 @@
 ## head:
 
-## v0.7.2.beta.1:
+## v0.7.2.beta.2 (03/20/2013):
+
+* Fix issue when trying to use ssh command (fixes #172)
+
+## v0.7.2.beta.1 (03/19/2013):
 
 * Upgrade to stackster 0.4.4 to address issue with getting instances
 * Modified backoff to help prevent exceeding API limits
