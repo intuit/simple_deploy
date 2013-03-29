@@ -68,6 +68,14 @@ describe SimpleDeploy do
       @config.notifications.should == ( { 'campfire' => { 'token' => 'my_token' } } )
     end
 
+    it "should return the access_key for the environment" do
+      @config.access_key('test_env').should == 'access'
+    end
+
+    it "should return the secret_key for the environment" do
+      @config.secret_key('test_env').should == 'secret'
+    end
+
     it "should return the region for the environment" do
       @config.region('test_env').should == 'us-west-1'
     end
