@@ -43,6 +43,14 @@ module SimpleDeploy
       config['notifications']
     end
 
+    def access_key
+      environment(name)['access_key']
+    end
+
+    def secret_key
+      environment(name)['secret_key']
+    end
+
     def region(name)
       environment(name)['region']
     end
