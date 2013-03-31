@@ -13,7 +13,7 @@ describe SimpleDeploy do
     @config_stub.stub(:access_key).and_return('access')
     @config_stub.stub(:secret_key).and_return('secret')
     SimpleDeploy::Config.should_receive(:new).
-                         once.
+                         at_least(:once).
                          with(:logger => @logger_stub).
                          and_return @config_stub
 
@@ -283,62 +283,63 @@ describe SimpleDeploy do
 
   describe 'instances' do
     before do
-      @instances = [{ 'instancesSet' => [{ 'ipAddress' => '50.40.30.20', 'privateIpAddress' => '10.1.2.3' }] }]
-      @environment_config_mock.stub(:[])
+      @stack_reader_mock = mock 'stack reader'
+
+      @instances = [
+        { 'instancesSet' => [{ 'ipAddress' => '50.40.30.20',
+                               'privateIpAddress' => '10.1.2.3' }] }
+      ]
     end
 
-    pending 'should use the private IP when vpc' do
-      stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                      :name        => 'test-stack',
-                                      :logger      => 'my-logger',
-                                      :config      => @config_stub,
-                                      :internal    => false
-      stack.stub(:stack) { @stack_mock }
-
+    it 'should use the private IP when vpc' do
       @instances.first['instancesSet'].first['vpcId'] = 'my-vpc'
-      @stack_mock.stub(:instances).and_return(@instances)
 
-      stack.instances.should == ['10.1.2.3']
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:instances).and_return(@instances)
+
+      @stack.instances.should == ['10.1.2.3']
     end
 
-    pending 'should use the private IP when internal' do
-      stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                      :name        => 'test-stack',
-                                      :logger      => 'my-logger',
-                                      :config      => @config_stub,
+    it 'should use the private IP when internal' do
+      stack = SimpleDeploy::Stack.new :name        => 'test-stack',
+                                      :logger      => @logger_stub,
+                                      :environment => 'test-env',
                                       :internal    => true
-      stack.stub(:stack) { @stack_mock }
-      @stack_mock.stub(:instances).and_return(@instances)
+
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
       stack.instances.should == ['10.1.2.3']
     end
 
-    pending 'should use the public IP when not vpc and not internal' do
-      stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                      :name        => 'test-stack',
-                                      :logger      => 'my-logger',
-                                      :config      => @config_stub,
-                                      :internal    => false
-      stack.stub(:stack) { @stack_mock }
-      @stack_mock.stub(:instances).and_return(@instances)
+    it 'should use the public IP when not vpc and not internal' do
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
-      stack.instances.should == ['50.40.30.20']
+      @stack.instances.should == ['50.40.30.20']
     end
 
-    pending 'should handle instanceSets with multiple intances' do
+    it 'should handle instanceSets with multiple intances' do
       @instances = [{ 'instancesSet' => [
         { 'ipAddress' => '50.40.30.20', 'privateIpAddress' => '10.1.2.3' },
         { 'ipAddress' => '50.40.30.21', 'privateIpAddress' => '10.1.2.4' }] }]
 
-      stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                      :name        => 'test-stack',
-                                      :logger      => 'my-logger',
-                                      :config      => @config_stub,
-                                      :internal    => false
-      stack.stub(:stack) { @stack_mock }
-      @stack_mock.stub(:instances).and_return(@instances)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
-      stack.instances.should == ['50.40.30.20', '50.40.30.21']
+      @stack.instances.should == ['50.40.30.20', '50.40.30.21']
     end
   end
 

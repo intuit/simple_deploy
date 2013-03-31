@@ -115,7 +115,7 @@ module SimpleDeploy
     end
 
     def instances
-      stack.instances.map do |instance| 
+      stack_reader.instances.map do |instance| 
         instance['instancesSet'].map do |info|
           if info['vpcId'] || @use_internal_ips
             info['privateIpAddress']
