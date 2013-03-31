@@ -5,6 +5,7 @@ require 'simple_deploy/stack/stack_attribute_formater'
 require 'simple_deploy/stack/stack_creator'
 require 'simple_deploy/stack/stack_reader'
 require 'simple_deploy/stack/stack_updater'
+require 'simple_deploy/stack/stack_destroyer'
 
 module SimpleDeploy
   class Stack
@@ -85,7 +86,14 @@ module SimpleDeploy
 
     def destroy
       if attributes['protection'] != 'on'
-        stack.destroy
+        # TODO push this into StackDestroyer
+        begin
+          stack_destroyer.destroy
+        rescue Exception => ex
+          raise Exceptions::CloudFormationError.new ex.message
+        end
+
+        @entry.delete_attributes
         @logger.info "#{@name} destroyed."
         true
       else
@@ -173,7 +181,11 @@ module SimpleDeploy
                                         :config => @config
     end
 
-    
+    def stack_destroyer
+      @stack_destroyer ||= StackDestroyer.new :name   => @name,
+                                              :config => @config
+    end
+
     def stack_attribute_formater
       @saf ||= StackAttributeFormater.new :config          => @config,
                                           :environment     => @environment,

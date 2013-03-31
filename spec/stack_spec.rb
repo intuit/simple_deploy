@@ -208,41 +208,76 @@ describe SimpleDeploy do
   end
 
   describe "destroying a stack" do
-    pending "should destroy if the stack is not protected" do
-      stack_mock = mock 'stackster stack mock', :attributes => { 'protection' => 'off' }
-      @stack.stub(:stack) { stack_mock }
+    before do
+      @stack_reader_mock = mock 'stack reader'
+      @stack_destroyer_mock = mock 'stack destroyer'
+    end
 
-      stack_mock.should_receive(:destroy)
+    it "should destroy if the stack is not protected" do
+      @entry_mock.should_receive(:delete_attributes)
+
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return('protection' => 'off')
+      SimpleDeploy::StackDestroyer.should_receive(:new).
+                                   with(:name   => 'test-stack',
+                                        :config => @config_stub).
+                                   and_return @stack_destroyer_mock
+      @stack_destroyer_mock.should_receive(:destroy).and_return(true)
 
       @stack.destroy.should be_true
     end
 
-    pending "should not destroy if the stack is protected" do
-      stack_mock = mock 'stackster stack mock', :attributes => { 'protection' => 'on' }
-      @stack.stub(:stack) { stack_mock }
+    it "should not destroy if the stack is protected" do
+      @entry_mock.should_receive(:delete_attributes).never
 
-      stack_mock.should_not_receive(:destroy)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return('protection' => 'on')
+      SimpleDeploy::StackDestroyer.should_receive(:new).never
 
       @stack.destroy.should_not be_true
     end
 
-    pending "should destroy if protection is undefined" do
-      stack_mock = mock 'stackster stack mock', :attributes => {}
-      @stack.stub(:stack) { stack_mock }
+    it "should destroy if protection is undefined" do
+      @entry_mock.should_receive(:delete_attributes)
 
-      stack_mock.should_receive(:destroy)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return({})
+      SimpleDeploy::StackDestroyer.should_receive(:new).
+                                   with(:name   => 'test-stack',
+                                        :config => @config_stub).
+                                   and_return @stack_destroyer_mock
+      @stack_destroyer_mock.should_receive(:destroy).and_return(true)
 
       @stack.destroy.should be_true
     end
 
-    pending "should not create a deployment" do
-      @stack.should_not_receive(:deployment)
+    it "should raise CloudFormationError if the destroy fails" do
+      @entry_mock.should_receive(:delete_attributes).never
 
-      stack_mock = mock 'stackster stack mock', :attributes => { 'protection' => 'off' }
-      @stack.stub(:stack) { stack_mock }
-      stack_mock.should_receive(:destroy)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return('protection' => 'off')
+      SimpleDeploy::StackDestroyer.should_receive(:new).
+                                   with(:name   => 'test-stack',
+                                        :config => @config_stub).
+                                   and_return @stack_destroyer_mock
+      @stack_destroyer_mock.should_receive(:destroy).
+                            and_raise(Exception.new('cf failure'))
 
-      @stack.destroy.should be_true
+      expect {
+        @stack.destroy
+      }.to raise_error(SimpleDeploy::Exceptions::CloudFormationError, 'cf failure')
     end
   end
 
