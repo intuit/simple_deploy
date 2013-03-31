@@ -1,8 +1,9 @@
-require 'stackster'
 require 'simple_deploy/stack/deployment'
 require 'simple_deploy/stack/execute'
 require 'simple_deploy/stack/output_mapper'
 require 'simple_deploy/stack/stack_attribute_formater'
+require 'simple_deploy/stack/stack_creator'
+require 'simple_deploy/stack/stack_reader'
 
 module SimpleDeploy
   class Stack
@@ -10,16 +11,31 @@ module SimpleDeploy
     def initialize(args)
       @environment = args[:environment]
       @name = args[:name]
+
       @config = Config.new :logger => args[:logger]
       @logger = @config.logger
 
       @use_internal_ips = !!args[:internal]
+      @entry = Entry.new :name   => @name,
+                         :config => @config
     end
 
     def create(args)
       attributes = stack_attribute_formater.updated_attributes args[:attributes]
-      stack.create :attributes => attributes,
-                   :template   => args[:template]
+      @template_file = args[:template]
+
+      begin
+        @entry.set_attributes attributes
+        stack_creator.create
+      rescue Exception => ex
+        raise Exceptions::CloudFormationError.new ex.message
+      end
+      
+      # TODO
+      #   examine the returned Excon::Response
+      #   perhaps move AWS::CloudFormation::Error process method to a util
+      #   class or module
+      @entry.save
     end
 
     def update(args)
@@ -107,7 +123,7 @@ module SimpleDeploy
     end
 
     def attributes
-      stack.attributes 
+      stack_reader.attributes 
     end
 
     def parameters
@@ -121,11 +137,24 @@ module SimpleDeploy
     private
 
     def stack
-      stackster_config = @config.environment @environment
-      @stack ||= Stackster::Stack.new :name        => @name,
-                                      :config      => stackster_config,
-                                      :logger      => @logger
+      stack_config = @config.environment @environment
+      @stack ||= Stack.new :name        => @name,
+                           :config      => stack_config,
+                           :logger      => @logger
     end
+
+    def stack_creator
+      @stack_creator ||= StackCreator.new :name          => @name,
+                                          :entry         => @entry,
+                                          :template_file => @template_file,
+                                          :config        => @config
+    end
+
+    def stack_reader
+      @stack_reader ||= StackReader.new :name   => @name,
+                                        :config => @config
+    end
+
     
     def stack_attribute_formater
       @saf ||= StackAttributeFormater.new :config          => @config,
