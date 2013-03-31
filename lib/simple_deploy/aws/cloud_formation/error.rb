@@ -1,6 +1,6 @@
 require 'xmlsimple'
 
-module Stackster
+module SimpleDeploy
   class AWS
     class CloudFormation
       class Error

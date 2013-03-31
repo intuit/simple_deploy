@@ -59,7 +59,7 @@ describe SimpleDeploy do
       @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
       @entry_mock.should_receive(:save).and_return(true)
 
-      SimpleDeploy::Stack::StackCreator.should_receive(:new).
+      SimpleDeploy::StackCreator.should_receive(:new).
                                  with(:name          => 'test-stack',
                                       :entry         => @entry_mock,
                                       :template_file => 'some_json',
@@ -75,7 +75,7 @@ describe SimpleDeploy do
       @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
       @entry_mock.should_receive(:save).never
 
-      SimpleDeploy::Stack::StackCreator.should_receive(:new).
+      SimpleDeploy::StackCreator.should_receive(:new).
                                  with(:name          => 'test-stack',
                                       :entry         => @entry_mock,
                                       :template_file => 'some_json',
@@ -92,56 +92,118 @@ describe SimpleDeploy do
 
   describe "updating a stack" do
     before do
-      @stack_mock.stub(:attributes).and_return(@main_attributes)
+      @stack_updater_mock = mock 'stack updater'
+      @stack_reader_mock = mock 'stack reader'
+      @new_attributes = [
+        { 'chef_repo' => 'test123' },
+        { 'chef_repo_bucket_prefix' => 'test-prefix' },
+        { 'chef_repo_domain' => 'test-domain' }
+      ]
+
+      @expected_attributes = [
+        { 'chef_repo' => 'test123' },
+        { 'chef_repo_bucket_prefix' => 'test-prefix' },
+        { 'chef_repo_domain' => 'test-domain' },
+        { 'CookBooksURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz' }
+      ]
     end
 
-    pending "should update when the deployment is not locked" do
+    it "should update when the deployment is not locked" do
       deployment_stub = stub 'deployment', :clear_for_deployment? => true
       @stack.stub(:deployment).and_return(deployment_stub)
 
-      Stackster::Stack.should_receive(:new).with(:name        => 'test-stack',
-                                                 :config      => @environment_config_mock,
-                                                 :logger      => @logger_stub).
-                                            and_return @stack_mock
-      @stack_mock.should_receive(:update).with :attributes => @expected_attributes
+      @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
+      @entry_mock.should_receive(:save).and_return(true)
 
-      @stack.update(:attributes => [{ 'chef_repo' => 'test123' }]).should be_true
+      SimpleDeploy::StackUpdater.should_receive(:new).
+                                 with(:name          => 'test-stack',
+                                      :entry         => @entry_mock,
+                                      :template_body => 'some_json',
+                                      :config        => @config_stub).
+                                 and_return @stack_updater_mock
+      @stack_updater_mock.should_receive(:update_stack_if_parameters_changed).
+                          and_return(true)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return({})
+      @stack_reader_mock.should_receive(:template).and_return('some_json')
+
+      @stack.update(:attributes => @new_attributes).should be_true
     end
 
-    pending "should not update when the deployment is locked and force is not set" do
+    it "should not update when the deployment is locked and force is not set" do
       deployment_stub = stub 'deployment', :clear_for_deployment? => false
       @stack.stub(:deployment).and_return(deployment_stub)
 
       SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
-      Stackster::Stack.should_not_receive(:new)
 
       @stack.update(:attributes => { 'arg1' => 'val' }).should_not be_true
     end
 
-    pending "should update when the deployment is locked and force is set true" do
+    it "should update when the deployment is locked and force is set true" do
       deployment_mock = mock 'deployment'
       deployment_mock.should_receive(:clear_for_deployment?).and_return(false, true, true)
       deployment_mock.should_receive(:clear_deployment_lock).with(true)
       @stack.stub(:deployment).and_return(deployment_mock)
       @stack.stub(:sleep).and_return(false)
 
-      Stackster::Stack.should_receive(:new).with(:name        => 'test-stack',
-                                                 :config      => @environment_config_mock,
-                                                 :logger      => @logger_stub).
-                                            and_return @stack_mock
-      @stack_mock.should_receive(:update).with :attributes => @expected_attributes
+      @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
+      @entry_mock.should_receive(:save).and_return(true)
 
-      @stack.update(:force => true, :attributes => [{ 'chef_repo' => 'test123' }]).should be_true
+      SimpleDeploy::StackUpdater.should_receive(:new).
+                                 with(:name          => 'test-stack',
+                                      :entry         => @entry_mock,
+                                      :template_body => 'some_json',
+                                      :config        => @config_stub).
+                                 and_return @stack_updater_mock
+      @stack_updater_mock.should_receive(:update_stack_if_parameters_changed).
+                          and_return(true)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return({})
+      @stack_reader_mock.should_receive(:template).and_return('some_json')
+
+      @stack.update(:force => true, :attributes => @new_attributes).should be_true
     end
 
-    pending "should not update when the deployment is locked and force is set false" do
+    it "should not update when the deployment is locked and force is set false" do
       deployment_stub = stub 'deployment', :clear_for_deployment? => false
       @stack.stub(:deployment).and_return(deployment_stub)
 
       SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
-      Stackster::Stack.should_not_receive(:new)
 
       @stack.update(:force => false, :attributes => { 'arg1' => 'val' }).should_not be_true
+    end
+
+    it "should raise CloudFormationError if the update fails" do
+      deployment_stub = stub 'deployment', :clear_for_deployment? => true
+      @stack.stub(:deployment).and_return(deployment_stub)
+
+      @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
+      @entry_mock.should_receive(:save).never
+
+      SimpleDeploy::StackUpdater.should_receive(:new).
+                                 with(:name          => 'test-stack',
+                                      :entry         => @entry_mock,
+                                      :template_body => 'some_json',
+                                      :config        => @config_stub).
+                                 and_return @stack_updater_mock
+      @stack_updater_mock.should_receive(:update_stack_if_parameters_changed).
+                          and_raise(Exception.new('cf failure'))
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return({})
+      @stack_reader_mock.should_receive(:template).and_return('some_json')
+
+      expect {
+        @stack.update :attributes => @new_attributes
+      }.to raise_error(SimpleDeploy::Exceptions::CloudFormationError, 'cf failure')
     end
   end
 

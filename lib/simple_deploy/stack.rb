@@ -4,6 +4,7 @@ require 'simple_deploy/stack/output_mapper'
 require 'simple_deploy/stack/stack_attribute_formater'
 require 'simple_deploy/stack/stack_creator'
 require 'simple_deploy/stack/stack_reader'
+require 'simple_deploy/stack/stack_updater'
 
 module SimpleDeploy
   class Stack
@@ -24,6 +25,7 @@ module SimpleDeploy
       attributes = stack_attribute_formater.updated_attributes args[:attributes]
       @template_file = args[:template]
 
+      # TODO push this into StackCreator
       begin
         @entry.set_attributes attributes
         stack_creator.create
@@ -32,8 +34,8 @@ module SimpleDeploy
       end
       
       # TODO
-      #   examine the returned Excon::Response
-      #   perhaps move AWS::CloudFormation::Error process method to a util
+      #   - examine the returned Excon::Response
+      #   - perhaps move AWS::CloudFormation::Error process method to a util
       #   class or module
       @entry.save
     end
@@ -51,9 +53,18 @@ module SimpleDeploy
       if deployment.clear_for_deployment?
         @logger.info "Updating #{@name}."
         attributes = stack_attribute_formater.updated_attributes args[:attributes]
-        stack.update :attributes => attributes
-        @logger.info "Update complete for #{@name}."
-        true
+        @template_body = template
+
+        # TODO push this into StackUpdater
+        begin
+          @entry.set_attributes attributes
+          stack_updater.update_stack_if_parameters_changed attributes
+          @logger.info "Update complete for #{@name}."
+          true
+        rescue Exception => ex
+          raise Exceptions::CloudFormationError.new ex.message
+        end
+        @entry.save
       else
         @logger.info "Not clear to update."
         false
@@ -118,20 +129,20 @@ module SimpleDeploy
     def exists?
       stack.status
       true
-    rescue Stackster::Exceptions::UnknownStack
+    rescue Exceptions::UnknownStack
       false
     end
 
     def attributes
-      stack_reader.attributes 
+      stack_reader.attributes
     end
 
     def parameters
-      stack.parameters 
+      stack.parameters
     end
 
     def template
-      JSON.parse stack.template
+      stack_reader.template
     end
 
     private
@@ -147,6 +158,13 @@ module SimpleDeploy
       @stack_creator ||= StackCreator.new :name          => @name,
                                           :entry         => @entry,
                                           :template_file => @template_file,
+                                          :config        => @config
+    end
+
+    def stack_updater
+      @stack_updater ||= StackUpdater.new :name          => @name,
+                                          :entry         => @entry,
+                                          :template_body => @template_body,
                                           :config        => @config
     end
 
