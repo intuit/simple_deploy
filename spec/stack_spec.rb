@@ -27,18 +27,6 @@ describe SimpleDeploy do
     @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
                                      :logger      => @logger_stub,
                                      :environment => 'test-env'
-
-    @main_attributes = {
-      'chef_repo_bucket_prefix' => 'test-prefix',
-      'chef_repo_domain' => 'test-domain' 
-    }
-
-    @stack_mock = mock 'stack'
-
-    @expected_attributes = [
-      { 'chef_repo' => 'test123' },
-      { 'CookBooksURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz' }
-    ]
   end
 
   describe "creating a stack" do
@@ -347,24 +335,24 @@ describe SimpleDeploy do
     before do
       @stack = SimpleDeploy::Stack.new :environment => 'test-env',
                                        :name        => 'test-stack',
-                                       :logger      => 'my-logger',
+                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
       @deployment_mock = mock "deployment"
       @stack.stub(:deployment).and_return(@deployment_mock)
     end
 
-    pending "should call exec on deployment" do
+    it "should call exec on deployment" do
       @deployment_mock.should_receive(:execute).with(true).and_return true
       @stack.deploy(true).should be_true
     end
 
-    pending "should not force the deployment by default" do
+    it "should not force the deployment by default" do
       @deployment_mock.should_receive(:execute).with(false).and_return true
       @stack.deploy.should be_true
     end
 
-    pending "should return false if the deployment fails" do
+    it "should return false if the deployment fails" do
       @deployment_mock.should_receive(:execute).with(false).and_return false
       @stack.deploy.should be_false
     end
@@ -374,20 +362,20 @@ describe SimpleDeploy do
     before do
       @stack = SimpleDeploy::Stack.new :environment => 'test-env',
                                        :name        => 'test-stack',
-                                       :logger      => 'my-logger',
+                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
       @execute_mock = mock "execute"
       @stack.stub(:executer).and_return(@execute_mock)
     end
 
-    pending "should call exec with the given args" do
+    it "should call exec with the given args" do
       @execute_mock.should_receive(:execute).
                     with(:arg => 'val').and_return true
       @stack.execute(:arg => 'val').should be_true
     end
 
-    pending "should return false if the exec fails" do
+    it "should return false if the exec fails" do
       @execute_mock.should_receive(:execute).
                     with(:arg => 'val').and_return false
       @stack.execute(:arg => 'val').should be_false
@@ -396,46 +384,52 @@ describe SimpleDeploy do
 
   describe "wait_for_stable" do
     before do
+      @status_mock = mock 'status'
       @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
-                                       :logger      => 'my-logger',
+                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
-      @stack_mock.stub(:attributes).and_return({})
-      Stackster::Stack.should_receive(:new).
-                       with(:name        => 'test-stack',
-                            :config      => @environment_config_mock,
-                            :logger      => @logger_stub).
-                       and_return @stack_mock
     end
 
-    pending "should call wait_for_stable on stackster stack" do
-      @stack_mock.should_receive(:wait_for_stable)
+    it "should call wait_for_stable on status" do
+      SimpleDeploy::Status.should_receive(:new).
+                           with(:name   => 'test-stack',
+                                :config => @config_stub).
+                           and_return @status_mock
+      @status_mock.should_receive(:wait_for_stable)
+
       @stack.wait_for_stable
     end
   end
 
   describe "exists?" do
     before do
+      @stack_reader_mock = mock 'stack reader'
       @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
-                                       :logger      => 'my-logger',
+                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
-      @stack_mock.stub(:attributes).and_return({})
-      Stackster::Stack.should_receive(:new).
-                       with(:name        => 'test-stack',
-                            :config      => @environment_config_mock,
-                            :logger      => @logger_stub).
-                       and_return @stack_mock
     end
 
-    pending "should return true if stack exists" do
-      @stack_mock.stub :status => 'CREATE_COMPLTE'
+    it "should return true if stack exists" do
+      SimpleDeploy::StackReader.should_receive(:new).
+                                with(:name   => 'test-stack',
+                                     :config => @config_stub).
+                                and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:status).and_return('CREATE_COMPLETE')
+
       @stack.exists?.should be_true
     end
 
-    pending "should return false if the stack does not exist" do
-      @stack_mock.should_receive(:status).
-                  and_raise Stackster::Exceptions::UnknownStack.new 'Stack:test-stack does not exist'
+    it "should return false if the stack does not exist" do
+      SimpleDeploy::StackReader.should_receive(:new).
+                                with(:name   => 'test-stack',
+                                     :config => @config_stub).
+                                and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:status).
+                         and_raise(SimpleDeploy::Exceptions::UnknownStack.new(
+                                  'Stack:test-stack does not exist'))
+
       @stack.exists?.should be_false
     end
   end

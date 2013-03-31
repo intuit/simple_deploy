@@ -3,9 +3,10 @@ require 'simple_deploy/stack/execute'
 require 'simple_deploy/stack/output_mapper'
 require 'simple_deploy/stack/stack_attribute_formater'
 require 'simple_deploy/stack/stack_creator'
+require 'simple_deploy/stack/stack_destroyer'
 require 'simple_deploy/stack/stack_reader'
 require 'simple_deploy/stack/stack_updater'
-require 'simple_deploy/stack/stack_destroyer'
+require 'simple_deploy/stack/status'
 
 module SimpleDeploy
   class Stack
@@ -103,15 +104,15 @@ module SimpleDeploy
     end
 
     def events(limit)
-      stack.events limit
+      stack_reader.events limit
     end
 
     def outputs
-      stack.outputs
+      stack_reader.outputs
     end
 
     def resources
-      stack.resources
+      stack_reader.resources
     end
 
     def instances
@@ -127,15 +128,15 @@ module SimpleDeploy
     end
 
     def status
-      stack.status
+      stack_reader.status
     end
 
     def wait_for_stable
-      stack.wait_for_stable
+      stack_status.wait_for_stable
     end
 
     def exists?
-      stack.status
+      status
       true
     rescue Exceptions::UnknownStack
       false
@@ -146,7 +147,7 @@ module SimpleDeploy
     end
 
     def parameters
-      stack.parameters
+      stack_reader.parameters
     end
 
     def template
@@ -154,13 +155,6 @@ module SimpleDeploy
     end
 
     private
-
-    def stack
-      stack_config = @config.environment @environment
-      @stack ||= Stack.new :name        => @name,
-                           :config      => stack_config,
-                           :logger      => @logger
-    end
 
     def stack_creator
       @stack_creator ||= StackCreator.new :name          => @name,
@@ -184,6 +178,11 @@ module SimpleDeploy
     def stack_destroyer
       @stack_destroyer ||= StackDestroyer.new :name   => @name,
                                               :config => @config
+    end
+
+    def stack_status
+      @status ||= Status.new :name   => @name,
+                             :config => @config
     end
 
     def stack_attribute_formater
