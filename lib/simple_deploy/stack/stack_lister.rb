@@ -2,7 +2,7 @@ module SimpleDeploy
   class StackLister
 
     def initialize(args = {})
-      @config = Config.new(:config => args[:config])
+      @config = args[:config]
     end
 
     def all

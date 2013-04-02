@@ -1,3 +1,5 @@
+require 'simple_deploy/entry/entry_lister'
+
 module SimpleDeploy
   class Entry
     attr_accessor :name
