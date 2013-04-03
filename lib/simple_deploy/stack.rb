@@ -15,7 +15,7 @@ module SimpleDeploy
       @environment = args[:environment]
       @name = args[:name]
 
-      @config = Config.new :logger => args[:logger]
+      @config = args[:config] || Config.new(:logger => args[:logger])
       @logger = @config.logger
 
       @use_internal_ips = !!args[:internal]
