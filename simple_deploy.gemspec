@@ -21,6 +21,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency "fakefs", "~> 0.4.2"
   s.add_development_dependency "rake"
   s.add_development_dependency "rspec", "~> 2.13.0"
+  s.add_development_dependency "simplecov", "~> 0.7.1"
+  s.add_development_dependency "timecop", "~> 0.6.1"
 
   s.add_runtime_dependency "capistrano", "= 2.13.5"
   s.add_runtime_dependency "tinder", "= 1.8.0"
