@@ -7,7 +7,7 @@ module SimpleDeploy
     def initialize(args)
       @domain = 'stacks'
       @config = args[:config]
-      @logger = @config.logger
+      @logger = args[:logger]
       @custom_attributes = {}
       self.name = region_specific_name args[:name]
       create_domain

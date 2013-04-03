@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SimpleDeploy do
+describe SimpleDeploy::Config do
   let(:config_data) do
     { 'environments' => {
         'test_env' => {
