@@ -46,7 +46,7 @@ EOS
           template_file.write source_stack.template.to_json
         end
 
-        rescue_stackster_exceptions_and_exit do
+        rescue_exceptions_and_exit do
           new_stack.create :attributes => new_attributes,
                            :template   => template_file_path
         end

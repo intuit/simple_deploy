@@ -30,10 +30,10 @@ EOS
         config = Config.new.environment @opts[:environment]
         stacks = SimpleDeploy::StackLister.new(:config => config).all.sort
 
-        #stack = Stack.new :environment => @opts[:environment],
-        #                  :name        => @opts[:name],
-        #                  :config      => config,
-        #                  :logger      => logger
+        stack = Stack.new :environment => @opts[:environment],
+                          :name        => @opts[:name],
+                          :config      => config,
+                          :logger      => logger
         puts stacks
       end
 

@@ -39,9 +39,9 @@ module SimpleDeploy
         self.class.name.split('::').last.downcase
       end
 
-      def rescue_stackster_exceptions_and_exit
+      def rescue_exceptions_and_exit
         yield
-      rescue Stackster::Exceptions::Base
+      rescue SimpleDeploy::Exceptions::Base
         exit 1
       end
 

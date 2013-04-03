@@ -69,7 +69,7 @@ EOS
           proceed = true
 
           if new_attributes.any?
-            rescue_stackster_exceptions_and_exit do
+            rescue_exceptions_and_exit do
               proceed = stack.update :force      => @opts[:force], 
                                      :attributes => new_attributes
             end
