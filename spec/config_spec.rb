@@ -61,7 +61,10 @@ describe SimpleDeploy do
     end
 
     it "should return the environment requested" do
-      @config.environment('test_env').should == ({ 'secret_key' => 'secret', 'access_key' => 'access', 'region' => 'us-west-1' })
+      env_config = @config.environment 'test_env'
+      env_config.access_key.should == 'access'
+      env_config.secret_key.should == 'secret'
+      env_config.region.should == 'us-west-1'
     end
 
     it "should return the notifications available" do
