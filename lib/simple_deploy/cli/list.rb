@@ -1,5 +1,7 @@
 require 'trollop'
 
+require 'simple_deploy/stack/stack_lister'
+
 module SimpleDeploy
   module CLI
 
@@ -26,7 +28,7 @@ EOS
                        :required => [:environment]
 
         config = Config.new.environment @opts[:environment]
-        stacks = Stackster::StackLister.new(:config => config).all.sort
+        stacks = SimpleDeploy::StackLister.new(:config => config).all.sort
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],

@@ -67,9 +67,9 @@ describe SimpleDeploy::CLI::Shared do
     @object.command_name.should == 'object'
   end
 
-  it "should rescue stackster exceptions and exit 1" do
-    lambda { @object.rescue_stackster_exceptions_and_exit do
-               raise Stackster::Exceptions::Base
+  it "should rescue exceptions and exit 1" do
+    lambda { @object.rescue_exceptions_and_exit do
+               raise SimpleDeploy::Exceptions::Base
              end 
            }.should raise_error SystemExit
   end

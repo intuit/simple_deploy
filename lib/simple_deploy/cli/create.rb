@@ -41,7 +41,7 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
                           :config      => @config,
                           :logger      => logger
 
-        rescue_stackster_exceptions_and_exit do
+        rescue_exceptions_and_exit do
           stack.create :attributes => merged_attributes,
                        :template   => @opts[:template]
         end

@@ -15,5 +15,10 @@ module SimpleDeploy
     class Exceptions::NoInstances < Base
     end
 
+    class CloudFormationError < Base
+    end
+
+    class UnknownStack < Base
+    end
   end
 end

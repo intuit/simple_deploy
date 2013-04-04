@@ -1,3 +1,5 @@
+require 'ostruct'
+
 module SimpleDeploy
   class Config
 
@@ -36,15 +38,23 @@ module SimpleDeploy
 
     def environment(name)
       raise "Environment not found" unless environments.include? name
-      environments[name]
+      OpenStruct.new environments[name]
     end
 
     def notifications
       config['notifications']
     end
 
+    def access_key(name)
+      environment(name).access_key
+    end
+
+    def secret_key(name)
+      environment(name).secret_key
+    end
+
     def region(name)
-      environment(name)['region']
+      environment(name).region
     end
 
     private

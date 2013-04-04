@@ -45,10 +45,9 @@ module SimpleDeploy
     private
 
     def stack
-      @stack ||= Stackster::Stack.new :environment => @environment,
-                                      :name        => @stack_name,
-                                      :config      => @config.environment(@environment),
-                                      :logger      => @logger
+      @stack ||= Stack.new :environment => @environment,
+                           :name        => @stack_name,
+                           :logger      => @logger
     end
 
   end

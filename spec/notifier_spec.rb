@@ -35,16 +35,12 @@ describe SimpleDeploy do
       stack_mock = mock 'stack'
       campfire_mock = mock 'campfire mock'
       environment_mock = mock 'environment mock'
-      @config_mock.should_receive(:environment).
-                   with('test').
-                   and_return environment_mock
       @config_mock.should_receive(:region).with('test').and_return('us-west-1')
-      Stackster::Stack.should_receive(:new).
-                       with(:environment => 'test',
-                            :name        => 'stack_name',
-                            :config      => environment_mock,
-                            :logger      => @logger_mock).
-                       and_return stack_mock
+      SimpleDeploy::Stack.should_receive(:new).
+                          with(:environment => 'test',
+                               :name        => 'stack_name',
+                               :logger      => @logger_mock).
+                          and_return stack_mock
       stack_mock.should_receive(:attributes).
                  and_return({ 'app_github_url'       => 'http://github.com/user/app',
                               'chef_repo_github_url' => 'http://github.com/user/chef_repo',

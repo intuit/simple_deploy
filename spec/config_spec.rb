@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SimpleDeploy do
+describe SimpleDeploy::Config do
   let(:config_data) do
     { 'environments' => {
         'test_env' => {
@@ -61,11 +61,22 @@ describe SimpleDeploy do
     end
 
     it "should return the environment requested" do
-      @config.environment('test_env').should == ({ 'secret_key' => 'secret', 'access_key' => 'access', 'region' => 'us-west-1' })
+      env_config = @config.environment 'test_env'
+      env_config.access_key.should == 'access'
+      env_config.secret_key.should == 'secret'
+      env_config.region.should == 'us-west-1'
     end
 
     it "should return the notifications available" do
       @config.notifications.should == ( { 'campfire' => { 'token' => 'my_token' } } )
+    end
+
+    it "should return the access_key for the environment" do
+      @config.access_key('test_env').should == 'access'
+    end
+
+    it "should return the secret_key for the environment" do
+      @config.secret_key('test_env').should == 'secret'
     end
 
     it "should return the region for the environment" do

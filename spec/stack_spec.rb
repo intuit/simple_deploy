@@ -10,74 +10,115 @@ describe SimpleDeploy do
     @config_stub.stub(:environment).and_return(@environment_config_mock)
     @config_stub.stub(:artifacts).and_return(['chef_repo', 'cookbooks', 'app'])
     @config_stub.stub(:artifact_cloud_formation_url).and_return('CookBooksURL')
-
+    @config_stub.stub(:access_key).and_return('access')
+    @config_stub.stub(:secret_key).and_return('secret')
     SimpleDeploy::Config.should_receive(:new).
                          at_least(:once).
-                         with(:logger => 'my-logger').
+                         with(:logger => @logger_stub).
                          and_return @config_stub
+
+    @entry_mock = mock 'entry mock'
+    SimpleDeploy::Entry.should_receive(:new).
+                        at_least(:once).
+                        with(:name => 'test-stack',
+                             :config => @config_stub).
+                        and_return @entry_mock
+
     @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
-                                     :logger      => 'my-logger',
-                                     :config      => @config_stub
-
-    @main_attributes = {
-      'chef_repo_bucket_prefix' => 'test-prefix',
-      'chef_repo_domain' => 'test-domain' 
-    }
-
-    @stack_mock = mock 'stackster stack'
-
-    @expected_attributes = [
-      { 'chef_repo' => 'test123' },
-      { 'CookBooksURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz' }
-    ]
+                                     :logger      => @logger_stub,
+                                     :environment => 'test-env'
   end
 
   describe "creating a stack" do
     before do
-      @stack_mock.stub(:attributes).and_return({})
-    end
-
-    it "should set the attributes using what is passed to the create command" do
-      Stackster::Stack.should_receive(:new).with(:name        => 'test-stack',
-                                                 :config      => @environment_config_mock,
-                                                 :logger      => @logger_stub).
-                                            and_return @stack_mock
-
-      expecteds = [
-        { 'chef_repo' => 'test123' },
-        { 'chef_repo_bucket_prefix' => 'test-prefix' },
-        { 'chef_repo_domain' => 'test-domain' },
-        { 'CookBooksURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz' }
-      ]
-      @stack_mock.should_receive(:create).with :attributes => expecteds,
-                                               :template   => 'some_json'
-
-      attributes = [
+      @stack_creator_mock = mock 'stack creator'
+      @new_attributes = [
         { 'chef_repo' => 'test123' },
         { 'chef_repo_bucket_prefix' => 'test-prefix' },
         { 'chef_repo_domain' => 'test-domain' }
       ]
 
-      @stack.create :attributes => attributes, :template => 'some_json'
+      @expected_attributes = @new_attributes +
+        [{ 'CookBooksURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz' }]
+    end
+
+    it "should set the attributes using what is passed to the create command" do
+      @entry_mock.should_receive(:attributes).and_return({})
+      @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
+      @entry_mock.should_receive(:save).and_return(true)
+
+      SimpleDeploy::StackCreator.should_receive(:new).
+                                 with(:name          => 'test-stack',
+                                      :entry         => @entry_mock,
+                                      :template_file => 'some_json',
+                                      :config        => @config_stub).
+                                and_return @stack_creator_mock
+      @stack_creator_mock.should_receive(:create)
+        
+      @stack.create :attributes => @new_attributes, :template => 'some_json'
+    end
+
+    it "should raise CloudFormationError if the create fails" do
+      @entry_mock.should_receive(:attributes).and_return({})
+      @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
+      @entry_mock.should_receive(:save).never
+
+      SimpleDeploy::StackCreator.should_receive(:new).
+                                 with(:name          => 'test-stack',
+                                      :entry         => @entry_mock,
+                                      :template_file => 'some_json',
+                                      :config        => @config_stub).
+                                and_return @stack_creator_mock
+      @stack_creator_mock.should_receive(:create).
+                          and_raise(Exception.new('cf failure'))
+
+      expect {
+        @stack.create :attributes => @new_attributes, :template => 'some_json'
+      }.to raise_error(SimpleDeploy::Exceptions::CloudFormationError, 'cf failure')
     end
   end
 
   describe "updating a stack" do
     before do
-      @stack_mock.stub(:attributes).and_return(@main_attributes)
+      @stack_updater_mock = mock 'stack updater'
+      @stack_reader_mock = mock 'stack reader'
+      @new_attributes = [
+        { 'chef_repo' => 'test123' },
+        { 'chef_repo_bucket_prefix' => 'test-prefix' },
+        { 'chef_repo_domain' => 'test-domain' }
+      ]
+
+      @expected_attributes = [
+        { 'chef_repo' => 'test123' },
+        { 'chef_repo_bucket_prefix' => 'test-prefix' },
+        { 'chef_repo_domain' => 'test-domain' },
+        { 'CookBooksURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz' }
+      ]
     end
 
     it "should update when the deployment is not locked" do
       deployment_stub = stub 'deployment', :clear_for_deployment? => true
       @stack.stub(:deployment).and_return(deployment_stub)
 
-      Stackster::Stack.should_receive(:new).with(:name        => 'test-stack',
-                                                 :config      => @environment_config_mock,
-                                                 :logger      => @logger_stub).
-                                            and_return @stack_mock
-      @stack_mock.should_receive(:update).with :attributes => @expected_attributes
+      @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
+      @entry_mock.should_receive(:save).and_return(true)
 
-      @stack.update(:attributes => [{ 'chef_repo' => 'test123' }]).should be_true
+      SimpleDeploy::StackUpdater.should_receive(:new).
+                                 with(:name          => 'test-stack',
+                                      :entry         => @entry_mock,
+                                      :template_body => 'some_json',
+                                      :config        => @config_stub).
+                                 and_return @stack_updater_mock
+      @stack_updater_mock.should_receive(:update_stack_if_parameters_changed).
+                          and_return(true)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return({})
+      @stack_reader_mock.should_receive(:template).and_return('some_json')
+
+      @stack.update(:attributes => @new_attributes).should be_true
     end
 
     it "should not update when the deployment is locked and force is not set" do
@@ -85,7 +126,6 @@ describe SimpleDeploy do
       @stack.stub(:deployment).and_return(deployment_stub)
 
       SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
-      Stackster::Stack.should_not_receive(:new)
 
       @stack.update(:attributes => { 'arg1' => 'val' }).should_not be_true
     end
@@ -97,13 +137,25 @@ describe SimpleDeploy do
       @stack.stub(:deployment).and_return(deployment_mock)
       @stack.stub(:sleep).and_return(false)
 
-      Stackster::Stack.should_receive(:new).with(:name        => 'test-stack',
-                                                 :config      => @environment_config_mock,
-                                                 :logger      => @logger_stub).
-                                            and_return @stack_mock
-      @stack_mock.should_receive(:update).with :attributes => @expected_attributes
+      @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
+      @entry_mock.should_receive(:save).and_return(true)
 
-      @stack.update(:force => true, :attributes => [{ 'chef_repo' => 'test123' }]).should be_true
+      SimpleDeploy::StackUpdater.should_receive(:new).
+                                 with(:name          => 'test-stack',
+                                      :entry         => @entry_mock,
+                                      :template_body => 'some_json',
+                                      :config        => @config_stub).
+                                 and_return @stack_updater_mock
+      @stack_updater_mock.should_receive(:update_stack_if_parameters_changed).
+                          and_return(true)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return({})
+      @stack_reader_mock.should_receive(:template).and_return('some_json')
+
+      @stack.update(:force => true, :attributes => @new_attributes).should be_true
     end
 
     it "should not update when the deployment is locked and force is set false" do
@@ -111,93 +163,157 @@ describe SimpleDeploy do
       @stack.stub(:deployment).and_return(deployment_stub)
 
       SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
-      Stackster::Stack.should_not_receive(:new)
 
       @stack.update(:force => false, :attributes => { 'arg1' => 'val' }).should_not be_true
+    end
+
+    it "should raise CloudFormationError if the update fails" do
+      deployment_stub = stub 'deployment', :clear_for_deployment? => true
+      @stack.stub(:deployment).and_return(deployment_stub)
+
+      @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
+      @entry_mock.should_receive(:save).never
+
+      SimpleDeploy::StackUpdater.should_receive(:new).
+                                 with(:name          => 'test-stack',
+                                      :entry         => @entry_mock,
+                                      :template_body => 'some_json',
+                                      :config        => @config_stub).
+                                 and_return @stack_updater_mock
+      @stack_updater_mock.should_receive(:update_stack_if_parameters_changed).
+                          and_raise(Exception.new('cf failure'))
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return({})
+      @stack_reader_mock.should_receive(:template).and_return('some_json')
+
+      expect {
+        @stack.update :attributes => @new_attributes
+      }.to raise_error(SimpleDeploy::Exceptions::CloudFormationError, 'cf failure')
     end
   end
 
   describe "destroying a stack" do
-    it "should destroy if the stack is not protected" do
-      stack_mock = mock 'stackster stack mock', :attributes => { 'protection' => 'off' }
-      @stack.stub(:stack) { stack_mock }
+    before do
+      @stack_reader_mock = mock 'stack reader'
+      @stack_destroyer_mock = mock 'stack destroyer'
+    end
 
-      stack_mock.should_receive(:destroy)
+    it "should destroy if the stack is not protected" do
+      @entry_mock.should_receive(:delete_attributes)
+
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return('protection' => 'off')
+      SimpleDeploy::StackDestroyer.should_receive(:new).
+                                   with(:name   => 'test-stack',
+                                        :config => @config_stub).
+                                   and_return @stack_destroyer_mock
+      @stack_destroyer_mock.should_receive(:destroy).and_return(true)
 
       @stack.destroy.should be_true
     end
 
     it "should not destroy if the stack is protected" do
-      stack_mock = mock 'stackster stack mock', :attributes => { 'protection' => 'on' }
-      @stack.stub(:stack) { stack_mock }
+      @entry_mock.should_receive(:delete_attributes).never
 
-      stack_mock.should_not_receive(:destroy)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return('protection' => 'on')
+      SimpleDeploy::StackDestroyer.should_receive(:new).never
 
       @stack.destroy.should_not be_true
     end
 
     it "should destroy if protection is undefined" do
-      stack_mock = mock 'stackster stack mock', :attributes => {}
-      @stack.stub(:stack) { stack_mock }
+      @entry_mock.should_receive(:delete_attributes)
 
-      stack_mock.should_receive(:destroy)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return({})
+      SimpleDeploy::StackDestroyer.should_receive(:new).
+                                   with(:name   => 'test-stack',
+                                        :config => @config_stub).
+                                   and_return @stack_destroyer_mock
+      @stack_destroyer_mock.should_receive(:destroy).and_return(true)
 
       @stack.destroy.should be_true
     end
 
-    it "should not create a deployment" do
-      @stack.should_not_receive(:deployment)
+    it "should raise CloudFormationError if the destroy fails" do
+      @entry_mock.should_receive(:delete_attributes).never
 
-      stack_mock = mock 'stackster stack mock', :attributes => { 'protection' => 'off' }
-      @stack.stub(:stack) { stack_mock }
-      stack_mock.should_receive(:destroy)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:attributes).and_return('protection' => 'off')
+      SimpleDeploy::StackDestroyer.should_receive(:new).
+                                   with(:name   => 'test-stack',
+                                        :config => @config_stub).
+                                   and_return @stack_destroyer_mock
+      @stack_destroyer_mock.should_receive(:destroy).
+                            and_raise(Exception.new('cf failure'))
 
-      @stack.destroy.should be_true
+      expect {
+        @stack.destroy
+      }.to raise_error(SimpleDeploy::Exceptions::CloudFormationError, 'cf failure')
     end
   end
 
   describe 'instances' do
     before do
-      @instances = [{ 'instancesSet' => [{ 'ipAddress' => '50.40.30.20', 'privateIpAddress' => '10.1.2.3' }] }]
-      @environment_config_mock.stub(:[])
+      @stack_reader_mock = mock 'stack reader'
+
+      @instances = [
+        { 'instancesSet' => [{ 'ipAddress' => '50.40.30.20',
+                               'privateIpAddress' => '10.1.2.3' }] }
+      ]
     end
 
     it 'should use the private IP when vpc' do
-      stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                      :name        => 'test-stack',
-                                      :logger      => 'my-logger',
-                                      :config      => @config_stub,
-                                      :internal    => false
-      stack.stub(:stack) { @stack_mock }
-
       @instances.first['instancesSet'].first['vpcId'] = 'my-vpc'
-      @stack_mock.stub(:instances).and_return(@instances)
 
-      stack.instances.should == ['10.1.2.3']
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:instances).and_return(@instances)
+
+      @stack.instances.should == ['10.1.2.3']
     end
 
     it 'should use the private IP when internal' do
-      stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                      :name        => 'test-stack',
-                                      :logger      => 'my-logger',
-                                      :config      => @config_stub,
+      stack = SimpleDeploy::Stack.new :name        => 'test-stack',
+                                      :logger      => @logger_stub,
+                                      :environment => 'test-env',
                                       :internal    => true
-      stack.stub(:stack) { @stack_mock }
-      @stack_mock.stub(:instances).and_return(@instances)
+
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
       stack.instances.should == ['10.1.2.3']
     end
 
     it 'should use the public IP when not vpc and not internal' do
-      stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                      :name        => 'test-stack',
-                                      :logger      => 'my-logger',
-                                      :config      => @config_stub,
-                                      :internal    => false
-      stack.stub(:stack) { @stack_mock }
-      @stack_mock.stub(:instances).and_return(@instances)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
-      stack.instances.should == ['50.40.30.20']
+      @stack.instances.should == ['50.40.30.20']
     end
 
     it 'should handle instanceSets with multiple intances' do
@@ -205,15 +321,13 @@ describe SimpleDeploy do
         { 'ipAddress' => '50.40.30.20', 'privateIpAddress' => '10.1.2.3' },
         { 'ipAddress' => '50.40.30.21', 'privateIpAddress' => '10.1.2.4' }] }]
 
-      stack = SimpleDeploy::Stack.new :environment => 'test-env',
-                                      :name        => 'test-stack',
-                                      :logger      => 'my-logger',
-                                      :config      => @config_stub,
-                                      :internal    => false
-      stack.stub(:stack) { @stack_mock }
-      @stack_mock.stub(:instances).and_return(@instances)
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack',
+                                      :config => @config_stub).
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
-      stack.instances.should == ['50.40.30.20', '50.40.30.21']
+      @stack.instances.should == ['50.40.30.20', '50.40.30.21']
     end
   end
 
@@ -221,7 +335,7 @@ describe SimpleDeploy do
     before do
       @stack = SimpleDeploy::Stack.new :environment => 'test-env',
                                        :name        => 'test-stack',
-                                       :logger      => 'my-logger',
+                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
       @deployment_mock = mock "deployment"
@@ -248,7 +362,7 @@ describe SimpleDeploy do
     before do
       @stack = SimpleDeploy::Stack.new :environment => 'test-env',
                                        :name        => 'test-stack',
-                                       :logger      => 'my-logger',
+                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
       @execute_mock = mock "execute"
@@ -270,46 +384,52 @@ describe SimpleDeploy do
 
   describe "wait_for_stable" do
     before do
+      @status_mock = mock 'status'
       @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
-                                       :logger      => 'my-logger',
+                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
-      @stack_mock.stub(:attributes).and_return({})
-      Stackster::Stack.should_receive(:new).
-                       with(:name        => 'test-stack',
-                            :config      => @environment_config_mock,
-                            :logger      => @logger_stub).
-                       and_return @stack_mock
     end
 
-    it "should call wait_for_stable on stackster stack" do
-      @stack_mock.should_receive(:wait_for_stable)
+    it "should call wait_for_stable on status" do
+      SimpleDeploy::Status.should_receive(:new).
+                           with(:name   => 'test-stack',
+                                :config => @config_stub).
+                           and_return @status_mock
+      @status_mock.should_receive(:wait_for_stable)
+
       @stack.wait_for_stable
     end
   end
 
   describe "exists?" do
     before do
+      @stack_reader_mock = mock 'stack reader'
       @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
-                                       :logger      => 'my-logger',
+                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
-      @stack_mock.stub(:attributes).and_return({})
-      Stackster::Stack.should_receive(:new).
-                       with(:name        => 'test-stack',
-                            :config      => @environment_config_mock,
-                            :logger      => @logger_stub).
-                       and_return @stack_mock
     end
 
     it "should return true if stack exists" do
-      @stack_mock.stub :status => 'CREATE_COMPLTE'
+      SimpleDeploy::StackReader.should_receive(:new).
+                                with(:name   => 'test-stack',
+                                     :config => @config_stub).
+                                and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:status).and_return('CREATE_COMPLETE')
+
       @stack.exists?.should be_true
     end
 
     it "should return false if the stack does not exist" do
-      @stack_mock.should_receive(:status).
-                  and_raise Stackster::Exceptions::UnknownStack.new 'Stack:test-stack does not exist'
+      SimpleDeploy::StackReader.should_receive(:new).
+                                with(:name   => 'test-stack',
+                                     :config => @config_stub).
+                                and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:status).
+                         and_raise(SimpleDeploy::Exceptions::UnknownStack.new(
+                                  'Stack:test-stack does not exist'))
+
       @stack.exists?.should be_false
     end
   end

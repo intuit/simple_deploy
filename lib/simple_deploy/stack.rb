@@ -1,8 +1,14 @@
-require 'stackster'
 require 'simple_deploy/stack/deployment'
 require 'simple_deploy/stack/execute'
 require 'simple_deploy/stack/output_mapper'
 require 'simple_deploy/stack/stack_attribute_formater'
+require 'simple_deploy/stack/stack_creator'
+require 'simple_deploy/stack/stack_destroyer'
+require 'simple_deploy/stack/stack_formatter'
+require 'simple_deploy/stack/stack_lister'
+require 'simple_deploy/stack/stack_reader'
+require 'simple_deploy/stack/stack_updater'
+require 'simple_deploy/stack/status'
 
 module SimpleDeploy
   class Stack
@@ -10,16 +16,32 @@ module SimpleDeploy
     def initialize(args)
       @environment = args[:environment]
       @name = args[:name]
-      @config = Config.new :logger => args[:logger]
+
+      @config = args[:config] || Config.new(:logger => args[:logger])
       @logger = @config.logger
 
       @use_internal_ips = !!args[:internal]
+      @entry = Entry.new :name   => @name,
+                         :config => @config
     end
 
     def create(args)
       attributes = stack_attribute_formater.updated_attributes args[:attributes]
-      stack.create :attributes => attributes,
-                   :template   => args[:template]
+      @template_file = args[:template]
+
+      # TODO push this into StackCreator
+      begin
+        @entry.set_attributes attributes
+        stack_creator.create
+      rescue Exception => ex
+        raise Exceptions::CloudFormationError.new ex.message
+      end
+      
+      # TODO
+      #   - examine the returned Excon::Response
+      #   - perhaps move AWS::CloudFormation::Error process method to a util
+      #   class or module
+      @entry.save
     end
 
     def update(args)
@@ -35,9 +57,18 @@ module SimpleDeploy
       if deployment.clear_for_deployment?
         @logger.info "Updating #{@name}."
         attributes = stack_attribute_formater.updated_attributes args[:attributes]
-        stack.update :attributes => attributes
-        @logger.info "Update complete for #{@name}."
-        true
+        @template_body = template
+
+        # TODO push this into StackUpdater
+        begin
+          @entry.set_attributes attributes
+          stack_updater.update_stack_if_parameters_changed attributes
+          @logger.info "Update complete for #{@name}."
+          true
+        rescue Exception => ex
+          raise Exceptions::CloudFormationError.new ex.message
+        end
+        @entry.save
       else
         @logger.info "Not clear to update."
         false
@@ -58,7 +89,14 @@ module SimpleDeploy
 
     def destroy
       if attributes['protection'] != 'on'
-        stack.destroy
+        # TODO push this into StackDestroyer
+        begin
+          stack_destroyer.destroy
+        rescue Exception => ex
+          raise Exceptions::CloudFormationError.new ex.message
+        end
+
+        @entry.delete_attributes
         @logger.info "#{@name} destroyed."
         true
       else
@@ -68,19 +106,19 @@ module SimpleDeploy
     end
 
     def events(limit)
-      stack.events limit
+      stack_reader.events limit
     end
 
     def outputs
-      stack.outputs
+      stack_reader.outputs
     end
 
     def resources
-      stack.resources
+      stack_reader.resources
     end
 
     def instances
-      stack.instances.map do |instance| 
+      stack_reader.instances.map do |instance| 
         instance['instancesSet'].map do |info|
           if info['vpcId'] || @use_internal_ips
             info['privateIpAddress']
@@ -92,41 +130,63 @@ module SimpleDeploy
     end
 
     def status
-      stack.status
+      stack_reader.status
     end
 
     def wait_for_stable
-      stack.wait_for_stable
+      stack_status.wait_for_stable
     end
 
     def exists?
-      stack.status
+      status
       true
-    rescue Stackster::Exceptions::UnknownStack
+    rescue Exceptions::UnknownStack
       false
     end
 
     def attributes
-      stack.attributes 
+      stack_reader.attributes
     end
 
     def parameters
-      stack.parameters 
+      stack_reader.parameters
     end
 
     def template
-      JSON.parse stack.template
+      stack_reader.template
     end
 
     private
 
-    def stack
-      stackster_config = @config.environment @environment
-      @stack ||= Stackster::Stack.new :name        => @name,
-                                      :config      => stackster_config,
-                                      :logger      => @logger
+    def stack_creator
+      @stack_creator ||= StackCreator.new :name          => @name,
+                                          :entry         => @entry,
+                                          :template_file => @template_file,
+                                          :config        => @config
     end
-    
+
+    def stack_updater
+      @stack_updater ||= StackUpdater.new :name          => @name,
+                                          :entry         => @entry,
+                                          :template_body => @template_body,
+                                          :config        => @config
+    end
+
+    def stack_reader
+      @stack_reader ||= StackReader.new :name   => @name,
+                                        :config => @config
+    end
+
+    def stack_destroyer
+      @stack_destroyer ||= StackDestroyer.new :name   => @name,
+                                              :config => @config
+    end
+
+    def stack_status
+      @status ||= Status.new :name   => @name,
+                             :config => @config
+    end
+
     def stack_attribute_formater
       @saf ||= StackAttributeFormater.new :config          => @config,
                                           :environment     => @environment,

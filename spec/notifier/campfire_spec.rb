@@ -12,13 +12,11 @@ describe SimpleDeploy do
       @tinder_mock = mock 'tinder'
       @config_mock.should_receive(:logger).and_return @logger_mock
       @config_mock.should_receive(:notifications).and_return config
-      @config_mock.should_receive(:environment).and_return 'env_config'
-      Stackster::Stack.should_receive(:new).
-                       with(:environment => 'test',
-                            :name        => 'stack_name',
-                            :config      => 'env_config',
-                            :logger      => @logger_mock).
-                       and_return @stack_mock
+      SimpleDeploy::Stack.should_receive(:new).
+                          with(:environment => 'test',
+                               :name        => 'stack_name',
+                               :logger      => @logger_mock).
+                          and_return @stack_mock
 
       Tinder::Campfire.should_receive(:new).
                        with("subdom", { :token=>"tkn", :ssl_options=> { :verify => false } }).and_return @tinder_mock
@@ -65,13 +63,11 @@ describe SimpleDeploy do
       @logger_mock = mock 'logger mock'
       @tinder_mock = mock 'tinder'
       @config_mock.should_receive(:logger).and_return @logger_mock
-      @config_mock.should_receive(:environment).and_return 'env_config'
-      Stackster::Stack.should_receive(:new).
-                       with(:environment => 'test',
-                            :name        => 'stack_name',
-                            :config      => 'env_config',
-                            :logger      => @logger_mock).
-                       and_return @stack_mock
+      SimpleDeploy::Stack.should_receive(:new).
+                          with(:environment => 'test',
+                               :name        => 'stack_name',
+                               :logger      => @logger_mock).
+                          and_return @stack_mock
 
       @stack_mock.should_receive(:attributes).
                   and_return({})
