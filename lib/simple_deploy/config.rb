@@ -1,80 +1,29 @@
-require 'ostruct'
 
 module SimpleDeploy
-  class Config
+  module Configuration
+    extend self
 
-    attr_accessor :config, :logger
-
-    def initialize(args = {})
-      self.config = args.fetch(:config) { load_config_file }
-      self.logger = args[:logger] ||= SimpleDeployLogger.new
+    def configure(environment, custom_config = {})
+      raw_config = custom_config.fetch(:config) { load_config_file }
+      Config.new raw_config['environments'][environment],
+                 raw_config['notifications']
     end
 
-    def artifacts
-      ['chef_repo', 'cookbooks', 'app']
-    end
-
-    def artifact_deploy_variable(artifact)
-      name_to_variable_map = { 'chef_repo' => 'CHEF_REPO_URL',
-                               'app'       => 'APP_URL',
-                               'cookbooks' => 'COOKBOOKS_URL' }
-      name_to_variable_map[artifact]
-    end
-
-    def artifact_cloud_formation_url(artifact)
-      name_to_url_map = { 'chef_repo' => 'ChefRepoURL',
-                          'app'       => 'AppArtifactURL',
-                          'cookbooks' => 'CookbooksURL' }
-      name_to_url_map[artifact]
-    end
-
-    def deploy_script
-      '/opt/intu/admin/bin/configure.sh'
-    end
-
-    def environments
-      config['environments']
-    end
-
-    def environment(name)
-      raise "Environment not found" unless environments.include? name
-      OpenStruct.new environments[name]
-    end
-
-    def notifications
-      config['notifications']
-    end
-
-    def access_key(name)
-      environment(name).access_key
-    end
-
-    def secret_key(name)
-      environment(name).secret_key
-    end
-
-    def region(name)
-      environment(name).region
+    def environments(custom_config = {})
+      raw_config = custom_config.fetch(:config) { load_config_file }
+      raw_config['environments']
     end
 
     private
 
     def load_config_file
       begin
-        YAML::load( File.open( config_file ) )
+        YAML::load File.open(config_file)
       rescue Errno::ENOENT
         raise "#{config_file} not found"
       rescue ArgumentError, Psych::SyntaxError => e
         raise "#{config_file} is corrupt"
       end
-    end
-
-    def env_home
-      env.load 'HOME'
-    end
-
-    def env_user
-      env.load 'USER'
     end
 
     def config_file
@@ -93,5 +42,59 @@ module SimpleDeploy
       @env ||= SimpleDeploy::Env.new
     end
 
+    class Config
+      attr_reader :environment, :notifications
+
+      def initialize(environment, notifications)
+        @environment = environment
+        @notifications = notifications
+      end
+
+      def artifacts
+        ['chef_repo', 'cookbooks', 'app']
+      end
+
+      def artifact_deploy_variable(artifact)
+        name_to_variable_map = { 'chef_repo' => 'CHEF_REPO_URL',
+                                 'app'       => 'APP_URL',
+                                 'cookbooks' => 'COOKBOOKS_URL' }
+        name_to_variable_map[artifact]
+      end
+
+      def artifact_cloud_formation_url(artifact)
+        name_to_url_map = { 'chef_repo' => 'ChefRepoURL',
+                            'app'       => 'AppArtifactURL',
+                            'cookbooks' => 'CookbooksURL' }
+        name_to_url_map[artifact]
+      end
+
+      def deploy_script
+        '/opt/intu/admin/bin/configure.sh'
+      end
+
+      def access_key
+        @environment['access_key']
+      end
+
+      def secret_key
+        @environment['secret_key']
+      end
+
+      def region
+        @environment['region']
+      end
+
+      private
+
+      def env_home
+        env.load 'HOME'
+      end
+
+      def env_user
+        env.load 'USER'
+      end
+
+
+    end
   end
 end
