@@ -3,8 +3,8 @@ module SimpleDeploy
 
     def initialize(args)
       @name = args[:name]
-      @config = args[:config]
-      @logger = @config.logger
+      @config = ResourceManager.instance.config
+      @logger = args[:logger]
     end
 
     def complete?
@@ -47,8 +47,7 @@ module SimpleDeploy
     end
 
     def stack_reader
-      @stack_reader ||= StackReader.new :name   => @name,
-                                        :config => @config
+      @stack_reader ||= StackReader.new :name   => @name
     end
   end
 end

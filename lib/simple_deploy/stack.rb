@@ -17,12 +17,11 @@ module SimpleDeploy
       @environment = args[:environment]
       @name = args[:name]
 
-      @config = args[:config] || Config.new(:logger => args[:logger])
-      @logger = @config.logger
+      @config = ResourceManager.instance.config
+      @logger = args[:logger]
 
       @use_internal_ips = !!args[:internal]
-      @entry = Entry.new :name   => @name,
-                         :config => @config
+      @entry = Entry.new :name => @name
     end
 
     def create(args)
@@ -162,35 +161,33 @@ module SimpleDeploy
       @stack_creator ||= StackCreator.new :name          => @name,
                                           :entry         => @entry,
                                           :template_file => @template_file,
-                                          :config        => @config
+                                          :logger        => @logger
     end
 
     def stack_updater
       @stack_updater ||= StackUpdater.new :name          => @name,
                                           :entry         => @entry,
                                           :template_body => @template_body,
-                                          :config        => @config
+                                          :logger        => @logger
     end
 
     def stack_reader
       @stack_reader ||= StackReader.new :name   => @name,
-                                        :config => @config
+                                        :logger => @logger
     end
 
     def stack_destroyer
-      @stack_destroyer ||= StackDestroyer.new :name   => @name,
-                                              :config => @config
+      @stack_destroyer ||= StackDestroyer.new :name   => @name
     end
 
     def stack_status
       @status ||= Status.new :name   => @name,
-                             :config => @config
+                             :logger => @logger
     end
 
     def stack_attribute_formater
-      @saf ||= StackAttributeFormater.new :config          => @config,
-                                          :environment     => @environment,
-                                          :main_attributes => attributes
+      @saf ||= StackAttributeFormater.new :main_attributes => attributes,
+                                          :logger          => @logger
     end
 
     def executer
