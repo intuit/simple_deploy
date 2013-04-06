@@ -1,9 +1,9 @@
 module SimpleDeploy
   class EntryLister
 
-    def initialize(args)
+    def initialize
       @domain = 'stacks'
-      @config = args[:config]
+      @config = ResourceManager.instance.config
     end
 
     def all
@@ -19,7 +19,7 @@ module SimpleDeploy
     private
 
     def sdb_connect
-      @sdb_connect ||= AWS::SimpleDB.new :config => @config
+      @sdb_connect ||= AWS::SimpleDB.new
     end
 
     def remove_region_from_entry(name)
