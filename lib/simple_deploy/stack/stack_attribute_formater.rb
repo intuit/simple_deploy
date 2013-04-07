@@ -2,11 +2,10 @@ module SimpleDeploy
   class StackAttributeFormater
 
     def initialize(args)
-      @config          = args[:config]
-      @environment     = args[:environment]
+      @config          = ResourceManager.instance.config
       @main_attributes = args[:main_attributes]
-      @region          = @config.region @environment
-      @logger          = @config.logger
+      @region          = @config.region
+      @logger          = args[:logger]
     end
 
     def updated_attributes(attributes)
@@ -39,7 +38,6 @@ module SimpleDeploy
       artifact = Artifact.new :name          => name,
                               :id            => id,
                               :region        => @region,
-                              :config        => @config,
                               :domain        => domain,
                               :encrypted     => artifact_encrypted?(name),
                               :bucket_prefix => bucket_prefix

@@ -20,5 +20,8 @@ module SimpleDeploy
 
     class UnknownStack < Base
     end
+
+    class IllegalStateException < Base
+    end
   end
 end

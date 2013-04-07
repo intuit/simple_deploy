@@ -21,20 +21,15 @@ module SimpleDeploy
       @logger = args[:logger]
 
       @use_internal_ips = !!args[:internal]
-      @entry = Entry.new :name => @name
+      @entry = Entry.new :name => @name, :logger => @logger
     end
 
     def create(args)
       attributes = stack_attribute_formater.updated_attributes args[:attributes]
       @template_file = args[:template]
 
-      # TODO push this into StackCreator
-      begin
-        @entry.set_attributes attributes
-        stack_creator.create
-      rescue Exception => ex
-        raise Exceptions::CloudFormationError.new ex.message
-      end
+      @entry.set_attributes attributes
+      stack_creator.create
       
       # TODO
       #   - examine the returned Excon::Response
@@ -191,20 +186,20 @@ module SimpleDeploy
     end
 
     def executer
-      @executer ||= Stack::Execute.new :config      => @config,
+      @executer ||= Stack::Execute.new :logger      => @logger,
                                        :environment => @environment,
                                        :name        => @name,
-                                       :stack       => stack,
+                                       :stack       => self,
                                        :instances   => instances,
                                        :ssh_user    => ssh_user,
                                        :ssh_key     => ssh_key
     end
 
     def deployment
-      @deployment ||= Stack::Deployment.new :config      => @config,
+      @deployment ||= Stack::Deployment.new :logger      => @logger,
                                             :environment => @environment,
                                             :name        => @name,
-                                            :stack       => stack,
+                                            :stack       => self,
                                             :instances   => instances,
                                             :ssh_user    => ssh_user,
                                             :ssh_key     => ssh_key
