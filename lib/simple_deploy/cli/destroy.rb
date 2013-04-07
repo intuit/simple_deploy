@@ -26,11 +26,10 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
-        config = Config.new.environment @opts[:environment]
+        config = ResourceManager.instance.config @opts[:environment]
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],
-                          :config      => config,
                           :logger      => logger
 
         exit 1 unless stack.destroy

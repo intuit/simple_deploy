@@ -79,13 +79,7 @@ module SimpleDeploy
 
     def destroy
       if attributes['protection'] != 'on'
-        # TODO push this into StackDestroyer
-        begin
-          stack_destroyer.destroy
-        rescue Exception => ex
-          raise Exceptions::CloudFormationError.new ex.message
-        end
-
+        stack_destroyer.destroy
         @entry.delete_attributes
         @logger.info "#{@name} destroyed."
         true
@@ -168,7 +162,8 @@ module SimpleDeploy
     end
 
     def stack_destroyer
-      @stack_destroyer ||= StackDestroyer.new :name   => @name
+      @stack_destroyer ||= StackDestroyer.new :name   => @name,
+                                              :logger => @logger
     end
 
     def stack_status
