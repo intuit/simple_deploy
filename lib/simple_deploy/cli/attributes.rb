@@ -48,7 +48,7 @@ EOS
       end
 
       def config
-        @config ||= Config.new.environment @opts[:environment]
+        @config = ResourceManager.instance.config @opts[:environment]
       end
 
       def default_output
