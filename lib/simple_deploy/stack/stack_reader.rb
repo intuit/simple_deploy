@@ -51,7 +51,7 @@ module SimpleDeploy
     end
 
     def instance_reader
-      @instance_reader ||= InstanceReader.new
+      @instance_reader ||= InstanceReader.new :logger => @logger
     end
   end
 end

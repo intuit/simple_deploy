@@ -7,8 +7,7 @@ module SimpleDeploy
 
         def initialize(args)
           @exception = args[:exception]
-          @config    = args[:config]
-          @logger    = @config.logger
+          @logger    = args[:logger]
         end
 
         def process
