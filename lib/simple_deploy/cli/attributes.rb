@@ -47,10 +47,6 @@ EOS
         puts attribute_data.map { |k, v| "-a #{k}=#{v}" }.join(' ')
       end
 
-      def config
-        @config = ResourceManager.instance.config @opts[:environment]
-      end
-
       def default_output
         attribute_data.each_pair { |k, v| puts "#{k}: #{v}" }
       end
@@ -60,9 +56,9 @@ EOS
       end
 
       def stack
-        @stack = Stack.new :environment => @opts[:environment],
+        @config = ResourceManager.instance.config @opts[:environment]
+        @stack = Stack.new :environment  => @opts[:environment],
                            :name         => @opts[:name],
-                           :config       => config,
                            :logger       => logger
       end
 
