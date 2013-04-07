@@ -28,11 +28,10 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
-        config = Config.new.environment @opts[:environment]
+        config = ResourceManager.instance.config @opts[:environment]
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],
-                          :config      => config,
                           :logger      => logger
 
         rescue_exceptions_and_exit do
