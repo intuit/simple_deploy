@@ -4,11 +4,11 @@ module SimpleDeploy
       class Status
 
         def initialize(args)
-          @config   = args[:config]
+          @config   = ResourceManager.instance.config
           @stack    = args[:stack]
           @ssh_user = args[:ssh_user]
           @name     = args[:name]
-          @logger   = @config.logger
+          @logger   = args[:logger]
         end
 
         def clear_for_deployment?

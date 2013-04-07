@@ -4,8 +4,8 @@ module SimpleDeploy
   class StackUpdater
 
     def initialize(args)
-      @config = args[:config]
-      @logger = @config.logger
+      @config = ResourceManager.instance.config
+      @logger = args[:logger]
       @entry = args[:entry]
       @name = args[:name]
       @template_body = args[:template_body]
@@ -57,12 +57,11 @@ module SimpleDeploy
     end
 
     def cloud_formation
-      @cloud_formation ||= AWS::CloudFormation.new :config => @config
+      @cloud_formation ||= AWS::CloudFormation.new
     end
 
     def status
-      @status ||= Status.new :name => @name,
-                             :config => @config
+      @status ||= Status.new :name => @name
     end
   end
 end
