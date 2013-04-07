@@ -57,7 +57,7 @@ module SimpleDeploy
     end
 
     def cloud_formation
-      @cloud_formation ||= AWS::CloudFormation.new
+      @cloud_formation ||= AWS::CloudFormation.new :logger => @logger
     end
 
     def status

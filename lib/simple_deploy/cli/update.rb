@@ -30,14 +30,13 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
-        config = Config.new.environment @opts[:environment]
+        config = ResourceManager.instance.config @opts[:environment]
 
         attributes = parse_attributes :attributes => @opts[:attributes]
 
         @opts[:name].each do |name|
           stack = Stack.new :environment => @opts[:environment],
                             :name        => name,
-                            :config      => config,
                             :logger      => logger
           rescue_exceptions_and_exit do
             stack.update :force => @opts[:force], :attributes => attributes

@@ -53,16 +53,12 @@ module SimpleDeploy
         attributes = stack_attribute_formater.updated_attributes args[:attributes]
         @template_body = template
 
-        # TODO push this into StackUpdater
-        begin
-          @entry.set_attributes attributes
-          stack_updater.update_stack_if_parameters_changed attributes
-          @logger.info "Update complete for #{@name}."
-          true
-        rescue Exception => ex
-          raise Exceptions::CloudFormationError.new ex.message
-        end
+        @entry.set_attributes attributes
+        stack_updater.update_stack_if_parameters_changed attributes
+        @logger.info "Update complete for #{@name}."
+
         @entry.save
+        true
       else
         @logger.info "Not clear to update."
         false
