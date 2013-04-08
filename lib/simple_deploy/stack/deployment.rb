@@ -90,8 +90,8 @@ module SimpleDeploy
       end
 
       def primary_instance 
-        if @stack.instances.any?
-          @stack.instances.first['instancesSet'].first['privateIpAddress']
+        if @stack.raw_instances.any?
+          @stack.raw_instances.first['instancesSet'].first['privateIpAddress']
         end
       end
 

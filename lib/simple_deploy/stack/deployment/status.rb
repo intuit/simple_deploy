@@ -43,7 +43,9 @@ module SimpleDeploy
 
         def unset_deployment_in_progress
           @logger.debug "Clearing deployment in progress for #{@name}."
-          @stack.update :attributes => [ { 'deployment_in_progress' => 'false' } ]
+          @stack.in_progress_update :attributes => [
+                                      { 'deployment_in_progress' => 'false' } ],
+                                    :caller => self
         end
 
         private

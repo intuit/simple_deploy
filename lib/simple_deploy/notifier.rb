@@ -11,12 +11,12 @@ module SimpleDeploy
     end
 
     def send_deployment_start_message
-      message = "Deployment to #{@stack_name} in #{@config.region @environment} started."
+      message = "Deployment to #{@stack_name} in #{@config.region} started."
       send message
     end
 
     def send_deployment_complete_message
-      message = "Deployment to #{@stack_name} in #{@config.region @environment} complete."
+      message = "Deployment to #{@stack_name} in #{@config.region} complete."
       attributes = stack.attributes
 
       if attributes['app_github_url']
@@ -35,7 +35,8 @@ module SimpleDeploy
         case notification
         when 'campfire'
           campfire = Notifier::Campfire.new :stack_name  => @stack_name,
-                                            :environment => @environment
+                                            :environment => @environment,
+                                            :logger      => @logger
           campfire.send message
         end
       end
