@@ -3,7 +3,7 @@ module SimpleDeploy
 
     def initialize(args)
       @name = args[:name]
-      @config = args[:config]
+      @config = ResourceManager.instance.config
     end
 
     def display
@@ -19,8 +19,7 @@ module SimpleDeploy
     private
 
     def stack_reader
-      @stack_reader ||= StackReader.new :name   => @name,
-        :config => @config
+      @stack_reader ||= StackReader.new :name   => @name
     end
   end
 end

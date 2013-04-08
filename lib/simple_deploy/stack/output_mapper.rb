@@ -3,7 +3,6 @@ module SimpleDeploy
     class OutputMapper
 
       def initialize(args)
-        @config      = args[:config]
         @environment = args[:environment]
         @logger      = args[:logger]
       end
@@ -35,7 +34,6 @@ module SimpleDeploy
           count += 1
           @logger.info "Reading outputs from stack '#{s}'."
           stack = Stack.new :environment => @environment,
-                            :config      => @config,
                             :logger      => @logger,
                             :name        => s
           stack.wait_for_stable

@@ -5,7 +5,7 @@ module SimpleDeploy
     class AutoScalingGroups
 
       def initialize(args)
-        c = args[:config]
+        c = ResourceManager.instance.config
         @asg_id = args[:asg_id]
         @connect = Fog::AWS::AutoScaling.new :aws_access_key_id => c.access_key,
                                              :aws_secret_access_key => c.secret_key,
