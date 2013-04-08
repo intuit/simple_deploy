@@ -6,15 +6,15 @@ module SimpleDeploy
     class SSH
 
       def initialize(args)
-        @config      = args[:config]
+        @config      = ResourceManager.instance.config
         @instances   = args[:instances]
         @environment = args[:environment]
         @ssh_user    = args[:ssh_user]
         @ssh_key     = args[:ssh_key]
         @stack       = args[:stack]
         @name        = args[:name]
-        @logger      = @config.logger
-        @region      = @config.region @environment
+        @logger      = args[:logger]
+        @region      = @config.region
       end
 
       def execute(args)

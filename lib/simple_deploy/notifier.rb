@@ -5,8 +5,8 @@ module SimpleDeploy
     def initialize(args)
       @stack_name = args[:stack_name]
       @environment = args[:environment]
-      @config = Config.new :logger => args[:logger]
-      @logger = @config.logger
+      @config = ResourceManager.instance.config
+      @logger = args[:logger]
       @notifications = @config.notifications || {}
     end
 
@@ -35,8 +35,7 @@ module SimpleDeploy
         case notification
         when 'campfire'
           campfire = Notifier::Campfire.new :stack_name  => @stack_name,
-                                            :environment => @environment,
-                                            :config      => @config
+                                            :environment => @environment
           campfire.send message
         end
       end
