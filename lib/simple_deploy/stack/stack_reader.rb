@@ -43,7 +43,7 @@ module SimpleDeploy
     private
 
     def entry
-      @entry ||= Entry.find :name => @name
+      @entry ||= Entry.find :name => @name, :logger => @logger
     end
 
     def cloud_formation

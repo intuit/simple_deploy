@@ -2,6 +2,12 @@ require 'spec_helper'
 
 describe SimpleDeploy::EntryLister do
 
+  before do
+    @config_mock = mock 'config'
+    @resource_manager = SimpleDeploy::ResourceManager.instance
+    @resource_manager.should_receive(:config).and_return(@config_mock)
+  end
+
   it "should create a list of entries" do
     @simple_db_mock = mock 'simple db'
     config = mock 'config mock'
@@ -12,7 +18,7 @@ describe SimpleDeploy::EntryLister do
     @simple_db_mock.should_receive(:select).
                     with("select * from stacks").
                     and_return('stack-to-find-us-west-1' => { 'attr1' => 'value1' })
-    entry_lister = SimpleDeploy::EntryLister.new :config => config
+    entry_lister = SimpleDeploy::EntryLister.new
     entry_lister.all.should == ['stack-to-find']
   end
 
@@ -25,7 +31,7 @@ describe SimpleDeploy::EntryLister do
                     and_return false
     @simple_db_mock.should_receive(:select).
                     with("select * from stacks").exactly(0).times
-    entry_lister = SimpleDeploy::EntryLister.new :config => config
+    entry_lister = SimpleDeploy::EntryLister.new
     entry_lister.all.should == []
   end
 

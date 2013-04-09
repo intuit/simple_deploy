@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Create do
   before do
@@ -15,22 +16,23 @@ describe SimpleDeploy::CLI::Create do
                  :log_level   => 'info',
                  :template    => '/tmp/test.json' }
     Trollop.stub :options => @options
-    SimpleDeploy::Config.stub :new => @config_object
+
+    @resource_manager = SimpleDeploy::ResourceManager.instance
+    @resource_manager.should_receive(:config).and_return(@config_object)
+    @resource_manager.should_receive(:environments).and_return(@config_env)
+    @config_env.should_receive(:keys).and_return(['test'])
+
+
     SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                      with(:log_level => 'info').
                                      and_return @logger
-    @config_object.stub :environments => { 'test' => 'config_data' }
-    @config_object.should_receive(:environment).with('test').
-                   and_return 'config_data'
     SimpleDeploy::Stack.should_receive(:new).
                         with(:environment => 'test',
                              :name        => 'mytest',
-                             :config      => 'config_data',
                              :logger      => @logger).
                         and_return(@stack_mock)
     SimpleDeploy::Misc::AttributeMerger.stub :new => @attribute_merger_mock
     merge_options = { :attributes   => [ { "attr1" => "val1" } ], 
-                      :config       => 'config_data', 
                       :logger       => @logger,
                       :environment  => 'test',
                       :template     => '/tmp/test.json',

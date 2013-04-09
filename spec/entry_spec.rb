@@ -12,11 +12,12 @@ describe SimpleDeploy::Entry do
 
   before do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true', :debug => 'true'
+    @resource_manager = SimpleDeploy::ResourceManager.instance
   end
 
   it "should create a new entry object" do
     @simple_db_mock = mock 'simple db'
-    config = SimpleDeploy::Config.new(:config => config_data).environment('test_env')
+    config = @resource_manager.config 'test_env', :config => config_data
     SimpleDeploy::AWS::SimpleDB.should_receive(:new).and_return @simple_db_mock
     @simple_db_mock.should_receive(:create_domain).
                     with("stacks").
@@ -29,7 +30,7 @@ describe SimpleDeploy::Entry do
   
   it "should find the requested stack in simple db" do
     @simple_db_mock = mock 'simple db'
-    config = SimpleDeploy::Config.new(:config => config_data).environment('test_env')
+    config = @resource_manager.config 'test_env', :config => config_data
     SimpleDeploy::AWS::SimpleDB.should_receive(:new).and_return @simple_db_mock
 
     @simple_db_mock.should_receive(:create_domain).
@@ -42,7 +43,7 @@ describe SimpleDeploy::Entry do
 
   context "with stack object" do
     before do
-      @config = SimpleDeploy::Config.new(:config => config_data).environment('test_env')
+      @config = @resource_manager.config 'test_env', :config => config_data
       @simple_db_mock = mock 'simple db'
       SimpleDeploy::AWS::SimpleDB.should_receive(:new).and_return @simple_db_mock
       @simple_db_mock.should_receive(:create_domain).

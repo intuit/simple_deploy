@@ -10,8 +10,11 @@ describe SimpleDeploy do
       @stack_mock = mock 'stack'
       @logger_mock = mock 'logger mock'
       @tinder_mock = mock 'tinder'
-      @config_mock.should_receive(:logger).and_return @logger_mock
+
+      @resource_manager = SimpleDeploy::ResourceManager.instance
+      @resource_manager.should_receive(:config).and_return(@config_mock)
       @config_mock.should_receive(:notifications).and_return config
+
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'test',
                                :name        => 'stack_name',
@@ -29,7 +32,7 @@ describe SimpleDeploy do
                    with "Campfire room ids '1,2'."
       @campfire = SimpleDeploy::Notifier::Campfire.new :stack_name  => 'stack_name',
                                                        :environment => 'test',
-                                                       :config      => @config_mock
+                                                       :logger      => @logger_mock
 
     end
 
@@ -62,7 +65,9 @@ describe SimpleDeploy do
       @stack_mock = mock 'stack'
       @logger_mock = mock 'logger mock'
       @tinder_mock = mock 'tinder'
-      @config_mock.should_receive(:logger).and_return @logger_mock
+
+      @resource_manager = SimpleDeploy::ResourceManager.instance
+      @resource_manager.should_receive(:config).and_return(@config_mock)
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'test',
                                :name        => 'stack_name',
@@ -81,7 +86,7 @@ describe SimpleDeploy do
                    with "Campfire notifications complete."
       @campfire = SimpleDeploy::Notifier::Campfire.new :stack_name  => 'stack_name',
                                                        :environment => 'test',
-                                                       :config      => @config_mock
+                                                       :logger      => @logger_mock
     end
 
     it "should not blow up if campfire_subdom & campfire_room_ids are not present" do

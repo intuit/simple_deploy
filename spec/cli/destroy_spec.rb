@@ -13,8 +13,8 @@ describe SimpleDeploy::CLI::Destroy do
                    :name        => 'my_stack' }
       @stack   = stub :attributes => {}
 
-      SimpleDeploy::Config.stub(:new).and_return(@config)
-      @config.should_receive(:environment).with('my_env').and_return(@config)
+      @resource_manager = SimpleDeploy::ResourceManager.instance
+      @resource_manager.should_receive(:config).and_return(@config)
       SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                        with(:log_level => 'debug').
                                        and_return(@logger)
@@ -29,8 +29,7 @@ describe SimpleDeploy::CLI::Destroy do
       @stack.should_receive(:destroy).and_return(true)
 
       SimpleDeploy::Stack.should_receive(:new).
-                          with(:config      => @config,
-                               :environment => 'my_env',
+                          with(:environment => 'my_env',
                                :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(@stack)
@@ -51,8 +50,7 @@ describe SimpleDeploy::CLI::Destroy do
       @stack.should_receive(:destroy).and_return(false)
 
       SimpleDeploy::Stack.should_receive(:new).
-                          with(:config      => @config,
-                               :environment => 'my_env',
+                          with(:environment => 'my_env',
                                :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(@stack)

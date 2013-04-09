@@ -8,18 +8,20 @@ describe SimpleDeploy::Misc::AttributeMerger do
     @logger_stub = stub 'logger', :info => true
 
     @stacks  = ['stack1', 'stack2']
-    @options = { :config      => @config_mock,
-                 :environment  => 'default',
+    @options = { :environment  => 'default',
                  :logger       => @logger_stub,
                  :attributes   => [ { 'attrib1' => 'val1' } ],
                  :input_stacks => @stacks,
                  :template     => '/tmp/file.json' }
     SimpleDeploy::Stack::OutputMapper.should_receive(:new).
                                     with(:environment => @options[:environment],
-                                         :config      => @options[:config],
                                          :logger      => @options[:logger]).
                                     and_return @mapper_mock
     @merger = SimpleDeploy::Misc::AttributeMerger.new
+
+
+    @resource_manager = SimpleDeploy::ResourceManager.instance
+    @resource_manager.should_receive(:config).and_return(@config_mock)
   end
 
   it "should return the consolidated list of attributes" do
