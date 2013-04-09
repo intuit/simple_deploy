@@ -8,12 +8,18 @@ describe SimpleDeploy do
     @config_mock = mock 'config'
     @config_mock.stub :logger => @logger_stub
     @stack_mock = mock 'stack'
+    @resource_manager = SimpleDeploy::ResourceManager.instance
+    @resource_manager.should_receive(:config).and_return(@config_mock)
 
-    options = { :config   => @config_mock,
+    options = { :logger   => @logger_stub,
                 :stack    => @stack_mock,
                 :ssh_user => 'user',
                 :name     => 'dastack' }
     @status = SimpleDeploy::Stack::Deployment::Status.new options
+  end
+
+  after do
+    @resource_manager.release_config
   end
 
   describe "clear_for_deployment?" do
@@ -43,8 +49,9 @@ describe SimpleDeploy do
   describe "clear_deployment_lock" do
     it "should unset deploy in progress if force & deploy in progress" do
       @stack_mock.stub :attributes => { 'deployment_in_progress' => 'true' }
-      @stack_mock.should_receive(:update).
-             with( { :attributes => [ { 'deployment_in_progress' => 'false'} ] })
+      @stack_mock.should_receive(:in_progress_update).
+             with( { :attributes => [ { 'deployment_in_progress' => 'false' } ],
+                     :caller => @status })
       @status.clear_deployment_lock(true)
     end
   end
@@ -60,8 +67,9 @@ describe SimpleDeploy do
 
   describe "unset_deployment_in_prgoress" do
     it "clears deployment in progress" do
-      @stack_mock.should_receive(:update).
-             with( { :attributes => [ { 'deployment_in_progress' => 'false'} ] })
+      @stack_mock.should_receive(:in_progress_update).
+             with( { :attributes => [ { 'deployment_in_progress' => 'false'} ],
+                     :caller => @status })
       @status.unset_deployment_in_progress
     end
   end

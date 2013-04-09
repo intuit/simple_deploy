@@ -20,6 +20,10 @@ describe SimpleDeploy::CLI::Destroy do
                                        and_return(@logger)
     end
 
+    after do
+      @resource_manager.release_config
+    end
+
     it "should exit with 0" do
       subject.should_receive(:valid_options?).
               with(:provided => @options,

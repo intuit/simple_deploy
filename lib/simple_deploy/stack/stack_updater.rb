@@ -61,7 +61,7 @@ module SimpleDeploy
     end
 
     def status
-      @status ||= Status.new :name => @name
+      @status ||= Status.new :name => @name, :logger => @logger
     end
   end
 end

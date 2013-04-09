@@ -24,6 +24,10 @@ describe SimpleDeploy::CLI::Attributes do
                           and_return(@stack)
     end
 
+    after do
+      @resource_manager.release_config
+    end
+
     it 'should output the attributes' do
       subject.should_receive(:valid_options?).
               with(:provided => @options,

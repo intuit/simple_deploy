@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SimpleDeploy do
+describe SimpleDeploy::Notifier do
 
   describe "with valid settings" do
     before do
@@ -15,6 +15,10 @@ describe SimpleDeploy do
       @notifier = SimpleDeploy::Notifier.new :stack_name  => 'stack_name',
                                              :environment => 'test',
                                              :logger      => @logger_mock
+    end
+
+    after do
+      @resource_manager.release_config
     end
 
     it "should support a basic start message" do

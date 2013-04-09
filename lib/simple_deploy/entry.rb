@@ -9,7 +9,7 @@ module SimpleDeploy
       @config = ResourceManager.instance.config
       @logger = args[:logger]
       @custom_attributes = {}
-      self.name = region_specific_name args[:name]
+      @name = region_specific_name args[:name]
       create_domain
     end
 

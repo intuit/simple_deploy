@@ -43,6 +43,10 @@ describe SimpleDeploy::CLI::Create do
     @create = SimpleDeploy::CLI::Create.new
   end
 
+  after do
+    @resource_manager.release_config
+  end
+
   it "should create a stack with provided and merged attributes" do
     @stack_mock.should_receive(:create).
                 with({ :attributes => { "attr1" => "val1",

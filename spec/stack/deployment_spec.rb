@@ -19,7 +19,6 @@ describe SimpleDeploy do
                       :error => 'true'
 
     @config_mock = mock 'config mock'
-    @config_mock.stub(:logger) { @logger_stub }
     @config_mock.stub(:region) { 'test-us-west-1' }
 
     @stack_mock = mock 'stack mock'
@@ -27,7 +26,10 @@ describe SimpleDeploy do
 
     @status_mock = mock 'status mock'
 
-    options = { :config      => @config_mock,
+    @resource_manager = SimpleDeploy::ResourceManager.instance
+    @resource_manager.should_receive(:config).and_return(@config_mock)
+
+    options = { :logger      => @logger_stub,
                 :instances   => ['1.2.3.4', '4.3.2.1'],
                 :environment => 'test-us-west-1',
                 :ssh_user    => 'user',
@@ -38,12 +40,16 @@ describe SimpleDeploy do
     @deployment.stub(:sleep) { false }
   end
 
+  after do
+    @resource_manager.release_config
+  end
+
   context "manage locks" do
     before do
       status_options = { :name        => 'stack-name',
                          :environment => 'test-us-west-1',
                          :ssh_user    => 'user',
-                         :config      => @config_mock,
+                         :logger      => @logger_stub,
                          :stack       => @stack_mock }
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               with(status_options).
@@ -78,14 +84,14 @@ describe SimpleDeploy do
       status_options = { :name        => 'stack-name',
                          :environment => 'test-us-west-1',
                          :ssh_user    => 'user',
-                         :config      => @config_mock,
+                         :logger      => @logger_stub,
                          :stack       => @stack_mock }
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               with(status_options).
                                               and_return @status_mock
     end
 
-    describe "when succesful" do
+    describe "when successful" do
         before do
           @execute_mock = mock "execute"
           execute_options = { :name        => 'stack-name',
@@ -93,7 +99,7 @@ describe SimpleDeploy do
                               :instances   => ['1.2.3.4', '4.3.2.1'],
                               :ssh_user    => 'user',
                               :ssh_key     => 'key',
-                              :config      => @config_mock,
+                              :logger      => @logger_stub,
                               :stack       => @stack_mock }
           SimpleDeploy::Stack::Execute.should_receive(:new).
                                        with(execute_options).
@@ -120,6 +126,8 @@ describe SimpleDeploy do
           @status_mock.stub :clear_for_deployment? => true
           @status_mock.should_receive(:set_deployment_in_progress)
           @status_mock.should_receive(:unset_deployment_in_progress)
+          @stack_mock.should_receive(:raw_instances).at_least(:once).and_return(
+                      [{ 'instancesSet' => [ { 'privateIpAddress' => '10.1.2.3' } ] }])
           @deployment.execute(false).should be_true
         end
 
@@ -129,6 +137,8 @@ describe SimpleDeploy do
                             :clear_for_deployment? => true
           @status_mock.should_receive(:set_deployment_in_progress)
           @status_mock.should_receive(:unset_deployment_in_progress)
+          @stack_mock.should_receive(:raw_instances).at_least(:once).and_return(
+                      [{ 'instancesSet' => [ { 'privateIpAddress' => '10.1.2.3' } ] }])
           @deployment.execute(true).should be_true
         end
       end
@@ -143,6 +153,8 @@ describe SimpleDeploy do
           @status_mock.stub :clear_for_deployment? => true
           @status_mock.should_receive(:set_deployment_in_progress)
           @status_mock.should_receive(:unset_deployment_in_progress)
+          @stack_mock.should_receive(:raw_instances).at_least(:once).and_return(
+                      [{ 'instancesSet' => [ { 'privateIpAddress' => '10.1.2.3' } ] }])
           @deployment.execute(false).should be_true
         end
 
@@ -152,12 +164,14 @@ describe SimpleDeploy do
                             :clear_for_deployment? => true
           @status_mock.should_receive(:set_deployment_in_progress)
           @status_mock.should_receive(:unset_deployment_in_progress)
+          @stack_mock.should_receive(:raw_instances).at_least(:once).and_return(
+                      [{ 'instancesSet' => [ { 'privateIpAddress' => '10.1.2.3' } ] }])
           @deployment.execute(true).should be_true
         end
       end
     end
 
-    describe "when unsuccesful" do
+    describe "when unsuccessful" do
       it "should not deploy if the stack is not clear to deploy but forced however does not clear in time" do
         @status_mock.stub(:clear_for_deployment?) { false }
         @status_mock.should_receive(:clear_deployment_lock).

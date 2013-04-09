@@ -16,6 +16,10 @@ describe SimpleDeploy::CLI::Protect do
                                        and_return(@logger)
     end
 
+    after do
+      @resource_manager.release_config
+    end
+
     it "should enable protection" do
       options = { :environment => 'my_env',
                   :log_level   => 'debug',

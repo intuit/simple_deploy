@@ -16,6 +16,10 @@ describe SimpleDeploy::CLI::Update do
                                        and_return(@logger)
     end
 
+    after do
+      @resource_manager.release_config
+    end
+
     it "should pass force true" do
       options = { :environment => 'my_env',
                   :log_level   => 'debug',

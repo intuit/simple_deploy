@@ -155,6 +155,10 @@ describe SimpleDeploy::CLI::Clone do
                                            :name        => 'new_stack').
                                       and_return(@new_stack)
       end
+
+      after do
+        @resource_manager.release_config
+      end
       
       it 'should create the new stack using the filtered, merged and added attributes' do
         subject.should_receive(:valid_options?).

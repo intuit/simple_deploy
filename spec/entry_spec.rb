@@ -13,44 +13,43 @@ describe SimpleDeploy::Entry do
   before do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true', :debug => 'true'
     @resource_manager = SimpleDeploy::ResourceManager.instance
+    @config = @resource_manager.config 'test_env', :config => config_data
+  end
+
+  after do
+    @resource_manager.release_config
   end
 
   it "should create a new entry object" do
     @simple_db_mock = mock 'simple db'
-    config = @resource_manager.config 'test_env', :config => config_data
     SimpleDeploy::AWS::SimpleDB.should_receive(:new).and_return @simple_db_mock
     @simple_db_mock.should_receive(:create_domain).
                     with("stacks").
                     and_return true
-    entry = SimpleDeploy::Entry.new :config => config,
-                                    :logger => @logger_stub,
+    entry = SimpleDeploy::Entry.new :logger => @logger_stub,
                                     :name   => 'test-stack'
     entry.class.should == SimpleDeploy::Entry
   end
   
   it "should find the requested stack in simple db" do
     @simple_db_mock = mock 'simple db'
-    config = @resource_manager.config 'test_env', :config => config_data
     SimpleDeploy::AWS::SimpleDB.should_receive(:new).and_return @simple_db_mock
 
     @simple_db_mock.should_receive(:create_domain).
                     with("stacks").
                     and_return true
     SimpleDeploy::Entry.find :name   => 'stack-to-find',
-                             :logger => @logger_stub,
-                             :config => config
+                             :logger => @logger_stub
   end
 
   context "with stack object" do
     before do
-      @config = @resource_manager.config 'test_env', :config => config_data
       @simple_db_mock = mock 'simple db'
       SimpleDeploy::AWS::SimpleDB.should_receive(:new).and_return @simple_db_mock
       @simple_db_mock.should_receive(:create_domain).
                       with("stacks").
                       and_return true
-      @entry = SimpleDeploy::Entry.new :config => @config,
-                                       :logger => @logger_stub,
+      @entry = SimpleDeploy::Entry.new :logger => @logger_stub,
                                        :name   => 'test-stack'
     end
 

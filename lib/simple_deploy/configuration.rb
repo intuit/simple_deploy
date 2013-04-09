@@ -46,6 +46,8 @@ module SimpleDeploy
       attr_reader :environment, :notifications
 
       def initialize(environment, notifications)
+        raise ArgumentError.new("environment must be defined") unless environment
+
         @environment = environment
         @notifications = notifications
       end

@@ -31,6 +31,10 @@ describe SimpleDeploy::CLI::Outputs do
     @outputs = SimpleDeploy::CLI::Outputs.new
   end
 
+  after do
+    @resource_manager.release_config
+  end
+
   it "should successfully return the show command with default values" do
     @outputs.should_receive(:puts).with('key1: value1')
     @outputs.should_receive(:puts).with('key2: value2')

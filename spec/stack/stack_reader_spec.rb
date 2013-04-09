@@ -5,6 +5,9 @@ describe SimpleDeploy::StackReader do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
     @config_stub = stub 'Config', :logger => @logger_stub, :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
 
+    @resource_manager = SimpleDeploy::ResourceManager.instance
+    @resource_manager.should_receive(:config).and_return(@config_stub)
+
     @entry_mock = mock 'Entry'
     @entry_mock.stub(:attributes).and_return(:chef_repo_bucket_prefix => 'chef_repo_bp')
     SimpleDeploy::Entry.stub(:new).and_return(@entry_mock)
@@ -21,9 +24,12 @@ describe SimpleDeploy::StackReader do
     SimpleDeploy::InstanceReader.stub(:new).and_return(@instance_reader_mock)
     @instance_reader_mock.stub(:list_stack_instances).and_return(['instance1', 'instance2'])
 
-    @stack_reader = SimpleDeploy::StackReader.new(:name => 'my_stack', :config => @config_stub)
+    @stack_reader = SimpleDeploy::StackReader.new(:name => 'my_stack', :logger => @logger_stub)
   end
 
+  after do
+    @resource_manager.release_config
+  end
 
   describe 'attributes' do
     it 'should return the stack attributes' do

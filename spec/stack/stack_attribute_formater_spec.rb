@@ -6,11 +6,18 @@ describe SimpleDeploy do
     @config_mock = mock 'config mock', :logger => @logger_mock, :region => 'us-west-1'
     @config_mock.stub(:artifact_cloud_formation_url).and_return('ChefRepoURL')
     @config_mock.stub(:artifacts).and_return(['chef_repo', 'cookbooks', 'app'])
+
+    @resource_manager = SimpleDeploy::ResourceManager.instance
+    @resource_manager.should_receive(:config).and_return(@config_mock)
+  end
+
+  after do
+    @resource_manager.release_config
   end
 
   context "when chef_repo unencrypted" do
     before do
-      options = { :config      => @config_mock,
+      options = { :logger      => @logger_mock,
                   :environment => 'preprod',
                   :main_attributes => {
                     'chef_repo_bucket_prefix' => 'test-prefix',
@@ -28,7 +35,7 @@ describe SimpleDeploy do
 
   context "when main_attributes set chef_repo encrypted" do
     before do
-      options = { :config      => @config_mock,
+      options = { :logger      => @logger_mock,
                   :environment => 'preprod',
                   :main_attributes => {
                     'chef_repo_bucket_prefix' => 'test-prefix',
@@ -47,7 +54,7 @@ describe SimpleDeploy do
 
   context "when provided attributes set chef_repo encrypted" do
     before do
-      options = { :config      => @config_mock,
+      options = { :logger      => @logger_mock,
                   :environment => 'preprod',
                   :main_attributes => {
                     'chef_repo_bucket_prefix' => 'test-prefix',
