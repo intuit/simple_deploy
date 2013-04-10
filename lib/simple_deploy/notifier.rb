@@ -5,7 +5,7 @@ module SimpleDeploy
     def initialize(args)
       @stack_name = args[:stack_name]
       @environment = args[:environment]
-      @config = ResourceManager.instance.config
+      @config = SimpleDeploy.config
       @logger = args[:logger]
       @notifications = @config.notifications || {}
     end

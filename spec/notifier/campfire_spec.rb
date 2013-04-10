@@ -11,8 +11,7 @@ describe SimpleDeploy do
       @logger_mock = mock 'logger mock'
       @tinder_mock = mock 'tinder'
 
-      @resource_manager = SimpleDeploy::ResourceManager.instance
-      @resource_manager.should_receive(:config).and_return(@config_mock)
+      SimpleDeploy.should_receive(:config).and_return(@config_mock)
       @config_mock.should_receive(:notifications).and_return config
 
       SimpleDeploy::Stack.should_receive(:new).
@@ -66,8 +65,7 @@ describe SimpleDeploy do
       @logger_mock = mock 'logger mock'
       @tinder_mock = mock 'tinder'
 
-      @resource_manager = SimpleDeploy::ResourceManager.instance
-      @resource_manager.should_receive(:config).and_return(@config_mock)
+      SimpleDeploy.should_receive(:config).and_return(@config_mock)
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'test',
                                :name        => 'stack_name',

@@ -17,9 +17,8 @@ describe SimpleDeploy::CLI::Create do
                  :template    => '/tmp/test.json' }
     Trollop.stub :options => @options
 
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_object)
-    @resource_manager.should_receive(:environments).and_return(@config_env)
+    SimpleDeploy.should_receive(:create_config).and_return(@config_object)
+    SimpleDeploy.should_receive(:environments).and_return(@config_env)
     @config_env.should_receive(:keys).and_return(['test'])
 
 
@@ -44,7 +43,7 @@ describe SimpleDeploy::CLI::Create do
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   it "should create a stack with provided and merged attributes" do

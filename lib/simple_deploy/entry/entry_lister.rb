@@ -3,7 +3,7 @@ module SimpleDeploy
 
     def initialize
       @domain = 'stacks'
-      @config = ResourceManager.instance.config
+      @config = SimpleDeploy.config
     end
 
     def all

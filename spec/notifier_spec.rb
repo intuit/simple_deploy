@@ -6,8 +6,7 @@ describe SimpleDeploy::Notifier do
     before do
       @config_mock = mock 'config mock'
       @logger_mock = mock 'logger mock'
-      @resource_manager = SimpleDeploy::ResourceManager.instance
-      @resource_manager.should_receive(:config).and_return(@config_mock)
+      SimpleDeploy.should_receive(:config).and_return(@config_mock)
                    
       @config_mock.should_receive(:notifications).
                    exactly(1).times.
@@ -18,7 +17,7 @@ describe SimpleDeploy::Notifier do
     end
 
     after do
-      @resource_manager.release_config
+      SimpleDeploy.release_config
     end
 
     it "should support a basic start message" do
@@ -70,8 +69,7 @@ describe SimpleDeploy::Notifier do
   it "should not blow up if the notification section is missing" do
     @config_mock = mock 'config mock'
     @logger_mock = mock 'logger mock'
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.should_receive(:config).and_return(@config_mock)
                  
     @config_mock.should_receive(:notifications).
                  and_return nil

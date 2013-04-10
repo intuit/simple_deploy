@@ -39,7 +39,7 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
-        config = ResourceManager.instance.config @opts[:environment]
+        config = SimpleDeploy.create_config @opts[:environment]
 
         @opts[:name].each do |name|
           notifier = Notifier.new :stack_name  => name,

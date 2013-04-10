@@ -12,12 +12,11 @@ describe SimpleDeploy::Entry do
 
   before do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true', :debug => 'true'
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @config = @resource_manager.config 'test_env', :config => config_data
+    @config = SimpleDeploy.create_config 'test_env', :config => config_data
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   it "should create a new entry object" do

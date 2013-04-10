@@ -2,7 +2,7 @@ module SimpleDeploy
   class StackDestroyer
 
     def initialize(args)
-      @config = ResourceManager.instance.config
+      @config = SimpleDeploy.config
       @name = args[:name]
       @logger = args[:logger]
     end

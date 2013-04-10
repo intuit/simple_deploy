@@ -4,7 +4,7 @@ module SimpleDeploy
   class StackCreator
 
     def initialize(args)
-      @config = ResourceManager.instance.config
+      @config = SimpleDeploy.config
       @logger = args[:logger]
       @entry = args[:entry]
       @name = args[:name]

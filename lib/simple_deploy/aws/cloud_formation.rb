@@ -5,7 +5,7 @@ module SimpleDeploy
     class CloudFormation
 
       def initialize(args)
-        @config = ResourceManager.instance.config
+        @config = SimpleDeploy.config
         @logger = args[:logger]
         @connect = Fog::AWS::CloudFormation.new :aws_access_key_id     => @config.access_key,
                                                 :aws_secret_access_key => @config.secret_key,

@@ -14,8 +14,7 @@ describe SimpleDeploy::Stack::Execute do
                 :stack       => @stack,
                 :name        => @name }
 
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.should_receive(:config).and_return(@config_mock)
 
     SimpleDeploy::Stack::SSH.should_receive(:new).
                              with(options).
@@ -24,7 +23,7 @@ describe SimpleDeploy::Stack::Execute do
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   it "should call execute with the given options" do

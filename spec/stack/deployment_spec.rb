@@ -26,8 +26,7 @@ describe SimpleDeploy do
 
     @status_mock = mock 'status mock'
 
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.should_receive(:config).and_return(@config_mock)
 
     options = { :logger      => @logger_stub,
                 :instances   => ['1.2.3.4', '4.3.2.1'],
@@ -41,7 +40,7 @@ describe SimpleDeploy do
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   context "manage locks" do

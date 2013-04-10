@@ -5,8 +5,7 @@ describe SimpleDeploy::StackReader do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
     @config_stub = stub 'Config', :logger => @logger_stub, :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
 
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_stub)
+    SimpleDeploy.should_receive(:config).and_return(@config_stub)
 
     @entry_mock = mock 'Entry'
     @entry_mock.stub(:attributes).and_return(:chef_repo_bucket_prefix => 'chef_repo_bp')
@@ -28,7 +27,7 @@ describe SimpleDeploy::StackReader do
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   describe 'attributes' do

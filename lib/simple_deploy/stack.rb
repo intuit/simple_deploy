@@ -17,7 +17,7 @@ module SimpleDeploy
       @environment = args[:environment]
       @name = args[:name]
 
-      @config = ResourceManager.instance.config
+      @config = SimpleDeploy.config
       @logger = args[:logger]
 
       @use_internal_ips = !!args[:internal]

@@ -6,8 +6,7 @@ describe SimpleDeploy::StackDestroyer do
     config_mock = mock 'config mock'
     logger_stub = mock 'logger stub', :info => true
     cloud_formation_mock = mock 'cloud formation mock'
-    resource_manager = SimpleDeploy::ResourceManager.instance
-    resource_manager.should_receive(:config).and_return(config_mock)
+    SimpleDeploy.should_receive(:config).and_return(config_mock)
 
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).
                                       with(:logger => logger_stub).

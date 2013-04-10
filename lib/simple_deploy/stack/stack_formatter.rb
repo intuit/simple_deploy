@@ -3,7 +3,7 @@ module SimpleDeploy
 
     def initialize(args)
       @name = args[:name]
-      @config = ResourceManager.instance.config
+      @config = SimpleDeploy.config
     end
 
     def display

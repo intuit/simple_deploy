@@ -15,9 +15,8 @@ describe SimpleDeploy::CLI::Outputs do
                       { 'OutputKey' => 'key2', 'OutputValue' => 'value2' }]
     Trollop.stub :options => @options
     @config_object.stub(:environments => { 'test' => 'data' })
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config)
-    @resource_manager.should_receive(:environments).and_return(@config_env)
+    SimpleDeploy.should_receive(:create_config).and_return(@config)
+    SimpleDeploy.should_receive(:environments).and_return(@config_env)
     @config_env.should_receive(:keys).and_return(['test'])
     SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                      with(:log_level => 'info').
@@ -32,7 +31,7 @@ describe SimpleDeploy::CLI::Outputs do
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   it "should successfully return the show command with default values" do

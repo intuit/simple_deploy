@@ -12,4 +12,26 @@ require 'simple_deploy/logger'
 require 'simple_deploy/version'
 require 'simple_deploy/backoff'
 require 'simple_deploy/instance'
-require 'simple_deploy/resource_manager'
+
+module SimpleDeploy
+  module_function
+
+  def create_config(environment, custom_config = {})
+    raise SimpleDeploy::Exceptions::IllegalStateException.new(
+      'environment is not defined') unless environment
+
+    @config = SimpleDeploy::Configuration.configure environment, custom_config
+  end
+
+  def config
+    @config
+  end
+
+  def release_config
+    @config = nil
+  end
+
+  def environments(custom_config = {})
+    SimpleDeploy::Configuration.environments custom_config
+  end
+end

@@ -81,7 +81,7 @@ EOS
       end
 
       def config
-        @config ||= ResourceManager.instance.config @opts[:environment]
+        @config ||= SimpleDeploy.create_config @opts[:environment]
       end
 
       def logger

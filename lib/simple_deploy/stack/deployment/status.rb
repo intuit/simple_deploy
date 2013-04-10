@@ -4,7 +4,7 @@ module SimpleDeploy
       class Status
 
         def initialize(args)
-          @config   = ResourceManager.instance.config
+          @config   = SimpleDeploy.config
           @stack    = args[:stack]
           @ssh_user = args[:ssh_user]
           @name     = args[:name]

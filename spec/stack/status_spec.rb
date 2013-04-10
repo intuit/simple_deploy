@@ -5,8 +5,7 @@ describe SimpleDeploy::Status do
   before do
     @config_mock = mock 'config mock'
     @logger_mock = mock 'logger mock'
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.should_receive(:config).and_return(@config_mock)
     @stack_reader_mock = mock 'stack reader mock'
     SimpleDeploy::StackReader.should_receive(:new).
                               and_return @stack_reader_mock
@@ -15,7 +14,7 @@ describe SimpleDeploy::Status do
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   it "should return true if the stack is in complete state" do

@@ -4,12 +4,11 @@ describe SimpleDeploy::EntryLister do
 
   before do
     @config_mock = mock 'config'
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.should_receive(:config).and_return(@config_mock)
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   it "should create a list of entries" do

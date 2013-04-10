@@ -34,7 +34,7 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
         valid_options? :provided => @opts,
                        :required => [:environment, :name, :template]
 
-        @config = ResourceManager.instance.config @opts[:environment]
+        @config = SimpleDeploy.create_config @opts[:environment]
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],

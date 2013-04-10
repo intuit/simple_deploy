@@ -12,8 +12,7 @@ describe SimpleDeploy::CLI::Attributes do
                    :name        => 'my_stack' }
       @stack   = stub :attributes => { 'foo' => 'bar', 'baz' => 'blah' }
 
-      @resource_manager = SimpleDeploy::ResourceManager.instance
-      @resource_manager.should_receive(:config).and_return(@config)
+      SimpleDeploy.should_receive(:create_config).and_return(@config)
       SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                        with(:log_level => 'debug').
                                        and_return(@logger)
@@ -25,7 +24,7 @@ describe SimpleDeploy::CLI::Attributes do
     end
 
     after do
-      @resource_manager.release_config
+      SimpleDeploy.release_config
     end
 
     it 'should output the attributes' do

@@ -7,8 +7,7 @@ describe ::SimpleDeploy::StackFormatter do
                                   :access_key => 'key',
                                   :secret_key => 'XXX',
                                   :region => 'us-west1'
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_stub)
+    SimpleDeploy.should_receive(:config).and_return(@config_stub)
 
     @stack_reader_mock = mock 'StackReader'
     SimpleDeploy::StackReader.stub(:new).and_return(@stack_reader_mock)
@@ -22,7 +21,7 @@ describe ::SimpleDeploy::StackFormatter do
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   describe 'display' do

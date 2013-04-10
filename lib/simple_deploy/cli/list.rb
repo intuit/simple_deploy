@@ -27,7 +27,7 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment]
 
-        config = ResourceManager.instance.config @opts[:environment]
+        config = SimpleDeploy.create_config @opts[:environment]
         stacks = SimpleDeploy::StackLister.new.all.sort
 
         stack = Stack.new :environment => @opts[:environment],

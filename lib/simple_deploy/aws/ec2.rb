@@ -5,7 +5,7 @@ module SimpleDeploy
     class EC2
 
       def initialize
-        c = ResourceManager.instance.config
+        c = SimpleDeploy.config
         @connect = Fog::Compute::AWS.new :aws_access_key_id => c.access_key,
                                          :aws_secret_access_key => c.secret_key,
                                          :region => c.region

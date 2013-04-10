@@ -4,7 +4,7 @@ module SimpleDeploy
 
       def merge(args)
         @attributes   = args[:attributes]
-        @config       = ResourceManager.instance.config
+        @config       = SimpleDeploy.config
         @environment  = args[:environment]
         @logger       = args[:logger]
         @input_stacks = args[:input_stacks]

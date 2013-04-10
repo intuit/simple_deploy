@@ -2,7 +2,7 @@ module SimpleDeploy
   class StackLister
 
     def initialize(args = {})
-      @config = ResourceManager.instance.config
+      @config = SimpleDeploy.config
     end
 
     def all

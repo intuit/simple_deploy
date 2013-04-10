@@ -6,7 +6,7 @@ module SimpleDeploy
 
     def initialize(args)
       @domain = 'stacks'
-      @config = ResourceManager.instance.config
+      @config = SimpleDeploy.config
       @logger = args[:logger]
       @custom_attributes = {}
       @name = region_specific_name args[:name]

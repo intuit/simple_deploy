@@ -13,15 +13,14 @@ describe SimpleDeploy::CLI::Destroy do
                    :name        => 'my_stack' }
       @stack   = stub :attributes => {}
 
-      @resource_manager = SimpleDeploy::ResourceManager.instance
-      @resource_manager.should_receive(:config).and_return(@config)
+      SimpleDeploy.should_receive(:create_config).and_return(@config)
       SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                        with(:log_level => 'debug').
                                        and_return(@logger)
     end
 
     after do
-      @resource_manager.release_config
+      SimpleDeploy.release_config
     end
 
     it "should exit with 0" do

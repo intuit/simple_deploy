@@ -25,8 +25,7 @@ describe SimpleDeploy::StackUpdater do
     entry_mock = mock 'entry mock'
     status_mock = mock 'status mock'
     cloud_formation_mock = mock 'cloud formation mock'
-    resource_manager = SimpleDeploy::ResourceManager.instance
-    resource_manager.should_receive(:config).and_return(config_mock)
+    SimpleDeploy.should_receive(:config).and_return(config_mock)
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).
                                       with(:logger => logger_mock).
                                       and_return cloud_formation_mock
@@ -59,8 +58,7 @@ describe SimpleDeploy::StackUpdater do
     entry_mock = mock 'entry mock'
     status_mock = mock 'status mock'
     cloud_formation_mock = mock 'cloud formation mock'
-    resource_manager = SimpleDeploy::ResourceManager.instance
-    resource_manager.should_receive(:config).and_return(config_mock)
+    SimpleDeploy.should_receive(:config).and_return(config_mock)
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).
                                       exactly(0).times
     logger_mock.should_receive(:debug).exactly(1).times
@@ -83,8 +81,7 @@ describe SimpleDeploy::StackUpdater do
     config_mock = mock 'config mock'
     logger_mock = mock 'logger mock'
     entry_mock = mock 'entry mock'
-    resource_manager = SimpleDeploy::ResourceManager.instance
-    resource_manager.should_receive(:config).and_return(config_mock)
+    SimpleDeploy.should_receive(:config).and_return(config_mock)
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).exactly(0).times
     logger_mock.should_receive(:debug).with("No Cloud Formation parameters require updating.")
     stack_updater = SimpleDeploy::StackUpdater.new :name          => 'test-stack',

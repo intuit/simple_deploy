@@ -10,8 +10,7 @@ describe SimpleDeploy::Stack::SSH do
                         :error => true
     @config_mock.stub :logger => @logger_stub
     @config_mock.should_receive(:region).and_return 'test-us-west-1'
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.should_receive(:config).and_return(@config_mock)
 
     @stack_mock.stub :attributes => { :ssh_gateway => false }
     @options = { :logger      => @logger_stub,
@@ -28,7 +27,7 @@ describe SimpleDeploy::Stack::SSH do
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   context "when unsuccessful" do

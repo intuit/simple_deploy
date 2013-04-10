@@ -54,7 +54,7 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
-        config = ResourceManager.instance.config @opts[:environment]
+        config = SimpleDeploy.create_config @opts[:environment]
 
         new_attributes = parse_attributes :attributes => @opts[:attributes]
 

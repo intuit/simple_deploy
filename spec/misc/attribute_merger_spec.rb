@@ -20,8 +20,7 @@ describe SimpleDeploy::Misc::AttributeMerger do
     @merger = SimpleDeploy::Misc::AttributeMerger.new
 
 
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.should_receive(:config).and_return(@config_mock)
   end
 
   it "should return the consolidated list of attributes" do

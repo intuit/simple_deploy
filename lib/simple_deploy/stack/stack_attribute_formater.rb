@@ -2,7 +2,7 @@ module SimpleDeploy
   class StackAttributeFormater
 
     def initialize(args)
-      @config          = ResourceManager.instance.config
+      @config          = SimpleDeploy.config
       @main_attributes = args[:main_attributes]
       @region          = @config.region
       @logger          = args[:logger]

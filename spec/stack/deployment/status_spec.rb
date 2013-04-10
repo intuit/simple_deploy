@@ -8,8 +8,7 @@ describe SimpleDeploy do
     @config_mock = mock 'config'
     @config_mock.stub :logger => @logger_stub
     @stack_mock = mock 'stack'
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.should_receive(:config).and_return(@config_mock)
 
     options = { :logger   => @logger_stub,
                 :stack    => @stack_mock,
@@ -19,7 +18,7 @@ describe SimpleDeploy do
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   describe "clear_for_deployment?" do

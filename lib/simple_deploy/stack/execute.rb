@@ -4,7 +4,7 @@ module SimpleDeploy
   class Stack
     class Execute
       def initialize(args)
-        @config      = ResourceManager.instance.config
+        @config      = SimpleDeploy.config
         @instances   = args[:instances]
         @environment = args[:environment]
         @ssh_user    = args[:ssh_user]

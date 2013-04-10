@@ -7,12 +7,11 @@ describe SimpleDeploy do
     @config_mock.stub(:artifact_cloud_formation_url).and_return('ChefRepoURL')
     @config_mock.stub(:artifacts).and_return(['chef_repo', 'cookbooks', 'app'])
 
-    @resource_manager = SimpleDeploy::ResourceManager.instance
-    @resource_manager.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.should_receive(:config).and_return(@config_mock)
   end
 
   after do
-    @resource_manager.release_config
+    SimpleDeploy.release_config
   end
 
   context "when chef_repo unencrypted" do
