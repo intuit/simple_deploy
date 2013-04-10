@@ -66,7 +66,7 @@ module SimpleDeploy
     end
 
     def in_progress_update(args)
-      if args[:caller] && args[:caller].kind_of?(Stack::Deployment::Status)
+      if args[:caller].kind_of? Stack::Deployment::Status
         @logger.info "Updating #{@name}."
         attributes = stack_attribute_formater.updated_attributes args[:attributes]
         @template_body = template
