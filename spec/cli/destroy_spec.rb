@@ -13,7 +13,7 @@ describe SimpleDeploy::CLI::Destroy do
                    :name        => 'my_stack' }
       @stack   = stub :attributes => {}
 
-      SimpleDeploy.should_receive(:create_config).and_return(@config)
+      SimpleDeploy.stub(:create_config).and_return(@config)
       SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                        with(:log_level => 'debug').
                                        and_return(@logger)

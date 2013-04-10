@@ -12,9 +12,7 @@ describe SimpleDeploy::Stack do
     @config_stub.stub(:artifact_cloud_formation_url).and_return('CookBooksURL')
     @config_stub.stub(:access_key).and_return('access')
     @config_stub.stub(:secret_key).and_return('secret')
-    SimpleDeploy.should_receive(:config).
-                 at_least(:once).
-                 and_return @config_stub
+    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @entry_mock = mock 'entry mock'
     SimpleDeploy::Entry.should_receive(:new).

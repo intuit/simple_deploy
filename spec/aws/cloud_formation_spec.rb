@@ -11,7 +11,7 @@ describe SimpleDeploy::AWS::CloudFormation do
         'StackEvents' => ['event1', 'event2'],
         'TemplateBody' => '{EIP: "string"}'
     }
-    SimpleDeploy.should_receive(:config).and_return(@config_stub)
+    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @cf_mock = mock 'CloudFormation'
     Fog::AWS::CloudFormation.stub(:new).and_return(@cf_mock)

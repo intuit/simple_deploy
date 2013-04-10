@@ -5,7 +5,7 @@ describe SimpleDeploy::Status do
   before do
     @config_mock = mock 'config mock'
     @logger_mock = mock 'logger mock'
-    SimpleDeploy.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.stub(:config).and_return(@config_mock)
     @stack_reader_mock = mock 'stack reader mock'
     SimpleDeploy::StackReader.should_receive(:new).
                               and_return @stack_reader_mock

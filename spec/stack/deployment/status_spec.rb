@@ -8,7 +8,7 @@ describe SimpleDeploy do
     @config_mock = mock 'config'
     @config_mock.stub :logger => @logger_stub
     @stack_mock = mock 'stack'
-    SimpleDeploy.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.stub(:config).and_return(@config_mock)
 
     options = { :logger   => @logger_stub,
                 :stack    => @stack_mock,

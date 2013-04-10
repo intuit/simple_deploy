@@ -25,7 +25,7 @@ describe SimpleDeploy::StackCreator do
     entry_mock = mock 'entry mock'
     file_mock = mock 'file mock'
     cloud_formation_mock = mock 'cloud formation mock'
-    SimpleDeploy.should_receive(:config).and_return(config_mock)
+    SimpleDeploy.stub(:config).and_return(config_mock)
 
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).
                                       with(:logger => logger_mock).

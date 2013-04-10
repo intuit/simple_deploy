@@ -7,7 +7,7 @@ describe SimpleDeploy do
     @config_mock.stub(:artifact_cloud_formation_url).and_return('ChefRepoURL')
     @config_mock.stub(:artifacts).and_return(['chef_repo', 'cookbooks', 'app'])
 
-    SimpleDeploy.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.stub(:config).and_return(@config_mock)
   end
 
   after do

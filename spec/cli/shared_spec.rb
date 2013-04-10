@@ -40,7 +40,7 @@ describe SimpleDeploy::CLI::Shared do
       provided = { :environment => 'prod' }
       required = [:environment]
 
-      SimpleDeploy.should_receive(:environments).and_return(config_stub)
+      SimpleDeploy.stub(:environments).and_return(config_stub)
       config_stub.should_receive(:keys).and_return(['preprod'])
       @object.stub :logger => logger_stub
 
@@ -57,7 +57,7 @@ describe SimpleDeploy::CLI::Shared do
       provided = { :environment => 'prod', :test1 => 'value1' }
       required = [:environment, :test1]
 
-      SimpleDeploy.should_receive(:environments).and_return(config_stub)
+      SimpleDeploy.stub(:environments).and_return(config_stub)
       config_stub.should_receive(:keys).and_return(['prod'])
 
       @object.valid_options? :provided => provided,

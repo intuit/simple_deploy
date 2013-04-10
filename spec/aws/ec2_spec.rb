@@ -12,7 +12,7 @@ describe SimpleDeploy::AWS::EC2 do
                           {'instanceId' => 'i-123456'},
                           {'privateIpAddress' => '192.168.1.1'}]}]
     }
-    SimpleDeploy.should_receive(:config).and_return(@config_stub)
+    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @cf_mock = mock 'CloudFormation'
     Fog::Compute::AWS.stub(:new).and_return(@cf_mock)

@@ -15,7 +15,7 @@ describe SimpleDeploy::AWS::SimpleDB do
       'Items' => { 'item1-2' => { 'key' => ['value'] } },
       'NextToken' => 'Chunk2'
     }
-    SimpleDeploy.should_receive(:config).and_return(@config_stub)
+    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @db_mock = mock 'SimpleDB'
     Fog::AWS::SimpleDB.stub(:new).and_return(@db_mock)

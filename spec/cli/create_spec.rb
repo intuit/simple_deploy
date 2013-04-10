@@ -17,8 +17,8 @@ describe SimpleDeploy::CLI::Create do
                  :template    => '/tmp/test.json' }
     Trollop.stub :options => @options
 
-    SimpleDeploy.should_receive(:create_config).and_return(@config_object)
-    SimpleDeploy.should_receive(:environments).and_return(@config_env)
+    SimpleDeploy.stub(:create_config).and_return(@config_object)
+    SimpleDeploy.stub(:environments).and_return(@config_env)
     @config_env.should_receive(:keys).and_return(['test'])
 
 

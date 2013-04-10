@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe SimpleDeploy::AWS::CloudFormation::Error do
   before do
-    #@logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
     @logger_mock = mock 'Logger'
     @config_stub = stub 'Config', :logger => @logger_mock, :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
 

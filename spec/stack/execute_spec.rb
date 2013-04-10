@@ -14,7 +14,7 @@ describe SimpleDeploy::Stack::Execute do
                 :stack       => @stack,
                 :name        => @name }
 
-    SimpleDeploy.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.stub(:config).and_return(@config_mock)
 
     SimpleDeploy::Stack::SSH.should_receive(:new).
                              with(options).

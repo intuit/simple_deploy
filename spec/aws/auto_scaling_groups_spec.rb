@@ -11,7 +11,7 @@ describe SimpleDeploy::AWS::AutoScalingGroups do
     @response_stub = stub 'Fog::Response', :body => body
     @auto_scaling_mock = mock 'AutoScalingGroups'
 
-    SimpleDeploy.should_receive(:config).and_return(@config_stub)
+    SimpleDeploy.stub(:config).and_return(@config_stub)
     Fog::AWS::AutoScaling.stub :new => @auto_scaling_mock
     @auto_scaling_groups = SimpleDeploy::AWS::AutoScalingGroups.new :asg_id => 'asg_name'
   end
@@ -22,9 +22,7 @@ describe SimpleDeploy::AWS::AutoScalingGroups do
                          with('AutoScalingGroupNames' => ['asg_name']).
                          and_return(@response_stub)
 
-      @auto_scaling_groups.list_instances.should ==  ['i-000001','i-000002' ]
-
-
+      @auto_scaling_groups.list_instances.should ==  ['i-000001','i-000002']
     end
   end
 end

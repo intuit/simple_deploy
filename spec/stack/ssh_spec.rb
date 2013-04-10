@@ -10,7 +10,7 @@ describe SimpleDeploy::Stack::SSH do
                         :error => true
     @config_mock.stub :logger => @logger_stub
     @config_mock.should_receive(:region).and_return 'test-us-west-1'
-    SimpleDeploy.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.stub(:config).and_return(@config_mock)
 
     @stack_mock.stub :attributes => { :ssh_gateway => false }
     @options = { :logger      => @logger_stub,

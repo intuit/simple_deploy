@@ -7,7 +7,7 @@ describe ::SimpleDeploy::StackFormatter do
                                   :access_key => 'key',
                                   :secret_key => 'XXX',
                                   :region => 'us-west1'
-    SimpleDeploy.should_receive(:config).and_return(@config_stub)
+    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @stack_reader_mock = mock 'StackReader'
     SimpleDeploy::StackReader.stub(:new).and_return(@stack_reader_mock)

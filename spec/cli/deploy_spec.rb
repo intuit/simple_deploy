@@ -9,7 +9,7 @@ describe SimpleDeploy::CLI::Deploy do
       @stack    = stub :attributes => {}
       @notifier = stub
 
-      SimpleDeploy.should_receive(:create_config).and_return(@config)
+      SimpleDeploy.stub(:create_config).and_return(@config)
 
       SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                        with(:log_level => 'debug').

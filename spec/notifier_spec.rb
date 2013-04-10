@@ -6,7 +6,7 @@ describe SimpleDeploy::Notifier do
     before do
       @config_mock = mock 'config mock'
       @logger_mock = mock 'logger mock'
-      SimpleDeploy.should_receive(:config).and_return(@config_mock)
+      SimpleDeploy.stub(:config).and_return(@config_mock)
                    
       @config_mock.should_receive(:notifications).
                    exactly(1).times.
@@ -69,7 +69,7 @@ describe SimpleDeploy::Notifier do
   it "should not blow up if the notification section is missing" do
     @config_mock = mock 'config mock'
     @logger_mock = mock 'logger mock'
-    SimpleDeploy.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.stub(:config).and_return(@config_mock)
                  
     @config_mock.should_receive(:notifications).
                  and_return nil

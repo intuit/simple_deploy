@@ -5,7 +5,7 @@ describe SimpleDeploy::StackReader do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
     @config_stub = stub 'Config', :logger => @logger_stub, :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
 
-    SimpleDeploy.should_receive(:config).and_return(@config_stub)
+    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @entry_mock = mock 'Entry'
     @entry_mock.stub(:attributes).and_return(:chef_repo_bucket_prefix => 'chef_repo_bp')

@@ -26,7 +26,7 @@ describe SimpleDeploy do
 
     @status_mock = mock 'status mock'
 
-    SimpleDeploy.should_receive(:config).and_return(@config_mock)
+    SimpleDeploy.stub(:config).and_return(@config_mock)
 
     options = { :logger      => @logger_stub,
                 :instances   => ['1.2.3.4', '4.3.2.1'],
