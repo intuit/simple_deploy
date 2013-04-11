@@ -1,16 +1,19 @@
 require 'spec_helper'
 
 describe SimpleDeploy::Status do
+  include_context 'stubbed config'
 
   before do
-    @config_mock = mock 'config mock'
     @logger_mock = mock 'logger mock'
     @stack_reader_mock = mock 'stack reader mock'
     SimpleDeploy::StackReader.should_receive(:new).
                               and_return @stack_reader_mock
-    @config_mock.should_receive(:logger).and_return @logger_mock
     @status = SimpleDeploy::Status.new :name   => 'test-stack',
-                                       :config => @config_mock
+                                       :logger => @logger_mock
+  end
+
+  after do
+    SimpleDeploy.release_config
   end
 
   it "should return true if the stack is in complete state" do

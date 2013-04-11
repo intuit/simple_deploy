@@ -43,7 +43,7 @@ EOS
         if @opts[:template]
           template_file_path = @opts[:template]
         else
-          template_file.write source_stack.template.to_json
+          template_file.write source_stack.template
         end
 
         rescue_exceptions_and_exit do
@@ -81,7 +81,7 @@ EOS
       end
 
       def config
-        @config ||= Config.new.environment @opts[:environment]
+        @config ||= SimpleDeploy.create_config @opts[:environment]
       end
 
       def logger
@@ -89,16 +89,16 @@ EOS
       end
 
       def source_stack
+        config
         @source_stack ||= Stack.new :environment => @opts[:environment],
                                     :name        => @opts[:source_name],
-                                    :config      => config,
                                     :logger      => logger
       end
 
       def new_stack
+        config
         @new_stack ||= Stack.new :environment => @opts[:environment],
                                  :name        => @opts[:new_name],
-                                 :config      => config,
                                  :logger      => logger
       end
 

@@ -9,11 +9,14 @@ describe SimpleDeploy::CLI::Protect do
       @config_mock  = mock 'config'
       @logger  = stub 'logger', 'info' => 'true'
 
-      SimpleDeploy::Config.stub(:new).and_return(@config_mock)
-      @config_mock.should_receive(:environment).with('my_env').and_return(@config)
+      SimpleDeploy.stub(:create_config).and_return(@config)
       SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                        with(:log_level => 'debug').
                                        and_return(@logger)
+    end
+
+    after do
+      SimpleDeploy.release_config
     end
 
     it "should enable protection" do
@@ -31,8 +34,7 @@ describe SimpleDeploy::CLI::Protect do
       stack.should_receive(:update).with(hash_including(:attributes => [{ 'protection' => 'on' }]))
 
       SimpleDeploy::Stack.should_receive(:new).
-                          with(:config      => @config,
-                               :environment => 'my_env',
+                          with(:environment => 'my_env',
                                :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(stack)
@@ -55,15 +57,13 @@ describe SimpleDeploy::CLI::Protect do
       stack.should_receive(:update).twice.with(hash_including(:attributes => [{ 'protection' => 'on' }]))
 
       SimpleDeploy::Stack.should_receive(:new).
-                          with(:config      => @config,
-                               :environment => 'my_env',
+                          with(:environment => 'my_env',
                                :logger      => @logger,
                                :name        => 'my_stack1').
                           and_return(stack)
 
       SimpleDeploy::Stack.should_receive(:new).
-                          with(:config      => @config,
-                               :environment => 'my_env',
+                          with(:environment => 'my_env',
                                :logger      => @logger,
                                :name        => 'my_stack2').
                           and_return(stack)
@@ -86,8 +86,7 @@ describe SimpleDeploy::CLI::Protect do
       stack.should_receive(:update).with(hash_including(:attributes => [{ 'protection' => 'off' }]))
 
       SimpleDeploy::Stack.should_receive(:new).
-                          with(:config      => @config,
-                               :environment => 'my_env',
+                          with(:environment => 'my_env',
                                :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(stack)
@@ -110,15 +109,13 @@ describe SimpleDeploy::CLI::Protect do
       stack.should_receive(:update).twice.with(hash_including(:attributes => [{ 'protection' => 'off' }]))
 
       SimpleDeploy::Stack.should_receive(:new).
-                          with(:config      => @config,
-                               :environment => 'my_env',
+                          with(:environment => 'my_env',
                                :logger      => @logger,
                                :name        => 'my_stack1').
                           and_return(stack)
 
       SimpleDeploy::Stack.should_receive(:new).
-                          with(:config      => @config,
-                               :environment => 'my_env',
+                          with(:environment => 'my_env',
                                :logger      => @logger,
                                :name        => 'my_stack2').
                           and_return(stack)

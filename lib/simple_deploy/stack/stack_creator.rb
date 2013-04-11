@@ -4,8 +4,8 @@ module SimpleDeploy
   class StackCreator
 
     def initialize(args)
-      @config = args[:config]
-      @logger = @config.logger
+      @config = SimpleDeploy.config
+      @logger = args[:logger]
       @entry = args[:entry]
       @name = args[:name]
       @template = read_template_from_file args[:template_file]
@@ -21,7 +21,7 @@ module SimpleDeploy
     private
 
     def cloud_formation
-      @cf ||= AWS::CloudFormation.new :config => @config
+      @cf ||= AWS::CloudFormation.new :logger => @logger
     end
 
     def read_template_from_file(template_file)

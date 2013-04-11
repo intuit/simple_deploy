@@ -1,17 +1,18 @@
 require 'spec_helper'
 
-describe SimpleDeploy do
+describe SimpleDeploy::Notifier::Campfire do
+  include_context 'stubbed config'
 
   describe "with all required configurations" do
     before do
       config = { 'campfire' => { 'token' => 'tkn' } }
                 
-      @config_mock = mock 'config mock'
       @stack_mock = mock 'stack'
       @logger_mock = mock 'logger mock'
       @tinder_mock = mock 'tinder'
-      @config_mock.should_receive(:logger).and_return @logger_mock
+
       @config_mock.should_receive(:notifications).and_return config
+
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'test',
                                :name        => 'stack_name',
@@ -29,7 +30,7 @@ describe SimpleDeploy do
                    with "Campfire room ids '1,2'."
       @campfire = SimpleDeploy::Notifier::Campfire.new :stack_name  => 'stack_name',
                                                        :environment => 'test',
-                                                       :config      => @config_mock
+                                                       :logger      => @logger_mock
 
     end
 
@@ -58,11 +59,10 @@ describe SimpleDeploy do
     before do
       config = nil
                 
-      @config_mock = mock 'config mock'
       @stack_mock = mock 'stack'
       @logger_mock = mock 'logger mock'
       @tinder_mock = mock 'tinder'
-      @config_mock.should_receive(:logger).and_return @logger_mock
+
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'test',
                                :name        => 'stack_name',
@@ -81,7 +81,7 @@ describe SimpleDeploy do
                    with "Campfire notifications complete."
       @campfire = SimpleDeploy::Notifier::Campfire.new :stack_name  => 'stack_name',
                                                        :environment => 'test',
-                                                       :config      => @config_mock
+                                                       :logger      => @logger_mock
     end
 
     it "should not blow up if campfire_subdom & campfire_room_ids are not present" do

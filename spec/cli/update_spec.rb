@@ -9,11 +9,14 @@ describe SimpleDeploy::CLI::Update do
       @logger  = stub 'logger', 'info' => 'true'
       @stack   = stub :attributes => {}
 
-      SimpleDeploy::Config.stub(:new).and_return(@config)
-      @config.should_receive(:environment).with('my_env').and_return(@config)
+      SimpleDeploy.stub(:create_config).and_return(@config)
       SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                        with(:log_level => 'debug').
                                        and_return(@logger)
+    end
+
+    after do
+      SimpleDeploy.release_config
     end
 
     it "should pass force true" do
@@ -30,8 +33,7 @@ describe SimpleDeploy::CLI::Update do
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Stack.should_receive(:new).
-                          with(:config      => @config,
-                               :environment => 'my_env',
+                          with(:environment => 'my_env',
                                :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(@stack)
@@ -55,8 +57,7 @@ describe SimpleDeploy::CLI::Update do
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Stack.should_receive(:new).
-                          with(:config      => @config,
-                               :environment => 'my_env',
+                          with(:environment => 'my_env',
                                :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(@stack)

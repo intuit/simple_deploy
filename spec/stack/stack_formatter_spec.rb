@@ -1,12 +1,12 @@
 require 'spec_helper'
 
 describe ::SimpleDeploy::StackFormatter do
+  include_context 'double stubbed config', :access_key => 'key',
+                                           :secret_key => 'XXX',
+                                           :region     => 'us-west-1'
+
   before do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
-    @config_stub = stub 'Config', :logger => @logger_stub,
-                                  :access_key => 'key',
-                                  :secret_key => 'XXX',
-                                  :region => 'us-west1'
 
     @stack_reader_mock = mock 'StackReader'
     SimpleDeploy::StackReader.stub(:new).and_return(@stack_reader_mock)
@@ -16,8 +16,11 @@ describe ::SimpleDeploy::StackFormatter do
     @stack_reader_mock.stub(:events).and_return(['event1', 'event2', 'event3'])
     @stack_reader_mock.stub(:resources).and_return([{'StackName' => 'my_stack'}])
 
-    @stack_formatter = SimpleDeploy::StackFormatter.new(:name => 'my_stack',
-                                                        :config => @config_stub)
+    @stack_formatter = SimpleDeploy::StackFormatter.new(:name => 'my_stack')
+  end
+
+  after do
+    SimpleDeploy.release_config
   end
 
   describe 'display' do

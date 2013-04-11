@@ -10,6 +10,10 @@ end
 
 require 'simple_deploy'
 
+['contexts'].each do |dir|
+  Dir[File.expand_path(File.join(File.dirname(__FILE__),dir,'*.rb'))].each {|f| require f}
+end
+
 RSpec.configure do |config|
   #spec config
 end

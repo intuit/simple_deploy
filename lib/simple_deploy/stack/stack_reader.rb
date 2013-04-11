@@ -3,7 +3,8 @@ module SimpleDeploy
 
     def initialize(args)
       @name = args[:name]
-      @config = args[:config]
+      @config = SimpleDeploy.config
+      @logger = args[:logger]
     end
 
     def attributes
@@ -42,15 +43,15 @@ module SimpleDeploy
     private
 
     def entry
-      @entry ||= Entry.find :name => @name, :config => @config
+      @entry ||= Entry.find :name => @name, :logger => @logger
     end
 
     def cloud_formation
-      @cloud_formation ||= AWS::CloudFormation.new :config => @config
+      @cloud_formation ||= AWS::CloudFormation.new :logger => @logger
     end
 
     def instance_reader
-      @instance_reader ||= InstanceReader.new :config => @config
+      @instance_reader ||= InstanceReader.new :logger => @logger
     end
   end
 end

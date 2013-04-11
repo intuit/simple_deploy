@@ -7,8 +7,8 @@ module SimpleDeploy
       def initialize(args)
         @stack_name = args[:stack_name]
         @environment = args[:environment]
-        @config = args[:config]
-        @logger = @config.logger
+        @config = SimpleDeploy.config
+        @logger = args[:logger]
 
         attributes = stack.attributes
         @subdomain = attributes['campfire_subdomain']

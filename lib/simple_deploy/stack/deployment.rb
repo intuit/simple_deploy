@@ -10,15 +10,15 @@ module SimpleDeploy
     class Deployment
 
       def initialize(args)
-        @config      = args[:config]
+        @config      = SimpleDeploy.config
         @instances   = args[:instances]
         @environment = args[:environment]
         @ssh_user    = args[:ssh_user]
         @ssh_key     = args[:ssh_key]
         @stack       = args[:stack]
         @name        = args[:name]
-        @logger      = @config.logger
-        @region      = @config.region @environment
+        @logger      = args[:logger]
+        @region      = @config.region
       end
 
       def execute(force=false)
@@ -90,8 +90,8 @@ module SimpleDeploy
       end
 
       def primary_instance 
-        if @stack.instances.any?
-          @stack.instances.first['instancesSet'].first['privateIpAddress']
+        if @stack.raw_instances.any?
+          @stack.raw_instances.first['instancesSet'].first['privateIpAddress']
         end
       end
 
@@ -100,13 +100,13 @@ module SimpleDeploy
       end
 
       def executer
-        options = { :config      => @config,
-                    :instances   => @instances,
+        options = { :instances   => @instances,
                     :environment => @environment,
                     :ssh_user    => @ssh_user,
                     :ssh_key     => @ssh_key,
                     :stack       => @stack,
-                    :name        => @name }
+                    :name        => @name,
+                    :logger      => @logger}
         @executer ||= SimpleDeploy::Stack::Execute.new options
       end
 
@@ -114,8 +114,8 @@ module SimpleDeploy
         options = { :name        => @name,
                     :environment => @environment,
                     :ssh_user    => @ssh_user,
-                    :config      => @config,
-                    :stack       => @stack }
+                    :stack       => @stack,
+                    :logger      => @logger}
         @status ||= SimpleDeploy::Stack::Deployment::Status.new options
       end
 

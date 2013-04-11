@@ -1,15 +1,20 @@
 require 'spec_helper'
 
 describe SimpleDeploy::Stack::Execute do
+  include_context 'stubbed config'
+
   before do
     @ssh_mock = mock 'ssh'
-    options = { :config      => @config,
+    @logger_mock = mock 'logger', :info => true
+
+    options = { :logger      => @logger_mock,
                 :instances   => @instances,
                 :environment => @environment,
                 :ssh_user    => @ssh_user,
                 :ssh_key     => @ssh_key,
                 :stack       => @stack,
                 :name        => @name }
+
 
     SimpleDeploy::Stack::SSH.should_receive(:new).
                              with(options).

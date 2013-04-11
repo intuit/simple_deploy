@@ -2,7 +2,7 @@ module SimpleDeploy
   class StackLister
 
     def initialize(args = {})
-      @config = args[:config]
+      @config = SimpleDeploy.config
     end
 
     def all
@@ -12,7 +12,7 @@ module SimpleDeploy
     private
 
     def entry_lister
-      @entry_lister ||= EntryLister.new :config => @config
+      @entry_lister ||= EntryLister.new
     end
   end
 end

@@ -2,8 +2,9 @@ module SimpleDeploy
   class StackDestroyer
 
     def initialize(args)
-      @config = args[:config]
+      @config = SimpleDeploy.config
       @name = args[:name]
+      @logger = args[:logger]
     end
 
     def destroy
@@ -13,7 +14,7 @@ module SimpleDeploy
     private
 
     def cloud_formation
-      @cf ||= AWS::CloudFormation.new :config => @config
+      @cf ||= AWS::CloudFormation.new :logger => @logger
     end
   end
 end

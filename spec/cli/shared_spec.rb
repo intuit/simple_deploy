@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Shared do
   before do
@@ -39,7 +40,8 @@ describe SimpleDeploy::CLI::Shared do
       provided = { :environment => 'prod' }
       required = [:environment]
 
-      SimpleDeploy::Config.stub :new => config_stub
+      SimpleDeploy.stub(:environments).and_return(config_stub)
+      config_stub.should_receive(:keys).and_return(['preprod'])
       @object.stub :logger => logger_stub
 
       lambda { 
@@ -55,7 +57,8 @@ describe SimpleDeploy::CLI::Shared do
       provided = { :environment => 'prod', :test1 => 'value1' }
       required = [:environment, :test1]
 
-      SimpleDeploy::Config.stub :new => config_stub
+      SimpleDeploy.stub(:environments).and_return(config_stub)
+      config_stub.should_receive(:keys).and_return(['prod'])
 
       @object.valid_options? :provided => provided,
                              :required => required,

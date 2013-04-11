@@ -15,20 +15,23 @@ describe SimpleDeploy::CLI::Outputs do
                       { 'OutputKey' => 'key2', 'OutputValue' => 'value2' }]
     Trollop.stub :options => @options
     @config_object.stub(:environments => { 'test' => 'data' })
-    SimpleDeploy::Config.stub :new => @config_object
+    SimpleDeploy.stub(:create_config).and_return(@config)
+    SimpleDeploy.stub(:environments).and_return(@config_env)
+    @config_env.should_receive(:keys).and_return(['test'])
     SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                      with(:log_level => 'info').
                                      and_return @logger
     SimpleDeploy::Stack.should_receive(:new).
                         with(:environment => 'test',
                              :name        => 'mytest',
-                             :config      => @config_env,
                              :logger      => @logger).
                         and_return(@stack)
     @stack.stub :outputs => @data
-    @config_object.should_receive(:environment).with('test').
-                                                and_return @config_env
     @outputs = SimpleDeploy::CLI::Outputs.new
+  end
+
+  after do
+    SimpleDeploy.release_config
   end
 
   it "should successfully return the show command with default values" do

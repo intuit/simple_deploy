@@ -4,11 +4,11 @@ module SimpleDeploy
       class Status
 
         def initialize(args)
-          @config   = args[:config]
+          @config   = SimpleDeploy.config
           @stack    = args[:stack]
           @ssh_user = args[:ssh_user]
           @name     = args[:name]
-          @logger   = @config.logger
+          @logger   = args[:logger]
         end
 
         def clear_for_deployment?
@@ -43,7 +43,9 @@ module SimpleDeploy
 
         def unset_deployment_in_progress
           @logger.debug "Clearing deployment in progress for #{@name}."
-          @stack.update :attributes => [ { 'deployment_in_progress' => 'false' } ]
+          @stack.in_progress_update :attributes => [
+                                      { 'deployment_in_progress' => 'false' } ],
+                                    :caller => self
         end
 
         private

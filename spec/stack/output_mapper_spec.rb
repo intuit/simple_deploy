@@ -37,7 +37,6 @@ describe SimpleDeploy::Stack::OutputMapper do
     it "should return the outputs which match parameters" do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :config      => @config_mock,
                                :logger      => @logger_stub,
                                :name        => 'stack1').
                           and_return @stack1_stub
@@ -50,7 +49,6 @@ describe SimpleDeploy::Stack::OutputMapper do
     it "should return the outputs which match pluralized parameters" do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :config      => @config_mock,
                                :logger      => @logger_stub,
                                :name        => 'stack4').
                           and_return @stack4_stub
@@ -63,13 +61,11 @@ describe SimpleDeploy::Stack::OutputMapper do
     it "should return the outputs which match parameters from multiple stacks" do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :config      => @config_mock,
                                :logger      => @logger_stub,
                                :name        => 'stack1').
                           and_return @stack1_stub
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :config      => @config_mock,
                                :logger      => @logger_stub,
                                :name        => 'stack2').
                           and_return @stack2_stub
@@ -82,13 +78,11 @@ describe SimpleDeploy::Stack::OutputMapper do
     it "should concatenate multiple outputs of same name into CSV" do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :config      => @config_mock,
                                :logger      => @logger_stub,
                                :name        => 'stack1').
                           and_return @stack1_stub
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :config      => @config_mock,
                                :logger      => @logger_stub,
                                :name        => 'stack3').
                           and_return @stack3_stub

@@ -24,15 +24,15 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
-        config = Config.new.environment @opts[:environment]
+        config = SimpleDeploy.create_config @opts[:environment]
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],
-                          :config      => config,
                           :logger      => logger
 
         rescue_exceptions_and_exit do
-          jj stack.template
+          raw_json = JSON.parse stack.template
+          puts JSON.pretty_generate raw_json
         end
       end
 

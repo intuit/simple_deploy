@@ -9,9 +9,15 @@ describe SimpleDeploy::CLI::Deploy do
       @stack    = stub :attributes => {}
       @notifier = stub
 
+      SimpleDeploy.stub(:create_config).and_return(@config)
+
       SimpleDeploy::SimpleDeployLogger.should_receive(:new).
                                        with(:log_level => 'debug').
                                        and_return(@logger)
+    end
+
+    after do
+      SimpleDeploy.release_config
     end
 
     it "should notify on success" do

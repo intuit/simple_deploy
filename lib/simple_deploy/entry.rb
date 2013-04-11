@@ -6,16 +6,16 @@ module SimpleDeploy
 
     def initialize(args)
       @domain = 'stacks'
-      @config = args[:config]
+      @config = SimpleDeploy.config
       @logger = args[:logger]
       @custom_attributes = {}
-      self.name = region_specific_name args[:name]
+      @name = region_specific_name args[:name]
       create_domain
     end
 
     def self.find(args)
       entry = Entry.new :name   => args[:name],
-                        :config => args[:config]
+                        :logger => args[:logger]
       entry
     end
 
@@ -75,7 +75,7 @@ module SimpleDeploy
     end
 
     def sdb_connect
-      @sdb_connect ||= AWS::SimpleDB.new :config => @config
+      @sdb_connect ||= AWS::SimpleDB.new
     end
   end
 

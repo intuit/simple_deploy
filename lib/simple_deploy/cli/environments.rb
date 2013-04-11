@@ -19,7 +19,7 @@ EOS
           opt :help, "Display Help"
         end
 
-        Config.new.environments.keys.each { |e| puts e }
+        SimpleDeploy.environments.keys.each { |e| puts e }
       end
 
       def command_summary

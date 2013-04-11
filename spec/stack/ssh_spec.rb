@@ -1,19 +1,18 @@
 require 'spec_helper'
 
 describe SimpleDeploy::Stack::SSH do
+  include_context 'stubbed config'
+
   before do
     @stack_mock = mock 'stack'
     @task_mock = mock 'task'
-    @config_mock = mock 'config'
     @logger_stub = stub 'logger', :debug => true,
                         :info  => true,
                         :error => true
-    @config_mock.stub :logger => @logger_stub
-    @config_mock.should_receive(:region).
-        with('test-env').
-        and_return 'test-us-west-1'
+    @config_mock.should_receive(:region).and_return 'test-us-west-1'
+
     @stack_mock.stub :attributes => { :ssh_gateway => false }
-    @options = { :config      => @config_mock,
+    @options = { :logger      => @logger_stub,
                  :instances   => ['1.2.3.4', '4.3.2.1'],
                  :environment => 'test-env',
                  :ssh_user    => 'user',
@@ -24,6 +23,10 @@ describe SimpleDeploy::Stack::SSH do
     @ssh_options = Hash.new
     @task_mock.stub :logger    => @task_logger_mock,
                     :variables => @ssh_options
+  end
+
+  after do
+    SimpleDeploy.release_config
   end
 
   context "when unsuccessful" do

@@ -5,18 +5,18 @@ module SimpleDeploy
     def initialize(args)
       @stack_name = args[:stack_name]
       @environment = args[:environment]
-      @config = Config.new :logger => args[:logger]
-      @logger = @config.logger
+      @config = SimpleDeploy.config
+      @logger = args[:logger]
       @notifications = @config.notifications || {}
     end
 
     def send_deployment_start_message
-      message = "Deployment to #{@stack_name} in #{@config.region @environment} started."
+      message = "Deployment to #{@stack_name} in #{@config.region} started."
       send message
     end
 
     def send_deployment_complete_message
-      message = "Deployment to #{@stack_name} in #{@config.region @environment} complete."
+      message = "Deployment to #{@stack_name} in #{@config.region} complete."
       attributes = stack.attributes
 
       if attributes['app_github_url']
@@ -36,7 +36,7 @@ module SimpleDeploy
         when 'campfire'
           campfire = Notifier::Campfire.new :stack_name  => @stack_name,
                                             :environment => @environment,
-                                            :config      => @config
+                                            :logger      => @logger
           campfire.send message
         end
       end

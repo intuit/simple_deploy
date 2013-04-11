@@ -1,29 +1,28 @@
 require 'spec_helper'
 
-describe SimpleDeploy do
+describe SimpleDeploy::Notifier do
+  include_context 'stubbed config'
 
   describe "with valid settings" do
     before do
-      @config_mock = mock 'config mock'
       @logger_mock = mock 'logger mock'
-      SimpleDeploy::Config.should_receive(:new).
-                           with(:logger => @logger_mock).
-                           and_return @config_mock
                    
       @config_mock.should_receive(:notifications).
                    exactly(1).times.
                    and_return({ 'campfire' => 'settings' })
-      @config_mock.should_receive(:logger).
-                   and_return @logger_mock
       @notifier = SimpleDeploy::Notifier.new :stack_name  => 'stack_name',
                                              :environment => 'test',
                                              :logger      => @logger_mock
     end
 
+    after do
+      SimpleDeploy.release_config
+    end
+
     it "should support a basic start message" do
       campfire_mock = mock 'campfire mock'
 
-      @config_mock.should_receive(:region).with('test').and_return('us-west-1')
+      @config_mock.stub(:region).and_return('us-west-1')
 
       SimpleDeploy::Notifier::Campfire.should_receive(:new).and_return campfire_mock
       campfire_mock.should_receive(:send).with "Deployment to stack_name in us-west-1 started."
@@ -35,7 +34,7 @@ describe SimpleDeploy do
       stack_mock = mock 'stack'
       campfire_mock = mock 'campfire mock'
       environment_mock = mock 'environment mock'
-      @config_mock.should_receive(:region).with('test').and_return('us-west-1')
+      @config_mock.stub(:region).and_return('us-west-1')
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'test',
                                :name        => 'stack_name',
@@ -58,7 +57,7 @@ describe SimpleDeploy do
       SimpleDeploy::Notifier::Campfire.should_receive(:new).
                                        with(:environment => 'test',
                                             :stack_name  => 'stack_name',
-                                            :config      => @config_mock).
+                                            :logger      => @logger_mock).
                                        and_return campfire_mock
       campfire_mock.should_receive(:send).with 'heh you guys!'
       @notifier.send 'heh you guys!'
@@ -67,16 +66,10 @@ describe SimpleDeploy do
   end
 
   it "should not blow up if the notification section is missing" do
-    @config_mock = mock 'config mock'
     @logger_mock = mock 'logger mock'
-    SimpleDeploy::Config.should_receive(:new).
-                         with(:logger => @logger_mock).
-                         and_return @config_mock
                  
     @config_mock.should_receive(:notifications).
                  and_return nil
-    @config_mock.should_receive(:logger).
-                 and_return @logger_mock
     @notifier = SimpleDeploy::Notifier.new :stack_name  => 'stack_name',
                                            :environment => 'test',
                                            :logger      => @logger_mock

@@ -4,8 +4,8 @@ module SimpleDeploy
   class AWS
     class EC2
 
-      def initialize(args)
-        c = args[:config]
+      def initialize
+        c = SimpleDeploy.config
         @connect = Fog::Compute::AWS.new :aws_access_key_id => c.access_key,
                                          :aws_secret_access_key => c.secret_key,
                                          :region => c.region

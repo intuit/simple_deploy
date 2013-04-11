@@ -4,7 +4,7 @@ module SimpleDeploy
 
       def merge(args)
         @attributes   = args[:attributes]
-        @config       = args[:config]
+        @config       = SimpleDeploy.config
         @environment  = args[:environment]
         @logger       = args[:logger]
         @input_stacks = args[:input_stacks]
@@ -36,7 +36,6 @@ module SimpleDeploy
 
       def mapper
         @om ||= Stack::OutputMapper.new :environment => @environment,
-                                        :config      => @config,
                                         :logger      => @logger
       end
 

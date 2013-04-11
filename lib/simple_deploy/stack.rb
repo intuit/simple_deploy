@@ -17,25 +17,19 @@ module SimpleDeploy
       @environment = args[:environment]
       @name = args[:name]
 
-      @config = args[:config] || Config.new(:logger => args[:logger])
-      @logger = @config.logger
+      @config = SimpleDeploy.config
+      @logger = args[:logger]
 
       @use_internal_ips = !!args[:internal]
-      @entry = Entry.new :name   => @name,
-                         :config => @config
+      @entry = Entry.new :name => @name, :logger => @logger
     end
 
     def create(args)
       attributes = stack_attribute_formater.updated_attributes args[:attributes]
       @template_file = args[:template]
 
-      # TODO push this into StackCreator
-      begin
-        @entry.set_attributes attributes
-        stack_creator.create
-      rescue Exception => ex
-        raise Exceptions::CloudFormationError.new ex.message
-      end
+      @entry.set_attributes attributes
+      stack_creator.create
       
       # TODO
       #   - examine the returned Excon::Response
@@ -59,18 +53,31 @@ module SimpleDeploy
         attributes = stack_attribute_formater.updated_attributes args[:attributes]
         @template_body = template
 
-        # TODO push this into StackUpdater
-        begin
-          @entry.set_attributes attributes
-          stack_updater.update_stack_if_parameters_changed attributes
-          @logger.info "Update complete for #{@name}."
-          true
-        rescue Exception => ex
-          raise Exceptions::CloudFormationError.new ex.message
-        end
+        @entry.set_attributes attributes
+        stack_updater.update_stack_if_parameters_changed attributes
+        @logger.info "Update complete for #{@name}."
+
         @entry.save
+        true
       else
         @logger.info "Not clear to update."
+        false
+      end
+    end
+
+    def in_progress_update(args)
+      if args[:caller].kind_of? Stack::Deployment::Status
+        @logger.info "Updating #{@name}."
+        attributes = stack_attribute_formater.updated_attributes args[:attributes]
+        @template_body = template
+
+        @entry.set_attributes attributes
+        stack_updater.update_stack_if_parameters_changed attributes
+        @logger.info "Update complete for #{@name}."
+
+        @entry.save
+        true
+      else
         false
       end
     end
@@ -89,13 +96,7 @@ module SimpleDeploy
 
     def destroy
       if attributes['protection'] != 'on'
-        # TODO push this into StackDestroyer
-        begin
-          stack_destroyer.destroy
-        rescue Exception => ex
-          raise Exceptions::CloudFormationError.new ex.message
-        end
-
+        stack_destroyer.destroy
         @entry.delete_attributes
         @logger.info "#{@name} destroyed."
         true
@@ -127,6 +128,10 @@ module SimpleDeploy
           end
         end
       end.flatten.compact
+    end
+
+    def raw_instances
+      stack_reader.instances
     end
 
     def status
@@ -162,52 +167,51 @@ module SimpleDeploy
       @stack_creator ||= StackCreator.new :name          => @name,
                                           :entry         => @entry,
                                           :template_file => @template_file,
-                                          :config        => @config
+                                          :logger        => @logger
     end
 
     def stack_updater
       @stack_updater ||= StackUpdater.new :name          => @name,
                                           :entry         => @entry,
                                           :template_body => @template_body,
-                                          :config        => @config
+                                          :logger        => @logger
     end
 
     def stack_reader
       @stack_reader ||= StackReader.new :name   => @name,
-                                        :config => @config
+                                        :logger => @logger
     end
 
     def stack_destroyer
       @stack_destroyer ||= StackDestroyer.new :name   => @name,
-                                              :config => @config
+                                              :logger => @logger
     end
 
     def stack_status
       @status ||= Status.new :name   => @name,
-                             :config => @config
+                             :logger => @logger
     end
 
     def stack_attribute_formater
-      @saf ||= StackAttributeFormater.new :config          => @config,
-                                          :environment     => @environment,
-                                          :main_attributes => attributes
+      @saf ||= StackAttributeFormater.new :main_attributes => attributes,
+                                          :logger          => @logger
     end
 
     def executer
-      @executer ||= Stack::Execute.new :config      => @config,
+      @executer ||= Stack::Execute.new :logger      => @logger,
                                        :environment => @environment,
                                        :name        => @name,
-                                       :stack       => stack,
+                                       :stack       => self,
                                        :instances   => instances,
                                        :ssh_user    => ssh_user,
                                        :ssh_key     => ssh_key
     end
 
     def deployment
-      @deployment ||= Stack::Deployment.new :config      => @config,
+      @deployment ||= Stack::Deployment.new :logger      => @logger,
                                             :environment => @environment,
                                             :name        => @name,
-                                            :stack       => stack,
+                                            :stack       => self,
                                             :instances   => instances,
                                             :ssh_user    => ssh_user,
                                             :ssh_key     => ssh_key
