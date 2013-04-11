@@ -1,9 +1,9 @@
 require 'spec_helper'
 
 describe SimpleDeploy::Misc::AttributeMerger do
+  include_context 'stubbed config'
 
   before do
-    @config_mock = mock 'config'
     @mapper_mock = mock 'mapper'
     @logger_stub = stub 'logger', :info => true
 
@@ -18,9 +18,6 @@ describe SimpleDeploy::Misc::AttributeMerger do
                                          :logger      => @options[:logger]).
                                     and_return @mapper_mock
     @merger = SimpleDeploy::Misc::AttributeMerger.new
-
-
-    SimpleDeploy.stub(:config).and_return(@config_mock)
   end
 
   it "should return the consolidated list of attributes" do

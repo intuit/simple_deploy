@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'json'
 
 describe SimpleDeploy::StackUpdater do
+  include_context 'stubbed config'
 
   before do
     @template_body = '{ "Parameters": 
@@ -20,12 +21,10 @@ describe SimpleDeploy::StackUpdater do
 
   it "should update the stack when parameters change and stack is stable" do
     attributes = { "param1" => "value1", "param3" => "value3" }
-    config_mock = mock 'config mock'
     logger_mock = mock 'logger mock'
     entry_mock = mock 'entry mock'
     status_mock = mock 'status mock'
     cloud_formation_mock = mock 'cloud formation mock'
-    SimpleDeploy.stub(:config).and_return(config_mock)
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).
                                       with(:logger => logger_mock).
                                       and_return cloud_formation_mock
@@ -53,12 +52,10 @@ describe SimpleDeploy::StackUpdater do
 
   it "should raise an error when parameters change and stack is not stable" do
     attributes = { "param1" => "value1", "param3" => "value3" }
-    config_mock = mock 'config mock'
     logger_mock = mock 'logger mock'
     entry_mock = mock 'entry mock'
     status_mock = mock 'status mock'
     cloud_formation_mock = mock 'cloud formation mock'
-    SimpleDeploy.stub(:config).and_return(config_mock)
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).
                                       exactly(0).times
     logger_mock.should_receive(:debug).exactly(1).times
@@ -78,10 +75,8 @@ describe SimpleDeploy::StackUpdater do
 
   it "should not update the stack when parameters don't change" do
     attributes = { "param3" => "value3" }
-    config_mock = mock 'config mock'
     logger_mock = mock 'logger mock'
     entry_mock = mock 'entry mock'
-    SimpleDeploy.stub(:config).and_return(config_mock)
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).exactly(0).times
     logger_mock.should_receive(:debug).with("No Cloud Formation parameters require updating.")
     stack_updater = SimpleDeploy::StackUpdater.new :name          => 'test-stack',

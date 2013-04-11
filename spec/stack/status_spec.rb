@@ -1,11 +1,10 @@
 require 'spec_helper'
 
 describe SimpleDeploy::Status do
+  include_context 'stubbed config'
 
   before do
-    @config_mock = mock 'config mock'
     @logger_mock = mock 'logger mock'
-    SimpleDeploy.stub(:config).and_return(@config_mock)
     @stack_reader_mock = mock 'stack reader mock'
     SimpleDeploy::StackReader.should_receive(:new).
                               and_return @stack_reader_mock

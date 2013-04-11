@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe SimpleDeploy do
+describe SimpleDeploy::StackAttributeFormater do
+  include_context 'stubbed config'
+
   before do
     @logger_mock = mock 'logger mock', :info => 'true'
-    @config_mock = mock 'config mock', :logger => @logger_mock, :region => 'us-west-1'
+    @config_mock.stub(:region).and_return('us-west-1')
     @config_mock.stub(:artifact_cloud_formation_url).and_return('ChefRepoURL')
     @config_mock.stub(:artifacts).and_return(['chef_repo', 'cookbooks', 'app'])
-
-    SimpleDeploy.stub(:config).and_return(@config_mock)
   end
 
   after do

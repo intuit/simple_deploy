@@ -5,7 +5,6 @@ describe SimpleDeploy::InstanceReader do
   describe "list_stack_instances" do
 
     before do
-      @config_mock                   = mock 'config'
       @logger_mock                   = mock 'logger'
       @cloud_formation_mock          = mock 'cloud formation'
       @auto_scaling_groups_mock      = mock 'auto scaling'

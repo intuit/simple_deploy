@@ -1,17 +1,16 @@
 require 'spec_helper'
 
-describe SimpleDeploy do
+describe SimpleDeploy::Notifier::Campfire do
+  include_context 'stubbed config'
 
   describe "with all required configurations" do
     before do
       config = { 'campfire' => { 'token' => 'tkn' } }
                 
-      @config_mock = mock 'config mock'
       @stack_mock = mock 'stack'
       @logger_mock = mock 'logger mock'
       @tinder_mock = mock 'tinder'
 
-      SimpleDeploy.stub(:config).and_return(@config_mock)
       @config_mock.should_receive(:notifications).and_return config
 
       SimpleDeploy::Stack.should_receive(:new).
@@ -60,12 +59,10 @@ describe SimpleDeploy do
     before do
       config = nil
                 
-      @config_mock = mock 'config mock'
       @stack_mock = mock 'stack'
       @logger_mock = mock 'logger mock'
       @tinder_mock = mock 'tinder'
 
-      SimpleDeploy.stub(:config).and_return(@config_mock)
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'test',
                                :name        => 'stack_name',

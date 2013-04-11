@@ -1,14 +1,12 @@
 require 'spec_helper'
 
-describe SimpleDeploy do
+describe SimpleDeploy::Stack::Deployment::Status do
+  include_context 'stubbed config'
 
   before do
     @logger_stub = stub 'logger', :debug => true,
                                   :info  => true
-    @config_mock = mock 'config'
-    @config_mock.stub :logger => @logger_stub
     @stack_mock = mock 'stack'
-    SimpleDeploy.stub(:config).and_return(@config_mock)
 
     options = { :logger   => @logger_stub,
                 :stack    => @stack_mock,

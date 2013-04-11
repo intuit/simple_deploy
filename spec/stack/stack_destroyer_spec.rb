@@ -1,12 +1,11 @@
 require 'spec_helper'
 
 describe SimpleDeploy::StackDestroyer do
+  include_context 'stubbed config'
 
   it "should destroy the stack" do
-    config_mock = mock 'config mock'
     logger_stub = mock 'logger stub', :info => true
     cloud_formation_mock = mock 'cloud formation mock'
-    SimpleDeploy.stub(:config).and_return(config_mock)
 
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).
                                       with(:logger => logger_stub).

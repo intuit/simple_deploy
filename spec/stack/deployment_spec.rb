@@ -1,6 +1,7 @@
 require 'spec_helper'
 
-describe SimpleDeploy do
+describe SimpleDeploy::Stack::Deployment do
+  include_context 'stubbed config'
 
   before do
     @attributes = { 'key'                     => 'val',
@@ -18,15 +19,12 @@ describe SimpleDeploy do
                       :info  => 'true',
                       :error => 'true'
 
-    @config_mock = mock 'config mock'
     @config_mock.stub(:region) { 'test-us-west-1' }
 
     @stack_mock = mock 'stack mock'
     @stack_mock.stub(:attributes) { @attributes }
 
     @status_mock = mock 'status mock'
-
-    SimpleDeploy.stub(:config).and_return(@config_mock)
 
     options = { :logger      => @logger_stub,
                 :instances   => ['1.2.3.4', '4.3.2.1'],

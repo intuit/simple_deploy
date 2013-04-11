@@ -1,11 +1,10 @@
 require 'spec_helper'
 
 describe SimpleDeploy::StackLister do
+  include_context 'stubbed config'
 
   it "should list the stack entries" do
-    config_mock = mock 'config mock'
     entry_lister_mock = mock 'entry lister mock'
-    SimpleDeploy.stub(:config).and_return(config_mock)
 
     SimpleDeploy::EntryLister.should_receive(:new).
                               and_return entry_lister_mock

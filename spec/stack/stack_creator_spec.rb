@@ -2,6 +2,7 @@ require 'spec_helper'
 require 'json'
 
 describe SimpleDeploy::StackCreator do
+  include_context 'stubbed config'
 
   before do
     @attributes = { "param1" => "value1", "param3" => "value3" }
@@ -20,12 +21,10 @@ describe SimpleDeploy::StackCreator do
   end
 
   it "should map the attributes to a template's parameters and create a stack " do
-    config_mock = mock 'config mock'
     logger_mock = mock 'logger mock'
     entry_mock = mock 'entry mock'
     file_mock = mock 'file mock'
     cloud_formation_mock = mock 'cloud formation mock'
-    SimpleDeploy.stub(:config).and_return(config_mock)
 
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).
                                       with(:logger => logger_mock).

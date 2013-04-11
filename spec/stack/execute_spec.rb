@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 describe SimpleDeploy::Stack::Execute do
+  include_context 'stubbed config'
+
   before do
     @ssh_mock = mock 'ssh'
-    @config_mock = mock 'config'
     @logger_mock = mock 'logger', :info => true
 
     options = { :logger      => @logger_mock,
@@ -14,16 +15,11 @@ describe SimpleDeploy::Stack::Execute do
                 :stack       => @stack,
                 :name        => @name }
 
-    SimpleDeploy.stub(:config).and_return(@config_mock)
 
     SimpleDeploy::Stack::SSH.should_receive(:new).
                              with(options).
                              and_return @ssh_mock
     @execute = SimpleDeploy::Stack::Execute.new options
-  end
-
-  after do
-    SimpleDeploy.release_config
   end
 
   it "should call execute with the given options" do

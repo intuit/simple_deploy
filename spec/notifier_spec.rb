@@ -1,12 +1,11 @@
 require 'spec_helper'
 
 describe SimpleDeploy::Notifier do
+  include_context 'stubbed config'
 
   describe "with valid settings" do
     before do
-      @config_mock = mock 'config mock'
       @logger_mock = mock 'logger mock'
-      SimpleDeploy.stub(:config).and_return(@config_mock)
                    
       @config_mock.should_receive(:notifications).
                    exactly(1).times.
@@ -67,9 +66,7 @@ describe SimpleDeploy::Notifier do
   end
 
   it "should not blow up if the notification section is missing" do
-    @config_mock = mock 'config mock'
     @logger_mock = mock 'logger mock'
-    SimpleDeploy.stub(:config).and_return(@config_mock)
                  
     @config_mock.should_receive(:notifications).
                  and_return nil
