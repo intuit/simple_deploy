@@ -40,7 +40,7 @@ describe SimpleDeploy::Configuration do
       File.should_receive(:open).with("/my/config/file").
                                  and_return(config_data.to_yaml)
       env_mock = mock 'env'
-      @the_module.should_receive(:env).and_return(env_mock)
+      @the_module.stub(:env).and_return(env_mock)
       env_mock.should_receive(:load).
                with('SIMPLE_DEPLOY_CONFIG_FILE').
                and_return "/my/config/file"
