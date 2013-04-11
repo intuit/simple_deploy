@@ -1,18 +1,18 @@
 require 'spec_helper'
 
 describe SimpleDeploy::Stack do
+  include_context 'double stubbed config', :access_key => 'access',
+                                           :secret_key => 'secret',
+                                           :region     => 'us-west-1'
+        
 
   before do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
     @environment_config_mock = mock 'environment config mock'
 
-    @config_stub = stub 'config stub', :region => 'us-west-1', :logger => @logger_stub
     @config_stub.stub(:environment).and_return(@environment_config_mock)
     @config_stub.stub(:artifacts).and_return(['chef_repo', 'cookbooks', 'app'])
     @config_stub.stub(:artifact_cloud_formation_url).and_return('CookBooksURL')
-    @config_stub.stub(:access_key).and_return('access')
-    @config_stub.stub(:secret_key).and_return('secret')
-    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @entry_mock = mock 'entry mock'
     SimpleDeploy::Entry.should_receive(:new).

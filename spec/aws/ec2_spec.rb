@@ -1,9 +1,12 @@
 require 'spec_helper'
 
 describe SimpleDeploy::AWS::EC2 do
+  include_context 'double stubbed config', :access_key => 'key',
+                                           :secret_key => 'XXX',
+                                           :region     => 'us-west-1'
+
   before do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true', :error => 'true'
-    @config_stub = stub 'Config', :logger => @logger_stub, :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
     @instance_id = 'i-123456'
     @response_stub = stub 'Excon::Response', :body => {
       'reservationSet' => [{
@@ -12,7 +15,6 @@ describe SimpleDeploy::AWS::EC2 do
                           {'instanceId' => 'i-123456'},
                           {'privateIpAddress' => '192.168.1.1'}]}]
     }
-    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @cf_mock = mock 'CloudFormation'
     Fog::Compute::AWS.stub(:new).and_return(@cf_mock)

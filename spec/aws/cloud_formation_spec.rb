@@ -1,9 +1,12 @@
 require 'spec_helper'
 
 describe SimpleDeploy::AWS::CloudFormation do
+  include_context 'double stubbed config', :access_key => 'key',
+                                           :secret_key => 'XXX',
+                                           :region     => 'us-west-1'
+
   before do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
-    @config_stub = stub 'Config', :logger => @logger_stub, :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
     @error_stub = stub 'Error', :process => 'Processed Error'
     @response_stub = stub 'Excon::Response', :body => { 
         'Stacks' => [{'StackStatus' => 'green', 'Outputs' => [{'key' => 'value'}]}],
@@ -11,7 +14,6 @@ describe SimpleDeploy::AWS::CloudFormation do
         'StackEvents' => ['event1', 'event2'],
         'TemplateBody' => '{EIP: "string"}'
     }
-    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @cf_mock = mock 'CloudFormation'
     Fog::AWS::CloudFormation.stub(:new).and_return(@cf_mock)

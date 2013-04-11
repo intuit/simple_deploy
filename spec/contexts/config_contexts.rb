@@ -11,3 +11,10 @@ shared_context "stubbed config" do
     SimpleDeploy.stub(:config).and_return(@config_mock)
   end
 end
+
+shared_context "double stubbed config" do |methods_hash|
+  before do
+    @config_stub = stub 'config stub', methods_hash
+    SimpleDeploy.stub(:config).and_return(@config_stub)
+  end
+end

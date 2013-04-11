@@ -1,11 +1,12 @@
 require 'spec_helper'
 
 describe SimpleDeploy::StackReader do
+  include_context 'double stubbed config', :access_key => 'key',
+                                           :secret_key => 'XXX',
+                                           :region     => 'us-west-1'
+
   before do
     @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
-    @config_stub = stub 'Config', :logger => @logger_stub, :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
-
-    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @entry_mock = mock 'Entry'
     @entry_mock.stub(:attributes).and_return(:chef_repo_bucket_prefix => 'chef_repo_bp')

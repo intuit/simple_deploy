@@ -1,8 +1,11 @@
 require 'spec_helper'
 
 describe SimpleDeploy::AWS::SimpleDB do
+  include_context 'double stubbed config', :access_key => 'key',
+                                           :secret_key => 'XXX',
+                                           :region     => 'us-west-1'
+
   before do
-    @config_stub = stub 'Config', :logger => @logger_stub, :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
     @response_stub = stub 'Excon::Response', :body => { 
       'RequestId' => 'rid',
       'Domains' => ['domain1', 'domain2'],
@@ -15,7 +18,6 @@ describe SimpleDeploy::AWS::SimpleDB do
       'Items' => { 'item1-2' => { 'key' => ['value'] } },
       'NextToken' => 'Chunk2'
     }
-    SimpleDeploy.stub(:config).and_return(@config_stub)
 
     @db_mock = mock 'SimpleDB'
     Fog::AWS::SimpleDB.stub(:new).and_return(@db_mock)

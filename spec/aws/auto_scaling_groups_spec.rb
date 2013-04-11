@@ -1,17 +1,16 @@
 require 'spec_helper'
 
 describe SimpleDeploy::AWS::AutoScalingGroups do
+  include_context 'double stubbed config', :access_key => 'key',
+                                           :secret_key => 'XXX',
+                                           :region     => 'us-west-1'
   before do
-    @config_stub = stub 'Config', :access_key => 'key',
-                                  :secret_key => 'XXX',
-                                  :region => 'us-west1'
     instances = ['first',{ 'Instances' => [{ 'InstanceId' => 'i-000001' },
                                            { 'InstanceId' => 'i-000002' }] }]
     body =  { 'DescribeAutoScalingGroupsResult' => { 'AutoScalingGroups' => instances } }
     @response_stub = stub 'Fog::Response', :body => body
     @auto_scaling_mock = mock 'AutoScalingGroups'
 
-    SimpleDeploy.stub(:config).and_return(@config_stub)
     Fog::AWS::AutoScaling.stub :new => @auto_scaling_mock
     @auto_scaling_groups = SimpleDeploy::AWS::AutoScalingGroups.new :asg_id => 'asg_name'
   end
