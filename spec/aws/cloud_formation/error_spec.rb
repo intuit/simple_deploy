@@ -7,8 +7,6 @@ describe SimpleDeploy::AWS::CloudFormation::Error do
   include_context 'double stubbed logger'
 
   before do
-    @config_stub = stub 'Config', :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
-
     @exception_stub1 = stub 'Excon::Response'
     @exception_stub1.stub(:response).and_return(@exception_stub1)
     @exception_stub1.stub(:body).and_return('<opt><Error><Message>No updates are to be performed.</Message></Error></opt>')
