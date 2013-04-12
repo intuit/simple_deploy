@@ -28,11 +28,11 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
-        config = SimpleDeploy.create_config @opts[:environment]
+        SimpleDeploy.create_config @opts[:environment]
+        logger = SimpleDeploy.create_logger @opts[:log_level]
 
         stack = Stack.new :environment => @opts[:environment],
-                          :name        => @opts[:name],
-                          :logger      => logger
+                          :name        => @opts[:name]
 
         rescue_exceptions_and_exit do
           @outputs = stack.outputs
@@ -60,10 +60,6 @@ EOS
         @outputs.each do |hash|
           puts "%s: %s" % [hash['OutputKey'], hash['OutputValue']]
         end
-      end
-
-      def logger
-        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
       end
 
     end

@@ -10,7 +10,7 @@ module SimpleDeploy
         attributes.each do |attribs|
           key   = attribs.split('=').first.gsub(/\s+/, "")
           value = attribs.gsub(/^.+?=/, '')
-          logger.info "Read #{key}=#{value}"
+          SimpleDeploy.logger.info "Read #{key}=#{value}"
           attrs << { key => value }
         end
         attrs
@@ -22,14 +22,14 @@ module SimpleDeploy
 
         required.each do |opt|
           unless provided[opt]
-            logger.error "Option '#{opt} (-#{opt[0]})' required but not specified."
+            SimpleDeploy.logger.error "Option '#{opt} (-#{opt[0]})' required but not specified."
             exit 1
           end
         end
 
         if required.include? :environment
           unless SimpleDeploy.environments.keys.include? provided[:environment]
-            logger.error "Environment '#{provided[:environment]}' does not exist."
+            SimpleDeploy.logger.error "Environment '#{provided[:environment]}' does not exist."
             exit 1
           end
         end

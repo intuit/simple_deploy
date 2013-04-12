@@ -30,22 +30,18 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
-        config = SimpleDeploy.create_config @opts[:environment]
+        SimpleDeploy.create_config @opts[:environment]
+        SimpleDeploy.create_logger @opts[:log_level]
 
         attributes = parse_attributes :attributes => @opts[:attributes]
 
         @opts[:name].each do |name|
           stack = Stack.new :environment => @opts[:environment],
-                            :name        => name,
-                            :logger      => logger
+                            :name        => name
           rescue_exceptions_and_exit do
             stack.update :force => @opts[:force], :attributes => attributes
           end
         end
-      end
-
-      def logger
-        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
       end
 
       def command_summary

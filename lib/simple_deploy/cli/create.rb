@@ -35,10 +35,10 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
                        :required => [:environment, :name, :template]
 
         @config = SimpleDeploy.create_config @opts[:environment]
+        @logger = SimpleDeploy.create_logger @opts[:log_level]
 
         stack = Stack.new :environment => @opts[:environment],
-                          :name        => @opts[:name],
-                          :logger      => logger
+                          :name        => @opts[:name]
 
         rescue_exceptions_and_exit do
           stack.create :attributes => merged_attributes,
@@ -65,11 +65,6 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
       def attribute_merger
         SimpleDeploy::Misc::AttributeMerger.new
       end
-
-      def logger
-        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
-      end
-
     end
 
   end

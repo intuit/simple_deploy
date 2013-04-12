@@ -3,20 +3,12 @@ require 'spec_helper'
 require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Update do
+  include_context 'cli config'
+  include_context 'cli logger'
+
   describe 'update' do
     before do
-      @config  = mock 'config'
-      @logger  = stub 'logger', 'info' => 'true'
       @stack   = stub :attributes => {}
-
-      SimpleDeploy.stub(:create_config).and_return(@config)
-      SimpleDeploy::SimpleDeployLogger.should_receive(:new).
-                                       with(:log_level => 'debug').
-                                       and_return(@logger)
-    end
-
-    after do
-      SimpleDeploy.release_config
     end
 
     it "should pass force true" do
@@ -34,7 +26,6 @@ describe SimpleDeploy::CLI::Update do
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(@stack)
 
@@ -58,7 +49,6 @@ describe SimpleDeploy::CLI::Update do
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(@stack)
 

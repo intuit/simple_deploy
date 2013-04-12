@@ -39,7 +39,8 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
-        config = SimpleDeploy.create_config @opts[:environment]
+        SimpleDeploy.create_config @opts[:environment]
+        logger = SimpleDeploy.create_logger @opts[:log_level]
 
         @opts[:name].each do |name|
           notifier = Notifier.new :stack_name  => name,
@@ -48,7 +49,6 @@ EOS
 
           stack = Stack.new :environment => @opts[:environment],
                             :name        => name,
-                            :logger      => logger,
                             :internal    => @opts[:internal]
 
           begin
@@ -61,10 +61,6 @@ EOS
             exit 1
           end
         end
-      end
-
-      def logger
-        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
       end
 
       def command_summary

@@ -25,11 +25,11 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
-        config = SimpleDeploy.create_config @opts[:environment]
+        SimpleDeploy.create_config @opts[:environment]
+        logger = SimpleDeploy.create_logger @opts[:log_level]
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],
-                          :logger      => logger,
                           :internal    => @opts[:internal]
 
         exit 1 unless stack.exists?
@@ -41,10 +41,6 @@ EOS
         else
           puts stack.instances
         end
-      end
-
-      def logger
-        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
       end
 
       def command_summary

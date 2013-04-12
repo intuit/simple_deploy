@@ -31,6 +31,9 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :source_name, :new_name]
 
+        SimpleDeploy.create_config @opts[:environment]
+        SimpleDeploy.create_logger @opts[:log_level]
+
         override_attributes = parse_attributes :attributes => @opts[:attributes]
 
         cloned_attributes = filter_attributes source_stack.attributes
@@ -80,28 +83,15 @@ EOS
         end.compact
       end
 
-      def config
-        @config ||= SimpleDeploy.create_config @opts[:environment]
-      end
-
-      def logger
-        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
-      end
-
       def source_stack
-        config
         @source_stack ||= Stack.new :environment => @opts[:environment],
-                                    :name        => @opts[:source_name],
-                                    :logger      => logger
+                                    :name        => @opts[:source_name]
       end
 
       def new_stack
-        config
         @new_stack ||= Stack.new :environment => @opts[:environment],
-                                 :name        => @opts[:new_name],
-                                 :logger      => logger
+                                 :name        => @opts[:new_name]
       end
-
     end
 
   end

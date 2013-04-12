@@ -3,24 +3,15 @@ require 'spec_helper'
 require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Destroy do
+  include_context 'cli config'
+  include_context 'cli logger'
 
   describe 'destroy' do
     before do
-      @config  = mock 'config'
-      @logger  = stub 'logger', 'info' => 'true'
       @options = { :environment => 'my_env',
                    :log_level   => 'debug',
                    :name        => 'my_stack' }
       @stack   = stub :attributes => {}
-
-      SimpleDeploy.stub(:create_config).and_return(@config)
-      SimpleDeploy::SimpleDeployLogger.should_receive(:new).
-                                       with(:log_level => 'debug').
-                                       and_return(@logger)
-    end
-
-    after do
-      SimpleDeploy.release_config
     end
 
     it "should exit with 0" do
@@ -33,7 +24,6 @@ describe SimpleDeploy::CLI::Destroy do
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(@stack)
 
@@ -54,7 +44,6 @@ describe SimpleDeploy::CLI::Destroy do
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(@stack)
 

@@ -4,10 +4,10 @@ describe SimpleDeploy::Stack do
   include_context 'double stubbed config', :access_key => 'access',
                                            :secret_key => 'secret',
                                            :region     => 'us-west-1'
+  include_context 'double stubbed logger'
         
 
   before do
-    @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
     @environment_config_mock = mock 'environment config mock'
 
     @config_stub.stub(:environment).and_return(@environment_config_mock)
@@ -22,7 +22,6 @@ describe SimpleDeploy::Stack do
                         and_return @entry_mock
 
     @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
-                                     :logger      => @logger_stub,
                                      :environment => 'test-env'
   end
 

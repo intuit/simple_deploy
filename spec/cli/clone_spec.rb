@@ -2,6 +2,8 @@ require 'spec_helper'
 require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Clone do
+  include_context 'cli config'
+  include_context 'cli logger'
 
   describe 'clone' do
     context 'filter_attributes' do
@@ -117,8 +119,6 @@ describe SimpleDeploy::CLI::Clone do
 
     context 'stack creation' do
       before do
-        @config  = mock 'config'
-        @logger  = stub 'logger', :info => 'true'
         @options = { :environment => 'my_env',
                      :log_level   => 'debug',
                      :source_name => 'source_stack',
@@ -138,27 +138,16 @@ describe SimpleDeploy::CLI::Clone do
         }, :template => { 'foo' => 'bah' }
         @new_stack   = stub :attributes => {}
 
-        SimpleDeploy.stub(:create_config).and_return(@config)
-        SimpleDeploy::SimpleDeployLogger.should_receive(:new).
-                                  with(:log_level => 'debug').
-                                  and_return(@logger)
-
         SimpleDeploy::Stack.should_receive(:new).
                                       with(:environment => 'my_env',
-                                           :logger      => @logger,
                                            :name        => 'source_stack').
                                       and_return(@source_stack)
         SimpleDeploy::Stack.should_receive(:new).
                                       with(:environment => 'my_env',
-                                           :logger      => @logger,
                                            :name        => 'new_stack').
                                       and_return(@new_stack)
       end
 
-      after do
-        SimpleDeploy.release_config
-      end
-      
       it 'should create the new stack using the filtered, merged and added attributes' do
         subject.should_receive(:valid_options?).
                 with(:provided => @options,
