@@ -11,7 +11,6 @@ module SimpleDeploy
         @ssh_key     = args[:ssh_key]
         @stack       = args[:stack]
         @name        = args[:name]
-        @logger      = args[:logger]
       end
 
       def execute(args)
@@ -26,8 +25,7 @@ module SimpleDeploy
                     :ssh_user    => @ssh_user,
                     :ssh_key     => @ssh_key,
                     :stack       => @stack,
-                    :name        => @name,
-                    :logger      => @logger}
+                    :name        => @name }
         @ssh ||= SimpleDeploy::Stack::SSH.new options
       end
 

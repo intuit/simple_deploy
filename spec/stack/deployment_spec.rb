@@ -2,6 +2,7 @@ require 'spec_helper'
 
 describe SimpleDeploy::Stack::Deployment do
   include_context 'stubbed config'
+  include_context 'double stubbed logger'
 
   before do
     @attributes = { 'key'                     => 'val',
@@ -14,10 +15,6 @@ describe SimpleDeploy::Stack::Deployment do
                     'cookbooks'               => 'cookbooks',
                     'cookbooks_bucket_prefix' => 'cookbooks_bp',
                     'cookbooks_domain'        => 'cookbooks_d' }
-    @logger_stub = stub 'logger stub'
-    @logger_stub.stub :debug => 'true', 
-                      :info  => 'true',
-                      :error => 'true'
 
     @config_mock.stub(:region) { 'test-us-west-1' }
 
@@ -26,8 +23,7 @@ describe SimpleDeploy::Stack::Deployment do
 
     @status_mock = mock 'status mock'
 
-    options = { :logger      => @logger_stub,
-                :instances   => ['1.2.3.4', '4.3.2.1'],
+    options = { :instances   => ['1.2.3.4', '4.3.2.1'],
                 :environment => 'test-us-west-1',
                 :ssh_user    => 'user',
                 :ssh_key     => 'key',
@@ -46,7 +42,6 @@ describe SimpleDeploy::Stack::Deployment do
       status_options = { :name        => 'stack-name',
                          :environment => 'test-us-west-1',
                          :ssh_user    => 'user',
-                         :logger      => @logger_stub,
                          :stack       => @stack_mock }
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               with(status_options).
@@ -81,7 +76,6 @@ describe SimpleDeploy::Stack::Deployment do
       status_options = { :name        => 'stack-name',
                          :environment => 'test-us-west-1',
                          :ssh_user    => 'user',
-                         :logger      => @logger_stub,
                          :stack       => @stack_mock }
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               with(status_options).
@@ -96,7 +90,6 @@ describe SimpleDeploy::Stack::Deployment do
                               :instances   => ['1.2.3.4', '4.3.2.1'],
                               :ssh_user    => 'user',
                               :ssh_key     => 'key',
-                              :logger      => @logger_stub,
                               :stack       => @stack_mock }
           SimpleDeploy::Stack::Execute.should_receive(:new).
                                        with(execute_options).

@@ -21,7 +21,7 @@ module SimpleDeploy
       @logger = SimpleDeploy.logger
 
       @use_internal_ips = !!args[:internal]
-      @entry = Entry.new :name => @name, :logger => @logger
+      @entry = Entry.new :name => @name
     end
 
     def create(args)
@@ -166,40 +166,33 @@ module SimpleDeploy
     def stack_creator
       @stack_creator ||= StackCreator.new :name          => @name,
                                           :entry         => @entry,
-                                          :template_file => @template_file,
-                                          :logger        => @logger
+                                          :template_file => @template_file
     end
 
     def stack_updater
       @stack_updater ||= StackUpdater.new :name          => @name,
                                           :entry         => @entry,
-                                          :template_body => @template_body,
-                                          :logger        => @logger
+                                          :template_body => @template_body
     end
 
     def stack_reader
-      @stack_reader ||= StackReader.new :name   => @name,
-                                        :logger => @logger
+      @stack_reader ||= StackReader.new :name   => @name
     end
 
     def stack_destroyer
-      @stack_destroyer ||= StackDestroyer.new :name   => @name,
-                                              :logger => @logger
+      @stack_destroyer ||= StackDestroyer.new :name   => @name
     end
 
     def stack_status
-      @status ||= Status.new :name   => @name,
-                             :logger => @logger
+      @status ||= Status.new :name   => @name
     end
 
     def stack_attribute_formater
-      @saf ||= StackAttributeFormater.new :main_attributes => attributes,
-                                          :logger          => @logger
+      @saf ||= StackAttributeFormater.new :main_attributes => attributes
     end
 
     def executer
-      @executer ||= Stack::Execute.new :logger      => @logger,
-                                       :environment => @environment,
+      @executer ||= Stack::Execute.new :environment => @environment,
                                        :name        => @name,
                                        :stack       => self,
                                        :instances   => instances,
@@ -208,8 +201,7 @@ module SimpleDeploy
     end
 
     def deployment
-      @deployment ||= Stack::Deployment.new :logger      => @logger,
-                                            :environment => @environment,
+      @deployment ||= Stack::Deployment.new :environment => @environment,
                                             :name        => @name,
                                             :stack       => self,
                                             :instances   => instances,

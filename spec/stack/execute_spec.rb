@@ -5,10 +5,7 @@ describe SimpleDeploy::Stack::Execute do
 
   before do
     @ssh_mock = mock 'ssh'
-    @logger_mock = mock 'logger', :info => true
-
-    options = { :logger      => @logger_mock,
-                :instances   => @instances,
+    options = { :instances   => @instances,
                 :environment => @environment,
                 :ssh_user    => @ssh_user,
                 :ssh_key     => @ssh_key,

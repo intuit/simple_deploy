@@ -3,9 +3,9 @@ module SimpleDeploy
 
     def initialize(args)
       @config          = SimpleDeploy.config
+      @logger          = SimpleDeploy.logger
       @main_attributes = args[:main_attributes]
       @region          = @config.region
-      @logger          = args[:logger]
     end
 
     def updated_attributes(attributes)

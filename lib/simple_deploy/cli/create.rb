@@ -34,8 +34,8 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
         valid_options? :provided => @opts,
                        :required => [:environment, :name, :template]
 
-        @config = SimpleDeploy.create_config @opts[:environment]
-        @logger = SimpleDeploy.create_logger @opts[:log_level]
+        SimpleDeploy.create_config @opts[:environment]
+        SimpleDeploy.create_logger @opts[:log_level]
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name]
@@ -56,7 +56,6 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
         provided_attributes = parse_attributes :attributes => @opts[:attributes]
 
         attribute_merger.merge :attributes   => provided_attributes,
-                               :logger       => @logger,
                                :environment  => @opts[:environment],
                                :input_stacks => @opts[:input_stack],
                                :template     => @opts[:template]

@@ -4,9 +4,9 @@ describe SimpleDeploy::AWS::CloudFormation do
   include_context 'double stubbed config', :access_key => 'key',
                                            :secret_key => 'XXX',
                                            :region     => 'us-west-1'
+  include_context 'double stubbed logger'
 
   before do
-    @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
     @error_stub = stub 'Error', :process => 'Processed Error'
     @response_stub = stub 'Excon::Response', :body => { 
         'Stacks' => [{'StackStatus' => 'green', 'Outputs' => [{'key' => 'value'}]}],
@@ -26,7 +26,7 @@ describe SimpleDeploy::AWS::CloudFormation do
 
     @exception = Exception.new('Failed')
 
-    @cf = SimpleDeploy::AWS::CloudFormation.new(:logger => @logger_stub)
+    @cf = SimpleDeploy::AWS::CloudFormation.new
   end
 
   after do
@@ -52,7 +52,7 @@ describe SimpleDeploy::AWS::CloudFormation do
                                                   }).and_raise(@exception)
 
       SimpleDeploy::AWS::CloudFormation::Error.should_receive(:new).
-        with(:logger => @logger_stub, :exception => @exception).
+        with(:exception => @exception).
         and_raise SimpleDeploy::Exceptions::CloudFormationError.new('failed')
 
       lambda { @cf.create @args }.
@@ -78,7 +78,7 @@ describe SimpleDeploy::AWS::CloudFormation do
                                                     'Parameters' => { 'parameter1' => 'my_param' }
                                                   }).and_raise(@exception)
       SimpleDeploy::AWS::CloudFormation::Error.should_receive(:new).
-        with(:logger => @logger_stub, :exception => @exception).
+        with(:exception => @exception).
         and_raise SimpleDeploy::Exceptions::CloudFormationError.new('failed')
 
       lambda { @cf.update(@args) }.
@@ -99,7 +99,7 @@ describe SimpleDeploy::AWS::CloudFormation do
                with('my_stack').
                and_raise @exception
       SimpleDeploy::AWS::CloudFormation::Error.should_receive(:new).
-        with(:logger => @logger_stub, :exception => @exception).
+        with(:exception => @exception).
         and_raise SimpleDeploy::Exceptions::CloudFormationError.new('failed')
 
       lambda { @cf.destroy('my_stack') }.
@@ -120,7 +120,7 @@ describe SimpleDeploy::AWS::CloudFormation do
                with('StackName' => 'my_stack').
                and_raise @exception
       SimpleDeploy::AWS::CloudFormation::Error.should_receive(:new).
-        with(:logger => @logger_stub, :exception => @exception).
+        with(:exception => @exception).
         and_raise SimpleDeploy::Exceptions::CloudFormationError.new('failed')
 
       lambda { @cf.describe_stack('my_stack') }.
@@ -140,7 +140,7 @@ describe SimpleDeploy::AWS::CloudFormation do
                with('StackName' => 'my_stack').
                and_raise @exception
       SimpleDeploy::AWS::CloudFormation::Error.should_receive(:new).
-        with(:logger => @logger_stub, :exception => @exception).
+        with(:exception => @exception).
         and_raise SimpleDeploy::Exceptions::CloudFormationError.new('failed')
 
       lambda { @cf.stack_resources('my_stack') }.
@@ -161,7 +161,7 @@ describe SimpleDeploy::AWS::CloudFormation do
                and_raise @exception
 
       SimpleDeploy::AWS::CloudFormation::Error.should_receive(:new).
-        with(:logger => @logger_stub, :exception => @exception).
+        with(:exception => @exception).
         and_raise SimpleDeploy::Exceptions::CloudFormationError.new('failed')
 
       lambda { @cf.stack_events('my_stack', 2) }.
@@ -197,7 +197,7 @@ describe SimpleDeploy::AWS::CloudFormation do
                with('my_stack').
                and_raise @exception
       SimpleDeploy::AWS::CloudFormation::Error.should_receive(:new).
-        with(:logger => @logger_stub, :exception => @exception).
+        with(:exception => @exception).
         and_raise SimpleDeploy::Exceptions::CloudFormationError.new('failed')
 
       lambda { @cf.template('my_stack') }.

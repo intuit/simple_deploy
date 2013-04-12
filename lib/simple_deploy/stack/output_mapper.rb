@@ -4,7 +4,7 @@ module SimpleDeploy
 
       def initialize(args)
         @environment = args[:environment]
-        @logger      = args[:logger]
+        @logger      = SimpleDeploy.logger
       end
 
       def map_outputs_from_stacks(args)
@@ -34,7 +34,6 @@ module SimpleDeploy
           count += 1
           @logger.info "Reading outputs from stack '#{s}'."
           stack = Stack.new :environment => @environment,
-                            :logger      => @logger,
                             :name        => s
           stack.wait_for_stable
           merge_outputs stack

@@ -6,8 +6,8 @@ module SimpleDeploy
       class Error
 
         def initialize(args)
+          @logger    = SimpleDeploy.logger
           @exception = args[:exception]
-          @logger    = args[:logger]
         end
 
         def process

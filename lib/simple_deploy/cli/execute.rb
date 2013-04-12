@@ -44,8 +44,7 @@ EOS
 
         @opts[:name].each do |name|
           notifier = Notifier.new :stack_name  => name,
-                                  :environment => @opts[:environment],
-                                  :logger      => logger
+                                  :environment => @opts[:environment]
 
           stack = Stack.new :environment => @opts[:environment],
                             :name        => name,

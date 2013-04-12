@@ -6,7 +6,6 @@ module SimpleDeploy
         @attributes   = args[:attributes]
         @config       = SimpleDeploy.config
         @environment  = args[:environment]
-        @logger       = args[:logger]
         @input_stacks = args[:input_stacks]
         @template     = args[:template]
 
@@ -35,8 +34,7 @@ module SimpleDeploy
       end
 
       def mapper
-        @om ||= Stack::OutputMapper.new :environment => @environment,
-                                        :logger      => @logger
+        @om ||= Stack::OutputMapper.new :environment => @environment
       end
 
     end

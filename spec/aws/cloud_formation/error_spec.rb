@@ -1,9 +1,13 @@
 require 'spec_helper'
 
 describe SimpleDeploy::AWS::CloudFormation::Error do
+  include_context 'double stubbed config', :access_key => 'key',
+                                           :secret_key => 'XXX',
+                                           :region     => 'us-west-1'
+  include_context 'double stubbed logger'
+
   before do
-    @logger_mock = mock 'Logger'
-    @config_stub = stub 'Config', :logger => @logger_mock, :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
+    @config_stub = stub 'Config', :access_key => 'key', :secret_key => 'XXX', :region => 'us-west1'
 
     @exception_stub1 = stub 'Excon::Response'
     @exception_stub1.stub(:response).and_return(@exception_stub1)
@@ -20,27 +24,18 @@ describe SimpleDeploy::AWS::CloudFormation::Error do
 
   describe 'process' do
     it 'should process no update messages' do
-      @logger_mock.should_receive(:info).with('No updates are to be performed.')
-
-      error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub1,
-                                                           :logger    => @logger_mock
-      error.process
+      error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub1
+      expect { error.process }.to_not raise_error SimpleDeploy::Exceptions::CloudFormationError
     end
 
     it 'should re-raise unkonwn errors as SimpleDeploy::CloudFormationError' do
-      @logger_mock.should_receive(:error).with('Oops.')
-
-      error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub2,
-                                                           :logger    => @logger_mock
+      error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub2
 
       lambda { error.process }.should raise_error SimpleDeploy::Exceptions::CloudFormationError
     end
 
     it 'should re-raise unkonwn errors as SimpleDeploy::CloudFormationError and set mesg' do
-      @logger_mock.should_receive(:error).with('Oops.')
-
-      error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub2,
-                                                           :logger    => @logger_mock
+      error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub2
       begin
         error.process
       rescue SimpleDeploy::Exceptions::CloudFormationError => e
@@ -49,10 +44,7 @@ describe SimpleDeploy::AWS::CloudFormation::Error do
     end
 
     it 'should reaise stck unkown messages as SimpleDeploy::UnknownStack' do
-      @logger_mock.should_receive(:error).with('Stack:test does not exist')
-
-      error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub3,
-                                                           :logger    => @logger_mock
+      error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub3
       lambda { error.process }.should raise_error SimpleDeploy::Exceptions::UnknownStack
     end
 

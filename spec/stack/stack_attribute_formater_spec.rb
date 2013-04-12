@@ -2,9 +2,9 @@ require 'spec_helper'
 
 describe SimpleDeploy::StackAttributeFormater do
   include_context 'stubbed config'
+  include_context 'double stubbed logger'
 
   before do
-    @logger_mock = mock 'logger mock', :info => 'true'
     @config_mock.stub(:region).and_return('us-west-1')
     @config_mock.stub(:artifact_cloud_formation_url).and_return('ChefRepoURL')
     @config_mock.stub(:artifacts).and_return(['chef_repo', 'cookbooks', 'app'])
@@ -16,8 +16,7 @@ describe SimpleDeploy::StackAttributeFormater do
 
   context "when chef_repo unencrypted" do
     before do
-      options = { :logger      => @logger_mock,
-                  :environment => 'preprod',
+      options = { :environment => 'preprod',
                   :main_attributes => {
                     'chef_repo_bucket_prefix' => 'test-prefix',
                     'chef_repo_domain'        => 'test-domain' }
@@ -34,8 +33,7 @@ describe SimpleDeploy::StackAttributeFormater do
 
   context "when main_attributes set chef_repo encrypted" do
     before do
-      options = { :logger      => @logger_mock,
-                  :environment => 'preprod',
+      options = { :environment => 'preprod',
                   :main_attributes => {
                     'chef_repo_bucket_prefix' => 'test-prefix',
                     'chef_repo_encrypted'     => 'true',
@@ -53,8 +51,7 @@ describe SimpleDeploy::StackAttributeFormater do
 
   context "when provided attributes set chef_repo encrypted" do
     before do
-      options = { :logger      => @logger_mock,
-                  :environment => 'preprod',
+      options = { :environment => 'preprod',
                   :main_attributes => {
                     'chef_repo_bucket_prefix' => 'test-prefix',
                     'chef_repo_domain'        => 'test-domain' }

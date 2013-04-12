@@ -5,7 +5,7 @@ module SimpleDeploy
 
     def initialize(args)
       @config = SimpleDeploy.config
-      @logger = args[:logger]
+      @logger = SimpleDeploy.logger
       @entry = args[:entry]
       @name = args[:name]
       @template_body = args[:template_body]
@@ -57,11 +57,11 @@ module SimpleDeploy
     end
 
     def cloud_formation
-      @cloud_formation ||= AWS::CloudFormation.new :logger => @logger
+      @cloud_formation ||= AWS::CloudFormation.new
     end
 
     def status
-      @status ||= Status.new :name => @name, :logger => @logger
+      @status ||= Status.new :name => @name
     end
   end
 end

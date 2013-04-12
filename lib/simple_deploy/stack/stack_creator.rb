@@ -5,7 +5,7 @@ module SimpleDeploy
 
     def initialize(args)
       @config = SimpleDeploy.config
-      @logger = args[:logger]
+      @logger = SimpleDeploy.logger
       @entry = args[:entry]
       @name = args[:name]
       @template = read_template_from_file args[:template_file]
@@ -21,7 +21,7 @@ module SimpleDeploy
     private
 
     def cloud_formation
-      @cf ||= AWS::CloudFormation.new :logger => @logger
+      @cf ||= AWS::CloudFormation.new
     end
 
     def read_template_from_file(template_file)
