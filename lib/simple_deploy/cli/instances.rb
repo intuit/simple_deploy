@@ -26,7 +26,7 @@ EOS
                        :required => [:environment, :name]
 
         SimpleDeploy.create_config @opts[:environment]
-        logger = SimpleDeploy.create_logger @opts[:log_level]
+        logger = SimpleDeploy.logger @opts[:log_level]
 
         stack = Stack.new :environment => @opts[:environment],
                           :name        => @opts[:name],

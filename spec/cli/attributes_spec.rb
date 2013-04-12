@@ -3,7 +3,7 @@ require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Attributes do
   include_context 'cli config'
-  include_context 'cli logger'
+  include_context 'double stubbed logger'
 
   describe 'show' do
     before do

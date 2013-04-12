@@ -3,7 +3,7 @@ require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Clone do
   include_context 'cli config'
-  include_context 'cli logger'
+  include_context 'double stubbed logger'
 
   describe 'clone' do
     context 'filter_attributes' do

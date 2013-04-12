@@ -29,7 +29,7 @@ EOS
                        :required => [:environment, :name]
 
         SimpleDeploy.create_config @opts[:environment]
-        SimpleDeploy.create_logger @opts[:log_level]
+        SimpleDeploy.logger @opts[:log_level]
 
         @opts[:as_command_args] ? command_args_output : default_output
       end

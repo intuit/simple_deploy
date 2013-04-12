@@ -3,7 +3,7 @@ require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Create do
   include_context 'cli config'
-  include_context 'cli logger'
+  include_context 'double stubbed logger'
 
   before do
     @config_env            = mock 'environment config'
@@ -28,7 +28,6 @@ describe SimpleDeploy::CLI::Create do
     SimpleDeploy::Misc::AttributeMerger.stub :new => @attribute_merger_mock
 
     merge_options = { :attributes   => [ { "attr1" => "val1" } ], 
-                      :logger       => @logger_stub,
                       :environment  => 'test',
                       :template     => '/tmp/test.json',
                       :input_stacks => ["stack1"] }

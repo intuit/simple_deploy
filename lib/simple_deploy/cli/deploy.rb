@@ -55,7 +55,7 @@ EOS
                        :required => [:environment, :name]
 
         SimpleDeploy.create_config @opts[:environment]
-        logger = SimpleDeploy.create_logger @opts[:log_level]
+        logger = SimpleDeploy.logger @opts[:log_level]
 
         new_attributes = parse_attributes :attributes => @opts[:attributes]
 

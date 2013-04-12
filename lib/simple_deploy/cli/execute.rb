@@ -40,7 +40,7 @@ EOS
                        :required => [:environment, :name]
 
         SimpleDeploy.create_config @opts[:environment]
-        logger = SimpleDeploy.create_logger @opts[:log_level]
+        logger = SimpleDeploy.logger @opts[:log_level]
 
         @opts[:name].each do |name|
           notifier = Notifier.new :stack_name  => name,

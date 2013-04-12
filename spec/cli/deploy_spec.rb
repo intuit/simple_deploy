@@ -4,7 +4,7 @@ require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Deploy do
   include_context 'cli config'
-  include_context 'cli logger'
+  include_context 'double stubbed logger'
 
   describe 'deploy' do
     before do
@@ -27,8 +27,7 @@ describe SimpleDeploy::CLI::Deploy do
 
       SimpleDeploy::Notifier.should_receive(:new).
                           with(:stack_name  => 'my_stack',
-                               :environment => 'my_env',
-                               :logger      => @logger_stub).
+                               :environment => 'my_env').
                           and_return(@notifier)
 
       SimpleDeploy::Stack.should_receive(:new).
@@ -60,8 +59,7 @@ describe SimpleDeploy::CLI::Deploy do
 
       SimpleDeploy::Notifier.should_receive(:new).
                           with(:stack_name  => 'my_stack',
-                               :environment => 'my_env',
-                               :logger      => @logger_stub).
+                               :environment => 'my_env').
                           and_return(@notifier)
 
       SimpleDeploy::Stack.should_receive(:new).
@@ -96,8 +94,7 @@ describe SimpleDeploy::CLI::Deploy do
 
       SimpleDeploy::Notifier.should_receive(:new).
                           with(:stack_name  => 'my_stack',
-                               :environment => 'my_env',
-                               :logger      => @logger_stub).
+                               :environment => 'my_env').
                           and_return(@notifier)
 
       SimpleDeploy::Stack.should_receive(:new).
@@ -130,8 +127,7 @@ describe SimpleDeploy::CLI::Deploy do
 
       SimpleDeploy::Notifier.should_receive(:new).
                           with(:stack_name  => 'my_stack',
-                               :environment => 'my_env',
-                               :logger      => @logger_stub).
+                               :environment => 'my_env').
                           and_return(@notifier)
 
       SimpleDeploy::Stack.should_receive(:new).
@@ -166,8 +162,7 @@ describe SimpleDeploy::CLI::Deploy do
 
       SimpleDeploy::Notifier.should_receive(:new).
                           with(:stack_name  => 'my_stack',
-                               :environment => 'my_env',
-                               :logger      => @logger_stub).
+                               :environment => 'my_env').
                           and_return(@notifier)
 
       SimpleDeploy::Stack.should_receive(:new).

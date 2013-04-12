@@ -4,7 +4,7 @@ require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Destroy do
   include_context 'cli config'
-  include_context 'cli logger'
+  include_context 'double stubbed logger'
 
   describe 'destroy' do
     before do
