@@ -28,6 +28,9 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :name]
 
+        SimpleDeploy.create_config @opts[:environment]
+        SimpleDeploy.logger @opts[:log_level]
+
         @opts[:as_command_args] ? command_args_output : default_output
       end
 
@@ -51,17 +54,10 @@ EOS
         attribute_data.each_pair { |k, v| puts "#{k}: #{v}" }
       end
 
-      def logger
-        @logger ||= SimpleDeployLogger.new :log_level => @opts[:log_level]
-      end
-
       def stack
-        config = SimpleDeploy.create_config @opts[:environment]
         @stack = Stack.new :environment  => @opts[:environment],
-                           :name         => @opts[:name],
-                           :logger       => logger
+                           :name         => @opts[:name]
       end
-
     end
 
   end

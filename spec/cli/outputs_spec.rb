@@ -2,29 +2,24 @@ require 'spec_helper'
 require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Outputs do
+  include_context 'cli config'
+  include_context 'double stubbed logger'
 
   before do
-    @config_object = mock 'config'
     @config_env    = mock 'environment config'
     @stack         = mock 'stack'
-    @logger        = stub 'logger'
     @options       = { :environment => 'test',
                        :log_level   => 'info',
                        :name        => 'mytest' }
     @data          = [{ 'OutputKey' => 'key1', 'OutputValue' => 'value1' },
                       { 'OutputKey' => 'key2', 'OutputValue' => 'value2' }]
     Trollop.stub :options => @options
-    @config_object.stub(:environments => { 'test' => 'data' })
-    SimpleDeploy.stub(:create_config).and_return(@config)
+    @config_mock.stub(:environments => { 'test' => 'data' })
     SimpleDeploy.stub(:environments).and_return(@config_env)
     @config_env.should_receive(:keys).and_return(['test'])
-    SimpleDeploy::SimpleDeployLogger.should_receive(:new).
-                                     with(:log_level => 'info').
-                                     and_return @logger
     SimpleDeploy::Stack.should_receive(:new).
                         with(:environment => 'test',
-                             :name        => 'mytest',
-                             :logger      => @logger).
+                             :name        => 'mytest').
                         and_return(@stack)
     @stack.stub :outputs => @data
     @outputs = SimpleDeploy::CLI::Outputs.new

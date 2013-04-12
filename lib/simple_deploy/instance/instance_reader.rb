@@ -1,10 +1,5 @@
 module SimpleDeploy
   class InstanceReader
-
-    def initialize(args)
-      @logger = args[:logger]
-    end
-
     def list_stack_instances(stack_name)
       @asg_id = auto_scaling_group_id(stack_name)
 
@@ -28,7 +23,7 @@ module SimpleDeploy
     end
 
     def cloud_formation
-      @cloud_formation ||= AWS::CloudFormation.new :logger => @logger
+      @cloud_formation ||= AWS::CloudFormation.new
     end
 
     def auto_scaling_group_id(stack_name)

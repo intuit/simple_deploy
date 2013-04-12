@@ -2,14 +2,13 @@ require 'spec_helper'
 
 describe SimpleDeploy::Status do
   include_context 'stubbed config'
+  include_context 'double stubbed logger'
 
   before do
-    @logger_mock = mock 'logger mock'
     @stack_reader_mock = mock 'stack reader mock'
     SimpleDeploy::StackReader.should_receive(:new).
                               and_return @stack_reader_mock
-    @status = SimpleDeploy::Status.new :name   => 'test-stack',
-                                       :logger => @logger_mock
+    @status = SimpleDeploy::Status.new :name   => 'test-stack'
   end
 
   after do
@@ -101,7 +100,6 @@ describe SimpleDeploy::Status do
 
     @stack_reader_mock.should_receive(:status).exactly(11).times.
                        and_return 'CREATE_FAILED'
-    @logger_mock.should_receive(:info).exactly(2).times
     @status.wait_for_stable(2).should == false
   end
 

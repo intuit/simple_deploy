@@ -2,21 +2,15 @@ require 'spec_helper'
 
 describe SimpleDeploy::Stack::Deployment::Status do
   include_context 'stubbed config'
+  include_context 'double stubbed logger'
 
   before do
-    @logger_stub = stub 'logger', :debug => true,
-                                  :info  => true
     @stack_mock = mock 'stack'
-
-    options = { :logger   => @logger_stub,
-                :stack    => @stack_mock,
+    options = { :stack    => @stack_mock,
                 :ssh_user => 'user',
                 :name     => 'dastack' }
-    @status = SimpleDeploy::Stack::Deployment::Status.new options
-  end
 
-  after do
-    SimpleDeploy.release_config
+    @status = SimpleDeploy::Stack::Deployment::Status.new options
   end
 
   describe "clear_for_deployment?" do

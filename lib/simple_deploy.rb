@@ -34,4 +34,8 @@ module SimpleDeploy
   def environments(custom_config = {})
     SimpleDeploy::Configuration.environments custom_config
   end
+
+  def logger(log_level = 'info')
+    @logger ||= SimpleDeployLogger.new :log_level => log_level
+  end
 end

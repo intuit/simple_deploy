@@ -4,7 +4,7 @@ module SimpleDeploy
     def initialize(args)
       @name = args[:name]
       @config = SimpleDeploy.config
-      @logger = args[:logger]
+      @logger = SimpleDeploy.logger
     end
 
     def complete?

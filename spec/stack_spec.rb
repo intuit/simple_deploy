@@ -4,10 +4,10 @@ describe SimpleDeploy::Stack do
   include_context 'double stubbed config', :access_key => 'access',
                                            :secret_key => 'secret',
                                            :region     => 'us-west-1'
+  include_context 'double stubbed logger'
         
 
   before do
-    @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true'
     @environment_config_mock = mock 'environment config mock'
 
     @config_stub.stub(:environment).and_return(@environment_config_mock)
@@ -17,12 +17,10 @@ describe SimpleDeploy::Stack do
     @entry_mock = mock 'entry mock'
     SimpleDeploy::Entry.should_receive(:new).
                         at_least(:once).
-                        with(:name   => 'test-stack',
-                             :logger => @logger_stub).
+                        with(:name   => 'test-stack').
                         and_return @entry_mock
 
     @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
-                                     :logger      => @logger_stub,
                                      :environment => 'test-env'
   end
 
@@ -47,8 +45,7 @@ describe SimpleDeploy::Stack do
       SimpleDeploy::StackCreator.should_receive(:new).
                                  with(:name          => 'test-stack',
                                       :entry         => @entry_mock,
-                                      :template_file => 'some_json',
-                                      :logger        => @logger_stub).
+                                      :template_file => 'some_json').
                                 and_return @stack_creator_mock
       @stack_creator_mock.should_receive(:create)
         
@@ -84,14 +81,12 @@ describe SimpleDeploy::Stack do
       SimpleDeploy::StackUpdater.should_receive(:new).
                                  with(:name          => 'test-stack',
                                       :entry         => @entry_mock,
-                                      :template_body => 'some_json',
-                                      :logger => @logger_stub).
+                                      :template_body => 'some_json').
                                  and_return @stack_updater_mock
       @stack_updater_mock.should_receive(:update_stack_if_parameters_changed).
                           and_return(true)
       SimpleDeploy::StackReader.should_receive(:new).
-                                 with(:name   => 'test-stack',
-                                      :logger => @logger_stub).
+                                 with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:attributes).and_return({})
       @stack_reader_mock.should_receive(:template).and_return('some_json')
@@ -121,14 +116,12 @@ describe SimpleDeploy::Stack do
       SimpleDeploy::StackUpdater.should_receive(:new).
                                  with(:name          => 'test-stack',
                                       :entry         => @entry_mock,
-                                      :template_body => 'some_json',
-                                      :logger => @logger_stub).
+                                      :template_body => 'some_json').
                                  and_return @stack_updater_mock
       @stack_updater_mock.should_receive(:update_stack_if_parameters_changed).
                           and_return(true)
       SimpleDeploy::StackReader.should_receive(:new).
-                                 with(:name   => 'test-stack',
-                                      :logger => @logger_stub).
+                                 with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:attributes).and_return({})
       @stack_reader_mock.should_receive(:template).and_return('some_json')
@@ -156,13 +149,11 @@ describe SimpleDeploy::Stack do
       @entry_mock.should_receive(:delete_attributes)
 
       SimpleDeploy::StackReader.should_receive(:new).
-                                 with(:name   => 'test-stack',
-                                      :logger => @logger_stub).
+                                 with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:attributes).and_return('protection' => 'off')
       SimpleDeploy::StackDestroyer.should_receive(:new).
-                                   with(:name   => 'test-stack',
-                                        :logger => @logger_stub).
+                                   with(:name   => 'test-stack').
                                    and_return @stack_destroyer_mock
       @stack_destroyer_mock.should_receive(:destroy).and_return(true)
 
@@ -173,8 +164,7 @@ describe SimpleDeploy::Stack do
       @entry_mock.should_receive(:delete_attributes).never
 
       SimpleDeploy::StackReader.should_receive(:new).
-                                 with(:name   => 'test-stack',
-                                      :logger => @logger_stub).
+                                 with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:attributes).and_return('protection' => 'on')
       SimpleDeploy::StackDestroyer.should_receive(:new).never
@@ -186,13 +176,11 @@ describe SimpleDeploy::Stack do
       @entry_mock.should_receive(:delete_attributes)
 
       SimpleDeploy::StackReader.should_receive(:new).
-                                 with(:name   => 'test-stack',
-                                      :logger => @logger_stub).
+                                 with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:attributes).and_return({})
       SimpleDeploy::StackDestroyer.should_receive(:new).
-                                   with(:name   => 'test-stack',
-                                        :logger => @logger_stub).
+                                   with(:name   => 'test-stack').
                                    and_return @stack_destroyer_mock
       @stack_destroyer_mock.should_receive(:destroy).and_return(true)
 
@@ -214,8 +202,7 @@ describe SimpleDeploy::Stack do
       @instances.first['instancesSet'].first['vpcId'] = 'my-vpc'
 
       SimpleDeploy::StackReader.should_receive(:new).
-                                 with(:name   => 'test-stack',
-                                      :logger => @logger_stub).
+                                 with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
@@ -224,13 +211,11 @@ describe SimpleDeploy::Stack do
 
     it 'should use the private IP when internal' do
       stack = SimpleDeploy::Stack.new :name        => 'test-stack',
-                                      :logger      => @logger_stub,
                                       :environment => 'test-env',
                                       :internal    => true
 
       SimpleDeploy::StackReader.should_receive(:new).
-                                 with(:name   => 'test-stack',
-                                      :logger => @logger_stub).
+                                 with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
@@ -239,8 +224,7 @@ describe SimpleDeploy::Stack do
 
     it 'should use the public IP when not vpc and not internal' do
       SimpleDeploy::StackReader.should_receive(:new).
-                                 with(:name   => 'test-stack',
-                                      :logger => @logger_stub).
+                                 with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
@@ -253,8 +237,7 @@ describe SimpleDeploy::Stack do
         { 'ipAddress' => '50.40.30.21', 'privateIpAddress' => '10.1.2.4' }] }]
 
       SimpleDeploy::StackReader.should_receive(:new).
-                                 with(:name   => 'test-stack',
-                                      :logger => @logger_stub).
+                                 with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
@@ -266,7 +249,6 @@ describe SimpleDeploy::Stack do
     before do
       @stack = SimpleDeploy::Stack.new :environment => 'test-env',
                                        :name        => 'test-stack',
-                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
       @deployment_mock = mock "deployment"
@@ -293,7 +275,6 @@ describe SimpleDeploy::Stack do
     before do
       @stack = SimpleDeploy::Stack.new :environment => 'test-env',
                                        :name        => 'test-stack',
-                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
       @execute_mock = mock "execute"
@@ -317,15 +298,13 @@ describe SimpleDeploy::Stack do
     before do
       @status_mock = mock 'status'
       @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
-                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
     end
 
     it "should call wait_for_stable on status" do
       SimpleDeploy::Status.should_receive(:new).
-                           with(:name   => 'test-stack',
-                                :logger => @logger_stub).
+                           with(:name   => 'test-stack').
                            and_return @status_mock
       @status_mock.should_receive(:wait_for_stable)
 
@@ -337,15 +316,13 @@ describe SimpleDeploy::Stack do
     before do
       @stack_reader_mock = mock 'stack reader'
       @stack = SimpleDeploy::Stack.new :name        => 'test-stack',
-                                       :logger      => @logger_stub,
                                        :config      => @config_stub,
                                        :internal    => false
     end
 
     it "should return true if stack exists" do
       SimpleDeploy::StackReader.should_receive(:new).
-                                with(:name   => 'test-stack',
-                                     :logger => @logger_stub).
+                                with(:name   => 'test-stack').
                                 and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:status).and_return('CREATE_COMPLETE')
 
@@ -354,8 +331,7 @@ describe SimpleDeploy::Stack do
 
     it "should return false if the stack does not exist" do
       SimpleDeploy::StackReader.should_receive(:new).
-                                with(:name   => 'test-stack',
-                                     :logger => @logger_stub).
+                                with(:name   => 'test-stack').
                                 and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:status).
                          and_raise(SimpleDeploy::Exceptions::UnknownStack.new(

@@ -5,17 +5,14 @@ describe SimpleDeploy::Misc::AttributeMerger do
 
   before do
     @mapper_mock = mock 'mapper'
-    @logger_stub = stub 'logger', :info => true
 
     @stacks  = ['stack1', 'stack2']
     @options = { :environment  => 'default',
-                 :logger       => @logger_stub,
                  :attributes   => [ { 'attrib1' => 'val1' } ],
                  :input_stacks => @stacks,
                  :template     => '/tmp/file.json' }
     SimpleDeploy::Stack::OutputMapper.should_receive(:new).
-                                    with(:environment => @options[:environment],
-                                         :logger      => @options[:logger]).
+                                    with(:environment => @options[:environment]).
                                     and_return @mapper_mock
     @merger = SimpleDeploy::Misc::AttributeMerger.new
   end

@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 describe SimpleDeploy::Entry do
+  include_context 'double stubbed logger'
+
   let(:config_data) do
     { 'environments' => {
         'test_env' => {
@@ -11,7 +13,6 @@ describe SimpleDeploy::Entry do
   end
 
   before do
-    @logger_stub = stub 'logger stub', :info => 'true', :warn => 'true', :debug => 'true'
     @config = SimpleDeploy.create_config 'test_env', :config => config_data
   end
 
@@ -25,8 +26,7 @@ describe SimpleDeploy::Entry do
     @simple_db_mock.should_receive(:create_domain).
                     with("stacks").
                     and_return true
-    entry = SimpleDeploy::Entry.new :logger => @logger_stub,
-                                    :name   => 'test-stack'
+    entry = SimpleDeploy::Entry.new :name   => 'test-stack'
     entry.class.should == SimpleDeploy::Entry
   end
   
@@ -37,8 +37,7 @@ describe SimpleDeploy::Entry do
     @simple_db_mock.should_receive(:create_domain).
                     with("stacks").
                     and_return true
-    SimpleDeploy::Entry.find :name   => 'stack-to-find',
-                             :logger => @logger_stub
+    SimpleDeploy::Entry.find :name   => 'stack-to-find'
   end
 
   context "with stack object" do
@@ -48,8 +47,7 @@ describe SimpleDeploy::Entry do
       @simple_db_mock.should_receive(:create_domain).
                       with("stacks").
                       and_return true
-      @entry = SimpleDeploy::Entry.new :logger => @logger_stub,
-                                       :name   => 'test-stack'
+      @entry = SimpleDeploy::Entry.new :name   => 'test-stack'
     end
 
     it "should set the name to region-name for the stack" do

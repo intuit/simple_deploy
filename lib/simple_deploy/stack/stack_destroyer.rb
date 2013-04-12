@@ -4,7 +4,6 @@ module SimpleDeploy
     def initialize(args)
       @config = SimpleDeploy.config
       @name = args[:name]
-      @logger = args[:logger]
     end
 
     def destroy
@@ -14,7 +13,7 @@ module SimpleDeploy
     private
 
     def cloud_formation
-      @cf ||= AWS::CloudFormation.new :logger => @logger
+      @cf ||= AWS::CloudFormation.new
     end
   end
 end

@@ -3,22 +3,10 @@ require 'spec_helper'
 require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Protect do
+  include_context 'cli config'
+  include_context 'double stubbed logger'
 
   describe 'protect' do
-    before do
-      @config_mock  = mock 'config'
-      @logger  = stub 'logger', 'info' => 'true'
-
-      SimpleDeploy.stub(:create_config).and_return(@config)
-      SimpleDeploy::SimpleDeployLogger.should_receive(:new).
-                                       with(:log_level => 'debug').
-                                       and_return(@logger)
-    end
-
-    after do
-      SimpleDeploy.release_config
-    end
-
     it "should enable protection" do
       options = { :environment => 'my_env',
                   :log_level   => 'debug',
@@ -35,7 +23,6 @@ describe SimpleDeploy::CLI::Protect do
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(stack)
 
@@ -58,13 +45,11 @@ describe SimpleDeploy::CLI::Protect do
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack1').
                           and_return(stack)
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack2').
                           and_return(stack)
 
@@ -87,7 +72,6 @@ describe SimpleDeploy::CLI::Protect do
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack').
                           and_return(stack)
 
@@ -110,13 +94,11 @@ describe SimpleDeploy::CLI::Protect do
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack1').
                           and_return(stack)
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack2').
                           and_return(stack)
 

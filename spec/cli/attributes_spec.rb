@@ -2,29 +2,20 @@ require 'spec_helper'
 require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Attributes do
+  include_context 'cli config'
+  include_context 'double stubbed logger'
 
   describe 'show' do
     before do
-      @config  = mock 'config'
-      @logger  = stub 'logger'
       @options = { :environment => 'my_env',
                    :log_level   => 'debug',
                    :name        => 'my_stack' }
       @stack   = stub :attributes => { 'foo' => 'bar', 'baz' => 'blah' }
 
-      SimpleDeploy.stub(:create_config).and_return(@config)
-      SimpleDeploy::SimpleDeployLogger.should_receive(:new).
-                                       with(:log_level => 'debug').
-                                       and_return(@logger)
       SimpleDeploy::Stack.should_receive(:new).
                           with( :environment => 'my_env',
-                               :logger      => @logger,
-                               :name        => 'my_stack').
+                                :name        => 'my_stack').
                           and_return(@stack)
-    end
-
-    after do
-      SimpleDeploy.release_config
     end
 
     it 'should output the attributes' do

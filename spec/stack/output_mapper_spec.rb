@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 describe SimpleDeploy::Stack::OutputMapper do
+  include_context 'double stubbed logger'
+
   before do
     @config_mock = mock 'config'
-    @logger_stub = stub 'logger', :debug => true, :info => true
 
     stack1_outputs = [ { 'OutputKey' => 'Test1', 'OutputValue' => 'val1' },
                        { 'OutputKey' => 'Nother', 'OutputValue' => 'another' } ]
@@ -23,8 +24,7 @@ describe SimpleDeploy::Stack::OutputMapper do
     @template_stub = stub 'template', :parameters => ["Test1", "Test2", "Tests"]
 
     @mapper = SimpleDeploy::Stack::OutputMapper.new :config      => @config_mock,
-                                                    :environment => 'default',
-                                                    :logger      => @logger_stub
+                                                    :environment => 'default'
   end
 
   context "when provided stacks" do
@@ -37,7 +37,6 @@ describe SimpleDeploy::Stack::OutputMapper do
     it "should return the outputs which match parameters" do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :logger      => @logger_stub,
                                :name        => 'stack1').
                           and_return @stack1_stub
       @mapper.should_receive(:sleep)
@@ -49,7 +48,6 @@ describe SimpleDeploy::Stack::OutputMapper do
     it "should return the outputs which match pluralized parameters" do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :logger      => @logger_stub,
                                :name        => 'stack4').
                           and_return @stack4_stub
       @mapper.should_receive(:sleep)
@@ -61,12 +59,10 @@ describe SimpleDeploy::Stack::OutputMapper do
     it "should return the outputs which match parameters from multiple stacks" do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :logger      => @logger_stub,
                                :name        => 'stack1').
                           and_return @stack1_stub
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :logger      => @logger_stub,
                                :name        => 'stack2').
                           and_return @stack2_stub
       @mapper.should_receive(:sleep).exactly(3).times
@@ -78,12 +74,10 @@ describe SimpleDeploy::Stack::OutputMapper do
     it "should concatenate multiple outputs of same name into CSV" do
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :logger      => @logger_stub,
                                :name        => 'stack1').
                           and_return @stack1_stub
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'default',
-                               :logger      => @logger_stub,
                                :name        => 'stack3').
                           and_return @stack3_stub
       @mapper.should_receive(:sleep).exactly(3).times

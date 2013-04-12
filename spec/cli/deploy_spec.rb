@@ -3,21 +3,13 @@ require 'spec_helper'
 require 'simple_deploy/cli'
 
 describe SimpleDeploy::CLI::Deploy do
+  include_context 'cli config'
+  include_context 'double stubbed logger'
+
   describe 'deploy' do
     before do
-      @logger   = stub 'logger', 'info' => 'true', 'error' => 'true'
       @stack    = stub :attributes => {}
       @notifier = stub
-
-      SimpleDeploy.stub(:create_config).and_return(@config)
-
-      SimpleDeploy::SimpleDeployLogger.should_receive(:new).
-                                       with(:log_level => 'debug').
-                                       and_return(@logger)
-    end
-
-    after do
-      SimpleDeploy.release_config
     end
 
     it "should notify on success" do
@@ -35,13 +27,11 @@ describe SimpleDeploy::CLI::Deploy do
 
       SimpleDeploy::Notifier.should_receive(:new).
                           with(:stack_name  => 'my_stack',
-                               :environment => 'my_env',
-                               :logger      => @logger).
+                               :environment => 'my_env').
                           and_return(@notifier)
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack',
                                :internal    => false).
                           and_return(@stack)
@@ -69,13 +59,11 @@ describe SimpleDeploy::CLI::Deploy do
 
       SimpleDeploy::Notifier.should_receive(:new).
                           with(:stack_name  => 'my_stack',
-                               :environment => 'my_env',
-                               :logger      => @logger).
+                               :environment => 'my_env').
                           and_return(@notifier)
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack',
                                :internal    => false).
                           and_return(@stack)
@@ -106,13 +94,11 @@ describe SimpleDeploy::CLI::Deploy do
 
       SimpleDeploy::Notifier.should_receive(:new).
                           with(:stack_name  => 'my_stack',
-                               :environment => 'my_env',
-                               :logger      => @logger).
+                               :environment => 'my_env').
                           and_return(@notifier)
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack',
                                :internal    => false).
                           and_return(@stack)
@@ -141,13 +127,11 @@ describe SimpleDeploy::CLI::Deploy do
 
       SimpleDeploy::Notifier.should_receive(:new).
                           with(:stack_name  => 'my_stack',
-                               :environment => 'my_env',
-                               :logger      => @logger).
+                               :environment => 'my_env').
                           and_return(@notifier)
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack',
                                :internal    => false).
                           and_return(@stack)
@@ -178,13 +162,11 @@ describe SimpleDeploy::CLI::Deploy do
 
       SimpleDeploy::Notifier.should_receive(:new).
                           with(:stack_name  => 'my_stack',
-                               :environment => 'my_env',
-                               :logger      => @logger).
+                               :environment => 'my_env').
                           and_return(@notifier)
 
       SimpleDeploy::Stack.should_receive(:new).
                           with(:environment => 'my_env',
-                               :logger      => @logger,
                                :name        => 'my_stack',
                                :internal    => false).
                           and_return(@stack)

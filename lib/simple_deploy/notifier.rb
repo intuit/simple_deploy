@@ -6,7 +6,6 @@ module SimpleDeploy
       @stack_name = args[:stack_name]
       @environment = args[:environment]
       @config = SimpleDeploy.config
-      @logger = args[:logger]
       @notifications = @config.notifications || {}
     end
 
@@ -35,8 +34,7 @@ module SimpleDeploy
         case notification
         when 'campfire'
           campfire = Notifier::Campfire.new :stack_name  => @stack_name,
-                                            :environment => @environment,
-                                            :logger      => @logger
+                                            :environment => @environment
           campfire.send message
         end
       end
@@ -46,8 +44,7 @@ module SimpleDeploy
 
     def stack
       @stack ||= Stack.new :environment => @environment,
-                           :name        => @stack_name,
-                           :logger      => @logger
+                           :name        => @stack_name
     end
 
   end

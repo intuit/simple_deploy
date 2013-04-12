@@ -8,7 +8,7 @@ module SimpleDeploy
         @stack_name = args[:stack_name]
         @environment = args[:environment]
         @config = SimpleDeploy.config
-        @logger = args[:logger]
+        @logger = SimpleDeploy.logger
 
         attributes = stack.attributes
         @subdomain = attributes['campfire_subdomain']
@@ -37,8 +37,7 @@ module SimpleDeploy
 
       def stack
         @stack ||= Stack.new :environment => @environment,
-                             :name        => @stack_name,
-                             :logger      => @logger
+                             :name        => @stack_name
       end
     end
   end
