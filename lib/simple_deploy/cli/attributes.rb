@@ -30,6 +30,7 @@ EOS
 
         SimpleDeploy.create_config @opts[:environment]
         SimpleDeploy.logger @opts[:log_level]
+        @stack = SimpleDeploy.stack @opts[:name], @opts[:environment]
 
         @opts[:as_command_args] ? command_args_output : default_output
       end
@@ -42,7 +43,7 @@ EOS
 
       def attribute_data
         rescue_exceptions_and_exit do
-          Hash[stack.attributes.sort]
+          Hash[@stack.attributes.sort]
         end
       end
 
@@ -52,11 +53,6 @@ EOS
 
       def default_output
         attribute_data.each_pair { |k, v| puts "#{k}: #{v}" }
-      end
-
-      def stack
-        @stack = Stack.new :environment  => @opts[:environment],
-                           :name         => @opts[:name]
       end
     end
 

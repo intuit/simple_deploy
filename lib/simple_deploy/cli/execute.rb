@@ -46,9 +46,8 @@ EOS
           notifier = Notifier.new :stack_name  => name,
                                   :environment => @opts[:environment]
 
-          stack = Stack.new :environment => @opts[:environment],
-                            :name        => name,
-                            :internal    => @opts[:internal]
+          stack = SimpleDeploy.stack @opts[:name], @opts[:environment],
+                                     :internal => @opts[:internal]
 
           begin
             unless stack.execute :command => @opts[:command],

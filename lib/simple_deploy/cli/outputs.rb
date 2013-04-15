@@ -30,9 +30,7 @@ EOS
 
         SimpleDeploy.create_config @opts[:environment]
         logger = SimpleDeploy.logger @opts[:log_level]
-
-        stack = Stack.new :environment => @opts[:environment],
-                          :name        => @opts[:name]
+        stack = SimpleDeploy.stack @opts[:name], @opts[:environment]
 
         rescue_exceptions_and_exit do
           @outputs = stack.outputs

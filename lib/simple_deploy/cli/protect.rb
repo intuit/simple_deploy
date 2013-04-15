@@ -33,8 +33,7 @@ EOS
         SimpleDeploy.logger @opts[:log_level]
 
         @opts[:name].each do |name|
-          stack = Stack.new :environment => @opts[:environment],
-                            :name        => name
+          stack = SimpleDeploy.stack name, @opts[:environment]
           rescue_exceptions_and_exit do
             stack.update :attributes => [{ 'protection' => @opts[:protection] }]
           end

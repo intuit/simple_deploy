@@ -4,10 +4,11 @@ require 'simple_deploy/cli'
 describe SimpleDeploy::CLI::Create do
   include_context 'cli config'
   include_context 'double stubbed logger'
+  include_context 'stubbed stack', :name        => 'mytest',
+                                   :environment => 'test'
 
   before do
     @config_env            = mock 'environment config'
-    @stack_mock            = mock 'stack'
     @attribute_merger_mock = mock 'attribute merger'
 
     @options = { :attributes  => [ 'attr1=val1' ],
@@ -21,10 +22,6 @@ describe SimpleDeploy::CLI::Create do
     SimpleDeploy.stub(:environments).and_return(@config_env)
     @config_env.should_receive(:keys).and_return(['test'])
 
-    SimpleDeploy::Stack.should_receive(:new).
-                        with(:environment => 'test',
-                             :name        => 'mytest').
-                        and_return(@stack_mock)
     SimpleDeploy::Misc::AttributeMerger.stub :new => @attribute_merger_mock
 
     merge_options = { :attributes   => [ { "attr1" => "val1" } ], 

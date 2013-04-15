@@ -36,9 +36,7 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
 
         SimpleDeploy.create_config @opts[:environment]
         SimpleDeploy.logger @opts[:log_level]
-
-        stack = Stack.new :environment => @opts[:environment],
-                          :name        => @opts[:name]
+        stack = SimpleDeploy.stack @opts[:name], @opts[:environment]
 
         rescue_exceptions_and_exit do
           stack.create :attributes => merged_attributes,

@@ -4,6 +4,10 @@ require 'simple_deploy/cli'
 describe SimpleDeploy::CLI::Clone do
   include_context 'cli config'
   include_context 'double stubbed logger'
+  include_context 'clone stack pair', :source_name => 'source_stack',
+                                      :source_env  => 'my_env',
+                                      :new_name    => 'new_stack',
+                                      :new_env     => 'my_env'
 
   describe 'clone' do
     context 'filter_attributes' do
@@ -127,7 +131,7 @@ describe SimpleDeploy::CLI::Clone do
                                       'chef_repo_domain=updated_community_chef_repo',
                                       'SolrClientTrafficContainer=solr-client-traffic-container'] }
 
-        @source_stack   = stub :attributes => {
+        @source_stack_stub.stub(:attributes).and_return(
           'AmiId' => 'ami-7b6a4e3e',
           'AppEnv' => 'pod-2-cd-1',
           'MaximumAppInstances' => 1,
@@ -135,17 +139,9 @@ describe SimpleDeploy::CLI::Clone do
           'chef_repo_bucket_prefix' => 'intu-lc',
           'chef_repo_domain' => 'live_community_chef_repo',
           'deployment_user' => 'rmendes'
-        }, :template => { 'foo' => 'bah' }
-        @new_stack   = stub :attributes => {}
-
-        SimpleDeploy::Stack.should_receive(:new).
-                                      with(:environment => 'my_env',
-                                           :name        => 'source_stack').
-                                      and_return(@source_stack)
-        SimpleDeploy::Stack.should_receive(:new).
-                                      with(:environment => 'my_env',
-                                           :name        => 'new_stack').
-                                      and_return(@new_stack)
+        )
+        @source_stack_stub.stub(:template).and_return('foo' => 'bah')
+        @new_stack_mock.stub(:attributes).and_return({})
       end
 
       it 'should create the new stack using the filtered, merged and added attributes' do
@@ -154,7 +150,7 @@ describe SimpleDeploy::CLI::Clone do
                      :required => [:environment, :source_name, :new_name])
         Trollop.stub(:options).and_return(@options)
 
-        @new_stack.should_receive(:create) do |options|
+        @new_stack_mock.should_receive(:create) do |options|
           options[:attributes].should == [{ 'AmiId' => 'ami-7b6a4e3e' },
                                           { 'AppEnv' => 'pod-2-cd-1' },
                                           { 'MaximumAppInstances' => 1 },
@@ -176,7 +172,7 @@ describe SimpleDeploy::CLI::Clone do
                       :required => [:environment, :source_name, :new_name])
         Trollop.stub(:options).and_return(@options)
 
-        @new_stack.should_receive(:create) do |options|
+        @new_stack_mock.should_receive(:create) do |options|
           options[:attributes].should == [{ 'AmiId' => 'ami-7b6a4e3e' },
                                           { 'AppEnv' => 'pod-2-cd-1' },
                                           { 'MaximumAppInstances' => 1 },

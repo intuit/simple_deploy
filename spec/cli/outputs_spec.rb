@@ -4,10 +4,11 @@ require 'simple_deploy/cli'
 describe SimpleDeploy::CLI::Outputs do
   include_context 'cli config'
   include_context 'double stubbed logger'
+  include_context 'stubbed stack', :name        => 'mytest',
+                                   :environment => 'test'
 
   before do
     @config_env    = mock 'environment config'
-    @stack         = mock 'stack'
     @options       = { :environment => 'test',
                        :log_level   => 'info',
                        :name        => 'mytest' }
@@ -17,11 +18,7 @@ describe SimpleDeploy::CLI::Outputs do
     @config_mock.stub(:environments => { 'test' => 'data' })
     SimpleDeploy.stub(:environments).and_return(@config_env)
     @config_env.should_receive(:keys).and_return(['test'])
-    SimpleDeploy::Stack.should_receive(:new).
-                        with(:environment => 'test',
-                             :name        => 'mytest').
-                        and_return(@stack)
-    @stack.stub :outputs => @data
+    @stack_mock.stub(:outputs).and_return(@data)
     @outputs = SimpleDeploy::CLI::Outputs.new
   end
 
