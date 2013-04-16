@@ -12,12 +12,12 @@ module SimpleDeploy
       def initialize(args)
         @config      = SimpleDeploy.config
         @logger      = SimpleDeploy.logger
+        @stack       = SimpleDeploy.stack
         @region      = @config.region
         @instances   = args[:instances]
         @environment = args[:environment]
         @ssh_user    = args[:ssh_user]
         @ssh_key     = args[:ssh_key]
-        @stack       = args[:stack]
         @name        = args[:name]
       end
 
@@ -104,7 +104,6 @@ module SimpleDeploy
                     :environment => @environment,
                     :ssh_user    => @ssh_user,
                     :ssh_key     => @ssh_key,
-                    :stack       => @stack,
                     :name        => @name }
         @executer ||= SimpleDeploy::Stack::Execute.new options
       end
@@ -112,8 +111,7 @@ module SimpleDeploy
       def status
         options = { :name        => @name,
                     :environment => @environment,
-                    :ssh_user    => @ssh_user,
-                    :stack       => @stack }
+                    :ssh_user    => @ssh_user }
         @status ||= SimpleDeploy::Stack::Deployment::Status.new options
       end
 

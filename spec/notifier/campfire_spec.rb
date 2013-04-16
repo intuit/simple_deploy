@@ -3,20 +3,16 @@ require 'spec_helper'
 describe SimpleDeploy::Notifier::Campfire do
   include_context 'stubbed config'
   include_context 'double stubbed logger'
+  include_context 'stubbed stack', :name        => 'my_stack',
+                                   :environment => 'my_env'
 
   describe "with all required configurations" do
     before do
       config = { 'campfire' => { 'token' => 'tkn' } }
                 
-      @stack_mock = mock 'stack'
       @tinder_mock = mock 'tinder'
 
       @config_mock.should_receive(:notifications).and_return config
-
-      SimpleDeploy::Stack.should_receive(:new).
-                          with(:environment => 'test',
-                               :name        => 'stack_name').
-                          and_return @stack_mock
 
       Tinder::Campfire.should_receive(:new).
                        with("subdom", { :token=>"tkn", :ssl_options=> { :verify => false } }).and_return @tinder_mock
@@ -45,13 +41,7 @@ describe SimpleDeploy::Notifier::Campfire do
     before do
       config = nil
                 
-      @stack_mock = mock 'stack'
       @tinder_mock = mock 'tinder'
-
-      SimpleDeploy::Stack.should_receive(:new).
-                          with(:environment => 'test',
-                               :name        => 'stack_name').
-                          and_return @stack_mock
 
       @stack_mock.should_receive(:attributes).
                   and_return({})

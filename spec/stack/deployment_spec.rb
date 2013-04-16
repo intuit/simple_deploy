@@ -3,6 +3,8 @@ require 'spec_helper'
 describe SimpleDeploy::Stack::Deployment do
   include_context 'stubbed config'
   include_context 'double stubbed logger'
+  include_context 'stubbed stack', :name        => 'my_stack',
+                                   :environment => 'my_env'
 
   before do
     @attributes = { 'key'                     => 'val',
@@ -18,7 +20,6 @@ describe SimpleDeploy::Stack::Deployment do
 
     @config_mock.stub(:region) { 'test-us-west-1' }
 
-    @stack_mock = mock 'stack mock'
     @stack_mock.stub(:attributes) { @attributes }
 
     @status_mock = mock 'status mock'
@@ -27,7 +28,6 @@ describe SimpleDeploy::Stack::Deployment do
                 :environment => 'test-us-west-1',
                 :ssh_user    => 'user',
                 :ssh_key     => 'key',
-                :stack       => @stack_mock,
                 :name        => 'stack-name' }
     @deployment = SimpleDeploy::Stack::Deployment.new options
     @deployment.stub(:sleep) { false }
@@ -41,8 +41,7 @@ describe SimpleDeploy::Stack::Deployment do
     before do
       status_options = { :name        => 'stack-name',
                          :environment => 'test-us-west-1',
-                         :ssh_user    => 'user',
-                         :stack       => @stack_mock }
+                         :ssh_user    => 'user' }
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               with(status_options).
                                               and_return @status_mock
@@ -75,8 +74,7 @@ describe SimpleDeploy::Stack::Deployment do
  
       status_options = { :name        => 'stack-name',
                          :environment => 'test-us-west-1',
-                         :ssh_user    => 'user',
-                         :stack       => @stack_mock }
+                         :ssh_user    => 'user' }
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               with(status_options).
                                               and_return @status_mock
@@ -89,8 +87,7 @@ describe SimpleDeploy::Stack::Deployment do
                               :environment => 'test-us-west-1',
                               :instances   => ['1.2.3.4', '4.3.2.1'],
                               :ssh_user    => 'user',
-                              :ssh_key     => 'key',
-                              :stack       => @stack_mock }
+                              :ssh_key     => 'key' }
           SimpleDeploy::Stack::Execute.should_receive(:new).
                                        with(execute_options).
                                        and_return @execute_mock

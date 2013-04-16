@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe SimpleDeploy::Notifier do
   include_context 'stubbed config'
+  include_context 'stubbed stack', :name        => 'my_stack',
+                                   :environment => 'my_env'
 
   describe "with valid settings" do
     before do
@@ -28,19 +30,14 @@ describe SimpleDeploy::Notifier do
     end
 
     it "should include the github app & chef links in the completed message" do
-      stack_mock = mock 'stack'
       campfire_mock = mock 'campfire mock'
       environment_mock = mock 'environment mock'
       @config_mock.stub(:region).and_return('us-west-1')
-      SimpleDeploy::Stack.should_receive(:new).
-                          with(:environment => 'test',
-                               :name        => 'stack_name').
-                          and_return stack_mock
-      stack_mock.should_receive(:attributes).
-                 and_return({ 'app_github_url'       => 'http://github.com/user/app',
-                              'chef_repo_github_url' => 'http://github.com/user/chef_repo',
-                              'app'                  => 'appsha',
-                              'chef_repo'            => 'chefsha' })
+      @stack_mock.should_receive(:attributes).
+                  and_return({ 'app_github_url'       => 'http://github.com/user/app',
+                               'chef_repo_github_url' => 'http://github.com/user/chef_repo',
+                               'app'                  => 'appsha',
+                               'chef_repo'            => 'chefsha' })
       SimpleDeploy::Notifier::Campfire.should_receive(:new).
                                        and_return campfire_mock
       campfire_mock.should_receive(:send).

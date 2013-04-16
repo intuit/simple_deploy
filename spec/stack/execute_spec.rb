@@ -9,7 +9,6 @@ describe SimpleDeploy::Stack::Execute do
                 :environment => @environment,
                 :ssh_user    => @ssh_user,
                 :ssh_key     => @ssh_key,
-                :stack       => @stack,
                 :name        => @name }
 
 

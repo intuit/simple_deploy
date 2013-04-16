@@ -6,7 +6,7 @@ module SimpleDeploy
         def initialize(args)
           @config   = SimpleDeploy.config
           @logger   = SimpleDeploy.logger
-          @stack    = args[:stack]
+          @stack    = SimpleDeploy.stack
           @ssh_user = args[:ssh_user]
           @name     = args[:name]
         end

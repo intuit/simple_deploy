@@ -3,18 +3,18 @@ require 'spec_helper'
 describe SimpleDeploy::Stack::SSH do
   include_context 'stubbed config'
   include_context 'double stubbed logger'
+  include_context 'double stubbed stack', :name        => 'my_stack',
+                                          :environment => 'my_env'
 
   before do
-    @stack_mock = mock 'stack'
     @task_mock = mock 'task'
     @config_mock.should_receive(:region).and_return 'test-us-west-1'
 
-    @stack_mock.stub :attributes => { :ssh_gateway => false }
+    @stack_stub.stub(:attributes).and_return({ :ssh_gateway => false })
     @options = { :instances   => ['1.2.3.4', '4.3.2.1'],
                  :environment => 'test-env',
                  :ssh_user    => 'user',
                  :ssh_key     => 'key',
-                 :stack       => @stack_mock,
                  :name        => 'test-stack' }
     @task_logger_mock = mock 'task_logger'
     @ssh_options = Hash.new

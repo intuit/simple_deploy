@@ -194,7 +194,6 @@ module SimpleDeploy
     def executer
       @executer ||= Stack::Execute.new :environment => @environment,
                                        :name        => @name,
-                                       :stack       => self,
                                        :instances   => instances,
                                        :ssh_user    => ssh_user,
                                        :ssh_key     => ssh_key
@@ -203,7 +202,6 @@ module SimpleDeploy
     def deployment
       @deployment ||= Stack::Deployment.new :environment => @environment,
                                             :name        => @name,
-                                            :stack       => self,
                                             :instances   => instances,
                                             :ssh_user    => ssh_user,
                                             :ssh_key     => ssh_key
