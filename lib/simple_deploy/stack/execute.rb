@@ -9,6 +9,7 @@ module SimpleDeploy
         @environment = args[:environment]
         @ssh_user    = args[:ssh_user]
         @ssh_key     = args[:ssh_key]
+        @stack       = args[:stack]
         @name        = args[:name]
       end
 
@@ -23,6 +24,7 @@ module SimpleDeploy
                     :environment => @environment,
                     :ssh_user    => @ssh_user,
                     :ssh_key     => @ssh_key,
+                    :stack       => @stack,
                     :name        => @name }
         @ssh ||= SimpleDeploy::Stack::SSH.new options
       end

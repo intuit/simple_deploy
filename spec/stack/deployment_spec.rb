@@ -28,6 +28,7 @@ describe SimpleDeploy::Stack::Deployment do
                 :environment => 'test-us-west-1',
                 :ssh_user    => 'user',
                 :ssh_key     => 'key',
+                :stack       => @stack_mock,
                 :name        => 'stack-name' }
     @deployment = SimpleDeploy::Stack::Deployment.new options
     @deployment.stub(:sleep) { false }
@@ -41,6 +42,7 @@ describe SimpleDeploy::Stack::Deployment do
     before do
       status_options = { :name        => 'stack-name',
                          :environment => 'test-us-west-1',
+                         :stack       => @stack_mock,
                          :ssh_user    => 'user' }
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               with(status_options).
@@ -74,6 +76,7 @@ describe SimpleDeploy::Stack::Deployment do
  
       status_options = { :name        => 'stack-name',
                          :environment => 'test-us-west-1',
+                         :stack       => @stack_mock,
                          :ssh_user    => 'user' }
       SimpleDeploy::Stack::Deployment::Status.should_receive(:new).
                                               with(status_options).
@@ -86,6 +89,7 @@ describe SimpleDeploy::Stack::Deployment do
           execute_options = { :name        => 'stack-name',
                               :environment => 'test-us-west-1',
                               :instances   => ['1.2.3.4', '4.3.2.1'],
+                              :stack       => @stack_mock,
                               :ssh_user    => 'user',
                               :ssh_key     => 'key' }
           SimpleDeploy::Stack::Execute.should_receive(:new).

@@ -2,6 +2,8 @@ require 'spec_helper'
 
 describe SimpleDeploy::Stack::Execute do
   include_context 'stubbed config'
+  include_context 'double stubbed stack', :name        => 'my_stack',
+                                          :environment => 'my_env'
 
   before do
     @ssh_mock = mock 'ssh'
@@ -9,6 +11,7 @@ describe SimpleDeploy::Stack::Execute do
                 :environment => @environment,
                 :ssh_user    => @ssh_user,
                 :ssh_key     => @ssh_key,
+                :stack       => @stack_stub,
                 :name        => @name }
 
 

@@ -149,6 +149,7 @@ describe SimpleDeploy::CLI::Clone do
                 with(:provided => @options,
                      :required => [:environment, :source_name, :new_name])
         Trollop.stub(:options).and_return(@options)
+        @new_stack_mock.stub(:template).and_return('foo' => 'bah')
 
         @new_stack_mock.should_receive(:create) do |options|
           options[:attributes].should == [{ 'AmiId' => 'ami-7b6a4e3e' },

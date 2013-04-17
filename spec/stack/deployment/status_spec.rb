@@ -7,7 +7,8 @@ describe SimpleDeploy::Stack::Deployment::Status do
                                    :environment => 'my_env'
 
   before do
-    options = { :ssh_user => 'user',
+    options = { :stack    => @stack_mock,
+                :ssh_user => 'user',
                 :name     => 'dastack' }
 
     @status = SimpleDeploy::Stack::Deployment::Status.new options

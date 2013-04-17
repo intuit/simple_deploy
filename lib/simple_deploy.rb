@@ -38,15 +38,4 @@ module SimpleDeploy
   def logger(log_level = 'info')
     @logger ||= SimpleDeployLogger.new :log_level => log_level
   end
-
-  def stack(name = nil, environment = nil, options = {})
-    return @stack if @stack
-
-    raise ArgumentError.new('name must be defined') unless name
-    raise ArgumentError.new('environment must be defined') unless environment
-    
-    args = options.merge :name        => name,
-                         :environment => environment
-    @stack = Stack.new args
-  end
 end

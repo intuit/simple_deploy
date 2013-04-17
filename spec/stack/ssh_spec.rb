@@ -15,6 +15,7 @@ describe SimpleDeploy::Stack::SSH do
                  :environment => 'test-env',
                  :ssh_user    => 'user',
                  :ssh_key     => 'key',
+                 :stack       => @stack_stub,
                  :name        => 'test-stack' }
     @task_logger_mock = mock 'task_logger'
     @ssh_options = Hash.new

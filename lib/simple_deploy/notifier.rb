@@ -4,7 +4,6 @@ module SimpleDeploy
   class Notifier
     def initialize(args)
       @config = SimpleDeploy.config
-      @stack  = SimpleDeploy.stack
       @stack_name = args[:stack_name]
       @environment = args[:environment]
       @notifications = @config.notifications || {}
@@ -17,7 +16,7 @@ module SimpleDeploy
 
     def send_deployment_complete_message
       message = "Deployment to #{@stack_name} in #{@config.region} complete."
-      attributes = @stack.attributes
+      attributes = stack.attributes
 
       if attributes['app_github_url']
         message += " App: #{attributes['app_github_url']}/commit/#{attributes['app']}"
@@ -39,6 +38,13 @@ module SimpleDeploy
           campfire.send message
         end
       end
+    end
+
+    private 
+
+    def stack
+      @stack ||= Stack.new :name        => @stack_name,
+                           :environment => @environment
     end
   end
 end

@@ -2,8 +2,8 @@ require 'spec_helper'
 
 describe SimpleDeploy::Notifier do
   include_context 'stubbed config'
-  include_context 'stubbed stack', :name        => 'my_stack',
-                                   :environment => 'my_env'
+  include_context 'stubbed stack', :name        => 'stack_name',
+                                   :environment => 'test'
 
   describe "with valid settings" do
     before do

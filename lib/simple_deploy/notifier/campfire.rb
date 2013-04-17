@@ -10,7 +10,7 @@ module SimpleDeploy
         @config = SimpleDeploy.config
         @logger = SimpleDeploy.logger
 
-        attributes = SimpleDeploy.stack.attributes
+        attributes = stack.attributes
         @subdomain = attributes['campfire_subdomain']
         @room_ids = attributes['campfire_room_ids'] ||= ''
         @logger.debug "Campfire subdomain '#{@subdomain}'."
@@ -33,6 +33,13 @@ module SimpleDeploy
         @logger.info "Campfire notifications complete."
       end
 
+      private
+
+      def stack
+        @stack ||= Stack.new :name        => @stack_name,
+                             :environment => @environment
+      end
     end
+
   end
 end

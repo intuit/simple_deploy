@@ -84,11 +84,13 @@ EOS
       end
 
       def source_stack
-        @source_stack ||= SimpleDeploy.stack @opts[:name], @opts[:environment]
+        @source_stack = Stack.new :name        => @opts[:source_name],
+                                  :environment => @opts[:environment]
       end
 
       def new_stack
-        @new_stack ||= SimpleDeploy.stack @opts[:name], @opts[:environment]
+        @new_stack = Stack.new :name        => @opts[:new_name],
+                               :environment => @opts[:environment]
       end
     end
 

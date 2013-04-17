@@ -30,7 +30,8 @@ EOS
 
         SimpleDeploy.create_config @opts[:environment]
         SimpleDeploy.logger @opts[:log_level]
-        @stack = SimpleDeploy.stack @opts[:name], @opts[:environment]
+        @stack = Stack.new :name        => @opts[:name],
+                           :environment => @opts[:environment]
 
         @opts[:as_command_args] ? command_args_output : default_output
       end
