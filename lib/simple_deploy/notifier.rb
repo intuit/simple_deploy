@@ -40,7 +40,7 @@ module SimpleDeploy
       end
     end
 
-    private 
+    private
 
     def stack
       @stack ||= Stack.new :name        => @stack_name,

@@ -12,13 +12,13 @@ describe SimpleDeploy::CLI::Protect do
       
       it "should enable protection" do
         options = { :environment => 'my_env',
-                   :log_level   => 'debug',
-                   :name        => ['my_stack1'],
-                   :protection  => 'on' }
+                    :log_level   => 'debug',
+                    :name        => ['my_stack1'],
+                    :protection  => 'on' }
 
         subject.should_receive(:valid_options?).
                 with(:provided => options,
-                    :required => [:environment, :name])
+                     :required => [:environment, :name])
         Trollop.stub(:options).and_return(options)
 
         @stack_mock1.stub(:attributes).and_return('protection' => 'on')
@@ -59,7 +59,7 @@ describe SimpleDeploy::CLI::Protect do
 
         subject.should_receive(:valid_options?).
                 with(:provided => options,
-                    :required => [:environment, :name])
+                     :required => [:environment, :name])
         Trollop.stub(:options).and_return(options)
 
         @stack_mock1.stub(:attributes).and_return('protection' => 'on')
