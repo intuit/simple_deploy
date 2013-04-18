@@ -5,10 +5,13 @@ require 'simple_deploy/cli'
 describe SimpleDeploy::CLI::Deploy do
   include_context 'cli config'
   include_context 'double stubbed logger'
+  include_context 'stubbed stack', :name        => 'my_stack',
+                                   :environment => 'my_env',
+                                   :internal    => false
 
   describe 'deploy' do
     before do
-      @stack    = stub :attributes => {}
+      @stack_mock.stub(:attributes).and_return({})
       @notifier = stub
     end
 
@@ -30,14 +33,8 @@ describe SimpleDeploy::CLI::Deploy do
                                :environment => 'my_env').
                           and_return(@notifier)
 
-      SimpleDeploy::Stack.should_receive(:new).
-                          with(:environment => 'my_env',
-                               :name        => 'my_stack',
-                               :internal    => false).
-                          and_return(@stack)
-
-      @stack.should_receive(:wait_for_stable)
-      @stack.should_receive(:deploy).with(true).and_return(true)
+      @stack_mock.should_receive(:wait_for_stable)
+      @stack_mock.should_receive(:deploy).with(true).and_return(true)
       @notifier.should_receive(:send_deployment_start_message)
       @notifier.should_receive(:send_deployment_complete_message)
 
@@ -62,14 +59,8 @@ describe SimpleDeploy::CLI::Deploy do
                                :environment => 'my_env').
                           and_return(@notifier)
 
-      SimpleDeploy::Stack.should_receive(:new).
-                          with(:environment => 'my_env',
-                               :name        => 'my_stack',
-                               :internal    => false).
-                          and_return(@stack)
-
-      @stack.should_receive(:wait_for_stable)
-      @stack.should_receive(:deploy).with(true).and_return(false)
+      @stack_mock.should_receive(:wait_for_stable)
+      @stack_mock.should_receive(:deploy).with(true).and_return(false)
       @notifier.should_receive(:send_deployment_start_message)
 
       begin
@@ -97,15 +88,9 @@ describe SimpleDeploy::CLI::Deploy do
                                :environment => 'my_env').
                           and_return(@notifier)
 
-      SimpleDeploy::Stack.should_receive(:new).
-                          with(:environment => 'my_env',
-                               :name        => 'my_stack',
-                               :internal    => false).
-                          and_return(@stack)
-
-      @stack.should_receive(:update).with(hash_including(:force => true, :attributes => [{'foo' => 'bah'}])).and_return(true)
-      @stack.should_receive(:wait_for_stable)
-      @stack.should_receive(:deploy).with(true).and_return(true)
+      @stack_mock.should_receive(:update).with(hash_including(:force => true, :attributes => [{'foo' => 'bah'}])).and_return(true)
+      @stack_mock.should_receive(:wait_for_stable)
+      @stack_mock.should_receive(:deploy).with(true).and_return(true)
       @notifier.should_receive(:send_deployment_start_message)
       @notifier.should_receive(:send_deployment_complete_message)
 
@@ -130,15 +115,9 @@ describe SimpleDeploy::CLI::Deploy do
                                :environment => 'my_env').
                           and_return(@notifier)
 
-      SimpleDeploy::Stack.should_receive(:new).
-                          with(:environment => 'my_env',
-                               :name        => 'my_stack',
-                               :internal    => false).
-                          and_return(@stack)
-
-      @stack.should_receive(:update).with(hash_including(:force => true,
+      @stack_mock.should_receive(:update).with(hash_including(:force => true,
                                                          :attributes => [{'foo' => 'bah'}])).and_return(false)
-      @stack.should_receive(:wait_for_stable)
+      @stack_mock.should_receive(:wait_for_stable)
 
       begin
         subject.deploy
@@ -165,15 +144,9 @@ describe SimpleDeploy::CLI::Deploy do
                                :environment => 'my_env').
                           and_return(@notifier)
 
-      SimpleDeploy::Stack.should_receive(:new).
-                          with(:environment => 'my_env',
-                               :name        => 'my_stack',
-                               :internal    => false).
-                          and_return(@stack)
-
-      @stack.should_not_receive(:update)
-      @stack.should_receive(:wait_for_stable)
-      @stack.should_receive(:deploy).with(true).and_return(true)
+      @stack_mock.should_not_receive(:update)
+      @stack_mock.should_receive(:wait_for_stable)
+      @stack_mock.should_receive(:deploy).with(true).and_return(true)
       @notifier.should_receive(:send_deployment_start_message)
       @notifier.should_receive(:send_deployment_complete_message)
 

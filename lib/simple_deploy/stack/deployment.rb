@@ -112,8 +112,8 @@ module SimpleDeploy
       def status
         options = { :name        => @name,
                     :environment => @environment,
-                    :ssh_user    => @ssh_user,
-                    :stack       => @stack }
+                    :stack       => @stack,
+                    :ssh_user    => @ssh_user }
         @status ||= SimpleDeploy::Stack::Deployment::Status.new options
       end
 

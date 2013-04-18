@@ -63,9 +63,9 @@ EOS
           notifier = Notifier.new :stack_name  => name,
                                   :environment => @opts[:environment]
 
-          stack = Stack.new :environment => @opts[:environment],
-                            :name        => name,
-                            :internal    => @opts[:internal]
+         stack = Stack.new :name        => @opts[:name],
+                           :environment => @opts[:environment],
+                           :internal    => @opts[:internal]
 
           proceed = true
 

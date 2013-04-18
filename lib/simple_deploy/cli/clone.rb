@@ -84,13 +84,13 @@ EOS
       end
 
       def source_stack
-        @source_stack ||= Stack.new :environment => @opts[:environment],
-                                    :name        => @opts[:source_name]
+        @source_stack = Stack.new :name        => @opts[:source_name],
+                                  :environment => @opts[:environment]
       end
 
       def new_stack
-        @new_stack ||= Stack.new :environment => @opts[:environment],
-                                 :name        => @opts[:new_name]
+        @new_stack = Stack.new :name        => @opts[:new_name],
+                               :environment => @opts[:environment]
       end
     end
 

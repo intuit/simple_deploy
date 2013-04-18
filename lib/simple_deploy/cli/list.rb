@@ -31,9 +31,6 @@ EOS
         SimpleDeploy.logger @opts[:log_level]
 
         stacks = SimpleDeploy::StackLister.new.all.sort
-
-        stack = Stack.new :environment => @opts[:environment],
-                          :name        => @opts[:name]
         puts stacks
       end
 

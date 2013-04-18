@@ -3,9 +3,10 @@ require 'spec_helper'
 describe SimpleDeploy::Stack::Deployment::Status do
   include_context 'stubbed config'
   include_context 'double stubbed logger'
+  include_context 'stubbed stack', :name        => 'my_stack',
+                                   :environment => 'my_env'
 
   before do
-    @stack_mock = mock 'stack'
     options = { :stack    => @stack_mock,
                 :ssh_user => 'user',
                 :name     => 'dastack' }

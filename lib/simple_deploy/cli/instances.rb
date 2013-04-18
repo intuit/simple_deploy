@@ -28,8 +28,8 @@ EOS
         SimpleDeploy.create_config @opts[:environment]
         logger = SimpleDeploy.logger @opts[:log_level]
 
-        stack = Stack.new :environment => @opts[:environment],
-                          :name        => @opts[:name],
+        stack = Stack.new :name        => @opts[:name],
+                          :environment => @opts[:environment],
                           :internal    => @opts[:internal]
 
         exit 1 unless stack.exists?

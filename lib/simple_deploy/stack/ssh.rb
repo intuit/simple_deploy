@@ -8,11 +8,11 @@ module SimpleDeploy
       def initialize(args)
         @config      = SimpleDeploy.config
         @logger      = SimpleDeploy.logger
+        @stack       = args[:stack]
         @instances   = args[:instances]
         @environment = args[:environment]
         @ssh_user    = args[:ssh_user]
         @ssh_key     = args[:ssh_key]
-        @stack       = args[:stack]
         @name        = args[:name]
         @region      = @config.region
       end

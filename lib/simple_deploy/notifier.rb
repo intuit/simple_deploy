@@ -3,9 +3,9 @@ require 'simple_deploy/notifier/campfire'
 module SimpleDeploy
   class Notifier
     def initialize(args)
+      @config = SimpleDeploy.config
       @stack_name = args[:stack_name]
       @environment = args[:environment]
-      @config = SimpleDeploy.config
       @notifications = @config.notifications || {}
     end
 
@@ -43,9 +43,8 @@ module SimpleDeploy
     private
 
     def stack
-      @stack ||= Stack.new :environment => @environment,
-                           :name        => @stack_name
+      @stack ||= Stack.new :name        => @stack_name,
+                           :environment => @environment
     end
-
   end
 end

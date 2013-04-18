@@ -5,13 +5,15 @@ require 'simple_deploy/cli'
 describe SimpleDeploy::CLI::Destroy do
   include_context 'cli config'
   include_context 'double stubbed logger'
+  include_context 'stubbed stack', :name        => 'my_stack',
+                                   :environment => 'my_env'
 
   describe 'destroy' do
     before do
       @options = { :environment => 'my_env',
                    :log_level   => 'debug',
                    :name        => 'my_stack' }
-      @stack   = stub :attributes => {}
+      @stack_mock.stub(:attributes).and_return({})
     end
 
     it "should exit with 0" do
@@ -20,12 +22,7 @@ describe SimpleDeploy::CLI::Destroy do
                    :required => [:environment, :name])
       Trollop.stub(:options).and_return(@options)
 
-      @stack.should_receive(:destroy).and_return(true)
-
-      SimpleDeploy::Stack.should_receive(:new).
-                          with(:environment => 'my_env',
-                               :name        => 'my_stack').
-                          and_return(@stack)
+      @stack_mock.should_receive(:destroy).and_return(true)
 
       begin
         subject.destroy
@@ -40,12 +37,7 @@ describe SimpleDeploy::CLI::Destroy do
                    :required => [:environment, :name])
       Trollop.stub(:options).and_return(@options)
 
-      @stack.should_receive(:destroy).and_return(false)
-
-      SimpleDeploy::Stack.should_receive(:new).
-                          with(:environment => 'my_env',
-                               :name        => 'my_stack').
-                          and_return(@stack)
+      @stack_mock.should_receive(:destroy).and_return(false)
 
       begin
         subject.destroy

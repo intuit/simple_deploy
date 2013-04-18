@@ -36,8 +36,9 @@ EOS
         attributes = parse_attributes :attributes => @opts[:attributes]
 
         @opts[:name].each do |name|
-          stack = Stack.new :environment => @opts[:environment],
-                            :name        => name
+          stack = Stack.new :name        => name,
+                            :environment => @opts[:environment]
+
           rescue_exceptions_and_exit do
             stack.update :force => @opts[:force], :attributes => attributes
           end

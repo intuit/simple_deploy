@@ -4,18 +4,15 @@ require 'simple_deploy/cli'
 describe SimpleDeploy::CLI::Attributes do
   include_context 'cli config'
   include_context 'double stubbed logger'
+  include_context 'double stubbed stack', :name        => 'my_stack',
+                                          :environment => 'my_env'
 
   describe 'show' do
     before do
       @options = { :environment => 'my_env',
                    :log_level   => 'debug',
                    :name        => 'my_stack' }
-      @stack   = stub :attributes => { 'foo' => 'bar', 'baz' => 'blah' }
-
-      SimpleDeploy::Stack.should_receive(:new).
-                          with( :environment => 'my_env',
-                                :name        => 'my_stack').
-                          and_return(@stack)
+      @stack_stub.stub(:attributes).and_return({ 'foo' => 'bar', 'baz' => 'blah' })
     end
 
     it 'should output the attributes' do
