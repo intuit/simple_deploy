@@ -29,7 +29,7 @@ end
 shared_context "received stack array" do |base_name, env, num_instances|
   before do
     1.upto(num_instances) do |n|
-      name = base_name + n.to_s
+      name = "#{base_name}#{n}"
       stack_mock = mock 'stack mock', :name => name, :environment => env
       self.instance_variable_set(:"@stack_mock#{n}", stack_mock)
       SimpleDeploy::Stack.should_receive(:new).with(:name        => name,
