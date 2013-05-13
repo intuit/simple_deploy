@@ -29,5 +29,4 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "trollop", "= 2.0"
   s.add_runtime_dependency "fog", "= 1.10.0"
   s.add_runtime_dependency "xml-simple", "= 1.1.2"
-  s.add_runtime_dependency "json", "~> 1.7.7"
 end
