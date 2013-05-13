@@ -6,16 +6,21 @@ describe SimpleDeploy::Notifier::Campfire do
   include_context 'stubbed stack', :name        => 'my_stack',
                                    :environment => 'my_env'
 
+  before do
+    @comms_mock = mock 'Campfire communications'
+
+    @room1_mock = mock 'Esbit room1', :id => 1, :name => 'Room 1'
+    @room2_mock = mock 'Esbit room2', :id => 2, :name => 'Room 2'
+    @comms_mock.stub(:rooms).and_return([@room1_mock, @room2_mock])
+  end
+
   describe "with all required configurations" do
     before do
       config = { 'campfire' => { 'token' => 'tkn' } }
-                
-      @tinder_mock = mock 'tinder'
-
       @config_mock.should_receive(:notifications).and_return config
 
-      Tinder::Campfire.should_receive(:new).
-                       with("subdom", { :token=>"tkn", :ssl_options=> { :verify => false } }).and_return @tinder_mock
+      Esbit::Campfire.should_receive(:new).with("subdom", "tkn").
+                      and_return @comms_mock
       @stack_mock.should_receive(:attributes).
                   and_return( 'campfire_room_ids'  => '1,2',
                               'campfire_subdomain' => 'subdom' )
@@ -25,14 +30,10 @@ describe SimpleDeploy::Notifier::Campfire do
     end
 
     it "should send a message to campfire rooms" do
-      room1_mock = mock 'tinder'
-      room2_mock = mock 'tinder'
-      @tinder_mock.should_receive(:find_room_by_id).with(1).
-                                                    and_return room1_mock
-      @tinder_mock.should_receive(:find_room_by_id).with(2).
-                                                    and_return room2_mock
-      room1_mock.should_receive(:speak).with :message => "heh you guys!"
-      room2_mock.should_receive(:speak).with :message => "heh you guys!"
+
+      @room1_mock.should_receive(:say).with :message => "heh you guys!"
+      @room2_mock.should_receive(:say).with :message => "heh you guys!"
+
       @campfire.send(:message => 'heh you guys!')
     end
   end
@@ -41,8 +42,6 @@ describe SimpleDeploy::Notifier::Campfire do
     before do
       config = nil
                 
-      @tinder_mock = mock 'tinder'
-
       @stack_mock.should_receive(:attributes).
                   and_return({})
       @campfire = SimpleDeploy::Notifier::Campfire.new :stack_name  => 'stack_name',
