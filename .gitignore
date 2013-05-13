@@ -3,4 +3,6 @@
 Gemfile.lock
 pkg/*
 coverage
+.ruby-version
+.rvmrc
 *.swp
