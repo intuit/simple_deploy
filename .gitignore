@@ -3,5 +3,5 @@
 Gemfile.lock
 pkg/*
 coverage
-*.rvmrc
+.rvmrc
 *.swp
