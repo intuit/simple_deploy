@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SimpleDeploy::StackAttributeFormater do
+describe SimpleDeploy::StackAttributeFormatter do
   include_context 'stubbed config'
   include_context 'double stubbed logger'
 
@@ -21,11 +21,11 @@ describe SimpleDeploy::StackAttributeFormater do
                     'chef_repo_bucket_prefix' => 'test-prefix',
                     'chef_repo_domain'        => 'test-domain' }
                 }
-      @formater = SimpleDeploy::StackAttributeFormater.new options
+      @formatter = SimpleDeploy::StackAttributeFormatter.new options
     end
 
     it 'should return updated attributes including the un encrypted cloud formation url' do
-      updates = @formater.updated_attributes([ { 'chef_repo' => 'test123' } ])
+      updates = @formatter.updated_attributes([ { 'chef_repo' => 'test123' } ])
       updates.should == [{ 'chef_repo' => 'test123' }, 
                          { 'ChefRepoURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz' }]
     end
@@ -39,11 +39,11 @@ describe SimpleDeploy::StackAttributeFormater do
                     'chef_repo_encrypted'     => 'true',
                     'chef_repo_domain'        => 'test-domain' }
                 }
-      @formater = SimpleDeploy::StackAttributeFormater.new options
+      @formatter = SimpleDeploy::StackAttributeFormatter.new options
     end
 
     it 'should return updated attributes including the encrypted cloud formation url ' do
-      updates = @formater.updated_attributes([ { 'chef_repo' => 'test123' } ])
+      updates = @formatter.updated_attributes([ { 'chef_repo' => 'test123' } ])
       updates.should == [{ 'chef_repo' => 'test123' }, 
                          { 'ChefRepoURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz.gpg' }]
     end
@@ -56,12 +56,12 @@ describe SimpleDeploy::StackAttributeFormater do
                     'chef_repo_bucket_prefix' => 'test-prefix',
                     'chef_repo_domain'        => 'test-domain' }
                 }
-      @formater = SimpleDeploy::StackAttributeFormater.new options
+      @formatter = SimpleDeploy::StackAttributeFormatter.new options
     end
 
     it 'should return updated attributes including the encrypted cloud formation url ' do
-      updates = @formater.updated_attributes([ { 'chef_repo' => 'test123' }, 
-                                               { 'chef_repo_encrypted' => 'true' } ])
+      updates = @formatter.updated_attributes([ { 'chef_repo' => 'test123' }, 
+                                                { 'chef_repo_encrypted' => 'true' } ])
       updates.should == [{ 'chef_repo' => 'test123' },
                          { 'chef_repo_encrypted' => 'true' },
                          { 'ChefRepoURL' => 's3://test-prefix-us-west-1/test-domain/test123.tar.gz.gpg' }]

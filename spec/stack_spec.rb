@@ -98,7 +98,7 @@ describe SimpleDeploy::Stack do
       deployment_stub = stub 'deployment', :clear_for_deployment? => false
       @stack.stub(:deployment).and_return(deployment_stub)
 
-      SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
+      SimpleDeploy::StackAttributeFormatter.should_not_receive(:new)
 
       @stack.update(:attributes => { 'arg1' => 'val' }).should_not be_true
     end
@@ -133,7 +133,7 @@ describe SimpleDeploy::Stack do
       deployment_stub = stub 'deployment', :clear_for_deployment? => false
       @stack.stub(:deployment).and_return(deployment_stub)
 
-      SimpleDeploy::StackAttributeFormater.should_not_receive(:new)
+      SimpleDeploy::StackAttributeFormatter.should_not_receive(:new)
 
       @stack.update(:force => false, :attributes => { 'arg1' => 'val' }).should_not be_true
     end

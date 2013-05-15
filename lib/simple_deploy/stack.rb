@@ -1,7 +1,7 @@
 require 'simple_deploy/stack/deployment'
 require 'simple_deploy/stack/execute'
 require 'simple_deploy/stack/output_mapper'
-require 'simple_deploy/stack/stack_attribute_formater'
+require 'simple_deploy/stack/stack_attribute_formatter'
 require 'simple_deploy/stack/stack_creator'
 require 'simple_deploy/stack/stack_destroyer'
 require 'simple_deploy/stack/stack_formatter'
@@ -25,7 +25,7 @@ module SimpleDeploy
     end
 
     def create(args)
-      attributes = stack_attribute_formater.updated_attributes args[:attributes]
+      attributes = stack_attribute_formatter.updated_attributes args[:attributes]
       @template_file = args[:template]
 
       @entry.set_attributes attributes
@@ -46,7 +46,7 @@ module SimpleDeploy
 
       if deployment.clear_for_deployment?
         @logger.info "Updating #{@name}."
-        attributes = stack_attribute_formater.updated_attributes args[:attributes]
+        attributes = stack_attribute_formatter.updated_attributes args[:attributes]
         @template_body = template
 
         @entry.set_attributes attributes
@@ -64,7 +64,7 @@ module SimpleDeploy
     def in_progress_update(args)
       if args[:caller].kind_of? Stack::Deployment::Status
         @logger.info "Updating #{@name}."
-        attributes = stack_attribute_formater.updated_attributes args[:attributes]
+        attributes = stack_attribute_formatter.updated_attributes args[:attributes]
         @template_body = template
 
         @entry.set_attributes attributes
@@ -183,8 +183,8 @@ module SimpleDeploy
       @status ||= Status.new :name   => @name
     end
 
-    def stack_attribute_formater
-      @saf ||= StackAttributeFormater.new :main_attributes => attributes
+    def stack_attribute_formatter
+      @saf ||= StackAttributeFormatter.new :main_attributes => attributes
     end
 
     def executer
