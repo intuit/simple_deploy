@@ -11,7 +11,6 @@ require 'simple_deploy/notifier'
 require 'simple_deploy/logger'
 require 'simple_deploy/version'
 require 'simple_deploy/backoff'
-require 'simple_deploy/instance'
 
 module SimpleDeploy
   module_function

@@ -50,7 +50,7 @@ module SimpleDeploy
     end
 
     def instance_reader
-      @instance_reader ||= InstanceReader.new
+      @instance_reader ||= AWS::InstanceReader.new
     end
   end
 end
