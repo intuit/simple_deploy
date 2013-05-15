@@ -31,10 +31,6 @@ module SimpleDeploy
       @entry.set_attributes attributes
       stack_creator.create
       
-      # TODO
-      #   - examine the returned Excon::Response
-      #   - perhaps move AWS::CloudFormation::Error process method to a util
-      #   class or module
       @entry.save
     end
 

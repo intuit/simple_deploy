@@ -1,6 +1,7 @@
 require 'simple_deploy/aws'
 require 'simple_deploy/env'
 require 'simple_deploy/entry'
+require 'simple_deploy/entry_lister'
 require 'simple_deploy/exceptions'
 require 'simple_deploy/configuration'
 require 'simple_deploy/artifact'
