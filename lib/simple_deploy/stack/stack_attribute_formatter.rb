@@ -1,5 +1,5 @@
 module SimpleDeploy
-  class StackAttributeFormater
+  class StackAttributeFormatter
 
     def initialize(args)
       @config          = SimpleDeploy.config
