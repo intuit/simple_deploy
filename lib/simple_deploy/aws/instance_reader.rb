@@ -12,7 +12,7 @@ module SimpleDeploy
         asg_instances = list_instances asg_id
         return [] unless asg_instances.any?
 
-        describe_instance asg_instances
+        describe_instances asg_instances
       end
 
       private
@@ -29,13 +29,13 @@ module SimpleDeploy
         result['Instances'].map { |info| info['InstanceId'] }
       end
 
-      def describe_instance(instance)
+      def describe_instances(instances)
         @ec2 ||= Fog::Compute::AWS.new :aws_access_key_id => @config.access_key,
                                        :aws_secret_access_key => @config.secret_key,
                                        :region => @config.region
 
         @ec2.describe_instances('instance-state-name' => 'running',
-                                'instance-id' => instance).body['reservationSet']
+                                'instance-id' => instances).body['reservationSet']
       end
 
       def cloud_formation
@@ -48,12 +48,10 @@ module SimpleDeploy
       end
 
       def parse_cf_stack_resources(cf_stack_resources)
-        cf_stack_resources.each do |resource|
-          if resource['ResourceType'] == 'AWS::AutoScaling::AutoScalingGroup'
-            return resource['PhysicalResourceId']
-          end
+        asgs = cf_stack_resources.select do |r|
+          r['ResourceType'] == 'AWS::AutoScaling::AutoScalingGroup'
         end
-        false
+        asgs.any? ? asgs.first['PhysicalResourceId'] : false
       end
 
     end

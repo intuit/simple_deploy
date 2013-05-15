@@ -28,7 +28,7 @@ describe SimpleDeploy::AWS::InstanceReader do
                             {'privateIpAddress' => '192.168.1.1'}]}]
       }
 
-      SimpleDeploy::AWS::CloudFormation.should_receive(:new).
+      SimpleDeploy::AWS::CloudFormation.stub(:new).
                                         and_return @cloud_formation_mock
     end
 
@@ -76,7 +76,7 @@ describe SimpleDeploy::AWS::InstanceReader do
                                     with('AutoScalingGroupNames' => ['asg1']).
                                     and_return(@list_response)
 
-          Fog::Compute::AWS.should_receive(:new).
+          Fog::Compute::AWS.stub(:new).
                             and_return @ec2_mock
           @ec2_mock.should_receive(:describe_instances).
                     with('instance-state-name' => 'running',
