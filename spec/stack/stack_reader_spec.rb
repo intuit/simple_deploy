@@ -21,7 +21,7 @@ describe SimpleDeploy::StackReader do
     @cf_mock.stub(:template).and_return('{"Parameters": {"EIP": "string"}}')
 
     @instance_reader_mock = mock 'InstanceReader'
-    SimpleDeploy::InstanceReader.stub(:new).and_return(@instance_reader_mock)
+    SimpleDeploy::AWS::InstanceReader.stub(:new).and_return(@instance_reader_mock)
     @instance_reader_mock.stub(:list_stack_instances).and_return(['instance1', 'instance2'])
 
     @stack_reader = SimpleDeploy::StackReader.new(:name => 'my_stack', :logger => @logger_stub)
