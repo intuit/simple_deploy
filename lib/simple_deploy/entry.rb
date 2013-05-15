@@ -1,4 +1,3 @@
-require 'simple_deploy/entry/entry_lister'
 
 module SimpleDeploy
   class Entry
@@ -29,13 +28,14 @@ module SimpleDeploy
     end
 
     def set_attributes(a)
-      a.each { |attribute| set_attribute(attribute) }
+      a.each { |attribute| @custom_attributes.merge! attribute }
     end
 
     def save
-      set_default_attributes
-      current_attributes = attributes
+      @custom_attributes.merge! 'Name' => name,
+                                'CreatedAt' => Time.now.utc.to_s
 
+      current_attributes = attributes
       current_attributes.each_pair do |key,value|
         @logger.debug "Setting attribute #{key}=#{value}"
       end
@@ -55,21 +55,12 @@ module SimpleDeploy
 
     private
 
-    def set_default_attributes
-      @custom_attributes.merge! 'Name' => name
-      @custom_attributes.merge! 'CreatedAt' => Time.now.utc.to_s
-    end
-
     def region_specific_name(name)
       "#{name}-#{@config.region}"
     end
 
     def create_domain
       sdb_connect.create_domain @domain
-    end
-
-    def set_attribute(attribute)
-      @custom_attributes.merge! attribute
     end
 
     def sdb_connect
