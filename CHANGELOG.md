@@ -1,5 +1,11 @@
 ## head:
 
+## v0.7.3 (05/17/2013):
+
+* Merged the simple_deploy and stackster gems
+* Replaced the tinder gem with the esbit gem for campfire communications
+* Refactored the combined source code to make it easier to maintain
+
 ## v0.7.2 (03/20/2013):
 
 * Fix issue when trying to use ssh command (fixes #172)
