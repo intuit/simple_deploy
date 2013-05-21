@@ -46,8 +46,8 @@ EOS
 
           rescue_exceptions_and_exit do
             stack.update :force => @opts[:force],
-                         :attributes => attributes,
-                         :template_body => template_body
+                         :template_body => template_body,
+                         :attributes => attributes
           end
         end
       end

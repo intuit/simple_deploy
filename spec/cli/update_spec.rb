@@ -50,15 +50,14 @@ describe SimpleDeploy::CLI::Update do
     it "should update the template if a new template is provided" do
       @options[:template] = 'brand_new_template.json'
 
-
       subject.should_receive(:valid_options?).
         with(:provided => @options,
              :required => [:environment, :name])
-
       Trollop.stub(:options).and_return(@options)
-      IO.should_receive(:read).with('brand_new_template.json').and_return(@template_body)
 
+      IO.should_receive(:read).with('brand_new_template.json').and_return(@template_body)
       @stack_mock1.should_receive(:update).with(hash_including(:template_body => @template_body))
+      
       subject.update
     end
   end

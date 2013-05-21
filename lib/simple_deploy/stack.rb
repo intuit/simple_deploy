@@ -35,8 +35,6 @@ module SimpleDeploy
     end
 
     def update(args)
-      require 'pp'
-      pp args[:template_body]
       if !deployment.clear_for_deployment? && args[:force]
         deployment.clear_deployment_lock true
 
