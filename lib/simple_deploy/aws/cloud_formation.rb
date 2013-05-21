@@ -28,32 +28,32 @@ module SimpleDeploy
                  'TemplateBody' => args[:template] }.merge parameters
         @connect.update_stack(args[:name], data)
         @logger.info "Cloud Formation stack update completed."
-      rescue Exception => e  
+      rescue Exception => e
         Error.new(:exception => e).process
       end
 
       def destroy(name)
         @connect.delete_stack name
         @logger.info "Cloud Formation stack destroy completed."
-      rescue Exception => e  
+      rescue Exception => e
         Error.new(:exception => e).process
       end
 
       def describe_stack(name)
         @connect.describe_stacks('StackName' => name).body['Stacks']
-      rescue Exception => e  
+      rescue Exception => e
         Error.new(:exception => e).process
       end
 
       def stack_resources(name)
         @connect.describe_stack_resources('StackName' => name).body['StackResources']
-      rescue Exception => e  
+      rescue Exception => e
         Error.new(:exception => e).process
       end
 
       def stack_events(name, limit)
         @connect.describe_stack_events(name).body['StackEvents'] [0..limit-1]
-      rescue Exception => e  
+      rescue Exception => e
         Error.new(:exception => e).process
       end
 
@@ -67,7 +67,7 @@ module SimpleDeploy
 
       def template(name)
         @connect.get_template(name).body['TemplateBody']
-      rescue Exception => e  
+      rescue Exception => e
         Error.new(:exception => e).process
       end
 

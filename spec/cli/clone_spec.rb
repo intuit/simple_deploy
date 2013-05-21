@@ -170,7 +170,7 @@ describe SimpleDeploy::CLI::Clone do
 
         subject.should_receive(:valid_options?).
                 with(:provided => @options,
-                      :required => [:environment, :source_name, :new_name])
+                     :required => [:environment, :source_name, :new_name])
         Trollop.stub(:options).and_return(@options)
 
         @new_stack_mock.should_receive(:create) do |options|

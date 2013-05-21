@@ -30,11 +30,13 @@ module SimpleDeploy
 
       @entry.set_attributes attributes
       stack_creator.create
-      
+
       @entry.save
     end
 
     def update(args)
+      require 'pp'
+      pp args[:template_body]
       if !deployment.clear_for_deployment? && args[:force]
         deployment.clear_deployment_lock true
 
@@ -47,7 +49,7 @@ module SimpleDeploy
       if deployment.clear_for_deployment?
         @logger.info "Updating #{@name}."
         attributes = stack_attribute_formatter.updated_attributes args[:attributes]
-        @template_body = template
+        @template_body = args[:template_body] || template
 
         @entry.set_attributes attributes
         stack_updater.update_stack_if_parameters_changed attributes
