@@ -16,7 +16,6 @@ describe SimpleDeploy::CLI::Update do
                    :log_level   => 'debug',
                    :name        => ['my_stack1'],
                    :force       => true,
-#                   :template    => nil,
                    :attributes  => ['chef_repo_bucket_prefix=intu-lc'] }
 
     end
@@ -53,11 +52,12 @@ describe SimpleDeploy::CLI::Update do
       subject.should_receive(:valid_options?).
         with(:provided => @options,
              :required => [:environment, :name])
+
       Trollop.stub(:options).and_return(@options)
 
       IO.should_receive(:read).with('brand_new_template.json').and_return(@template_body)
+
       @stack_mock1.should_receive(:update).with(hash_including(:template_body => @template_body))
-      
       subject.update
     end
   end
