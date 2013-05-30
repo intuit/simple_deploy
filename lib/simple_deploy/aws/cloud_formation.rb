@@ -18,7 +18,7 @@ module SimpleDeploy
                  'TemplateBody' => args[:template] }.merge parameters
         @connect.create_stack(args[:name], data)
         @logger.info "Cloud Formation stack creation completed."
-      rescue Exception => e  
+      rescue Exception => e
         Error.new(:exception => e).process
       end
 
