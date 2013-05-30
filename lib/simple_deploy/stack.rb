@@ -65,7 +65,6 @@ module SimpleDeploy
       if args[:caller].kind_of? Stack::Deployment::Status
         @logger.info "Updating #{@name}."
         attributes = stack_attribute_formatter.updated_attributes args[:attributes]
-        @template_body = args[:template_body] || template
 
         @entry.set_attributes attributes
         stack_updater.update_stack_if_changes attributes, @template_body
