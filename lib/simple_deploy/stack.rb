@@ -50,7 +50,7 @@ module SimpleDeploy
         @template_body = args[:template_body] || template
 
         @entry.set_attributes attributes
-        stack_updater.update_stack_if_changes attributes, @template_body
+        stack_updater.update_stack attributes
         @logger.info "Update complete for #{@name}."
 
         @entry.save
@@ -67,7 +67,7 @@ module SimpleDeploy
         attributes = stack_attribute_formatter.updated_attributes args[:attributes]
 
         @entry.set_attributes attributes
-        stack_updater.update_stack_if_changes attributes, @template_body
+        stack_updater.update_stack attributes
         @logger.info "Update complete for #{@name}."
 
         @entry.save

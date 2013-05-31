@@ -1,5 +1,7 @@
 ## head:
 
+* Updated the update command so it can now take a new template
+
 ## v0.7.3 (05/17/2013):
 
 * Merged the simple_deploy and stackster gems
