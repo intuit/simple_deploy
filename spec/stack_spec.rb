@@ -83,8 +83,7 @@ describe SimpleDeploy::Stack do
                                       :entry         => @entry_mock,
                                       :template_body => 'some_json').
                                  and_return @stack_updater_mock
-      @stack_updater_mock.should_receive(:update_stack).
-                          and_return(true)
+      @stack_updater_mock.stub(:update_stack).and_return(true)
       SimpleDeploy::StackReader.should_receive(:new).
                                  with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
@@ -118,8 +117,7 @@ describe SimpleDeploy::Stack do
                                       :entry         => @entry_mock,
                                       :template_body => 'some_json').
                                  and_return @stack_updater_mock
-      @stack_updater_mock.should_receive(:update_stack).
-                          and_return(true)
+      @stack_updater_mock.stub(:update_stack).and_return(true)
       SimpleDeploy::StackReader.should_receive(:new).
                                  with(:name   => 'test-stack').
                                  and_return @stack_reader_mock

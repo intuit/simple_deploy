@@ -12,11 +12,11 @@ module SimpleDeploy
     end
 
     def update_stack(attributes)
-      if parameter_updated?(attributes) || !@template_body.nil?
-        @logger.debug 'Updated parameters found.'
+      if parameter_updated?(attributes) || @template_body
+        @logger.debug 'Updated parameters or new template found.'
         update
       else
-        @logger.debug 'No Cloud Formation parameters require updating.'
+        @logger.debug 'No parameters require updating and no new template found.'
         false
       end
     end

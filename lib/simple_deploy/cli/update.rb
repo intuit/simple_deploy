@@ -41,7 +41,7 @@ EOS
                             :environment => @opts[:environment]
 
           if @opts[:template]
-            template_body = IO.read(@opts[:template])
+            template_body = IO.read @opts[:template]
           end
 
           rescue_exceptions_and_exit do

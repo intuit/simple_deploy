@@ -92,8 +92,7 @@ describe SimpleDeploy::StackUpdater do
     entry_mock = mock 'entry mock'
     status_mock = mock 'status mock'
     cloud_formation_mock = mock 'cloud formation mock'
-    SimpleDeploy::AWS::CloudFormation.should_receive(:new).
-                                      exactly(0).times
+    SimpleDeploy::AWS::CloudFormation.should_receive(:new).never
     SimpleDeploy::Status.should_receive(:new).
                          with(:name   => 'test-stack').
                          and_return status_mock
