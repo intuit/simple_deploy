@@ -69,7 +69,7 @@ describe SimpleDeploy::StackUpdater do
     cloud_formation_mock = mock 'cloud formation mock'
     SimpleDeploy::AWS::CloudFormation.should_receive(:new).
                                       and_return cloud_formation_mock
-    entry_mock.should_receive(:attributes).and_return attributes
+    entry_mock.stub(:attributes).and_return attributes
 
     cloud_formation_mock.should_receive(:update).
                          with(:name      => 'test-stack', 
@@ -79,7 +79,7 @@ describe SimpleDeploy::StackUpdater do
     SimpleDeploy::Status.should_receive(:new).
                       with(:name   => 'test-stack').
                       and_return status_mock
-    status_mock.should_receive(:wait_for_stable).and_return true
+    status_mock.stub(:wait_for_stable).and_return true
     stack_updater = SimpleDeploy::StackUpdater.new :name          => 'test-stack',
                                                    :template_body => @new_template_body,
                                                    :entry         => entry_mock
@@ -96,7 +96,7 @@ describe SimpleDeploy::StackUpdater do
     SimpleDeploy::Status.should_receive(:new).
                          with(:name   => 'test-stack').
                          and_return status_mock
-    status_mock.should_receive(:wait_for_stable).and_return false
+    status_mock.stub(:wait_for_stable).and_return false
     stack_updater = SimpleDeploy::StackUpdater.new :name          => 'test-stack',
                                                    :template_body => @template_body,
                                                    :entry         => entry_mock
