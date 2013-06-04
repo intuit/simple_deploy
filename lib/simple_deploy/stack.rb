@@ -30,7 +30,7 @@ module SimpleDeploy
 
       @entry.set_attributes attributes
       stack_creator.create
-      
+
       @entry.save
     end
 
@@ -47,10 +47,10 @@ module SimpleDeploy
       if deployment.clear_for_deployment?
         @logger.info "Updating #{@name}."
         attributes = stack_attribute_formatter.updated_attributes args[:attributes]
-        @template_body = template
+        @template_body = args[:template_body] || template
 
         @entry.set_attributes attributes
-        stack_updater.update_stack_if_parameters_changed attributes
+        stack_updater.update_stack attributes
         @logger.info "Update complete for #{@name}."
 
         @entry.save
@@ -65,10 +65,9 @@ module SimpleDeploy
       if args[:caller].kind_of? Stack::Deployment::Status
         @logger.info "Updating #{@name}."
         attributes = stack_attribute_formatter.updated_attributes args[:attributes]
-        @template_body = template
 
         @entry.set_attributes attributes
-        stack_updater.update_stack_if_parameters_changed attributes
+        stack_updater.update_stack attributes
         @logger.info "Update complete for #{@name}."
 
         @entry.save

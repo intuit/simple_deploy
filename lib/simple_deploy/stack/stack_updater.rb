@@ -11,12 +11,12 @@ module SimpleDeploy
       @template_body = args[:template_body]
     end
 
-    def update_stack_if_parameters_changed(attributes)
-      if parameter_updated?(attributes)
-        @logger.debug "Updated parameters found."
+    def update_stack(attributes)
+      if parameter_updated?(attributes) || @template_body
+        @logger.debug 'Updated parameters or new template found.'
         update
       else
-        @logger.debug "No Cloud Formation parameters require updating."
+        @logger.debug 'No parameters require updating and no new template found.'
         false
       end
     end
@@ -26,9 +26,9 @@ module SimpleDeploy
     def update
       if status.wait_for_stable
         @logger.info "Updating Cloud Formation stack #{@name}."
-        cloud_formation.update :name => @name,
+        cloud_formation.update :name       => @name,
                                :parameters => read_parameters_from_entry_attributes,
-                               :template => @template_body
+                               :template   => @template_body
       else
         raise "#{@name} did not reach a stable state."
       end
