@@ -1,4 +1,4 @@
-## head:
+## v0.7.4:
 
 * Updated the update command so it can now take a new template
 
