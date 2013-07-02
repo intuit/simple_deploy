@@ -5,7 +5,6 @@ describe SimpleDeploy::Stack do
                                            :secret_key => 'secret',
                                            :region     => 'us-west-1'
   include_context 'double stubbed logger'
-        
 
   before do
     @environment_config_mock = mock 'environment config mock'
@@ -313,7 +312,7 @@ describe SimpleDeploy::Stack do
                                  and_return stack_updater_mock
       stack_updater_mock.should_receive(:update_stack).with([{ 'deployment_in_progress' => 'false' }])
       @entry_mock.should_receive(:save)
-      @stack.in_progress_update :attributes => [ { 'deployment_in_progress' => 'false' } ], :caller => status_stub
+      @stack.in_progress_update(:attributes => [ { 'deployment_in_progress' => 'false' } ], :caller => status_stub).should be_true
     end
   end
 
