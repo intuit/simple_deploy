@@ -292,6 +292,31 @@ describe SimpleDeploy::Stack do
     end
   end
 
+  describe 'in_progress_update' do
+    before do
+      @stack = SimpleDeploy::Stack.new :environment => 'test-env',
+                                       :name        => 'test-stack',
+                                       :config      => @config_stub,
+                                       :internal    => false
+    end
+
+    it "should update the stack to not be in progress" do
+      status_stub = stub 'status', :kind_of? => SimpleDeploy::Stack::Deployment::Status
+      stack_updater_mock = mock 'stack_updater'
+      @entry_mock.stub :attributes => { 'deployment_in_progress' => 'true' }
+      @stack.stub :template => 'some_json'
+      @entry_mock.should_receive(:set_attributes).with([{ 'deployment_in_progress' => 'false' }])
+      SimpleDeploy::StackUpdater.should_receive(:new).
+                                 with(:name          => 'test-stack',
+                                      :entry         => @entry_mock,
+                                      :template_body => 'some_json').
+                                 and_return stack_updater_mock
+      stack_updater_mock.should_receive(:update_stack).with([{ 'deployment_in_progress' => 'false' }])
+      @entry_mock.should_receive(:save)
+      @stack.in_progress_update :attributes => [ { 'deployment_in_progress' => 'false' } ], :caller => status_stub
+    end
+  end
+
   describe "wait_for_stable" do
     before do
       @status_mock = mock 'status'
