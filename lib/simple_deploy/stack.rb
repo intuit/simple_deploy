@@ -91,6 +91,11 @@ module SimpleDeploy
     end
 
     def destroy
+      unless exists?
+        @logger.error "#{@name} does not exist"
+        return false
+      end
+
       if attributes['protection'] != 'on'
         stack_destroyer.destroy
         @entry.delete_attributes

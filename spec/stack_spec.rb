@@ -143,6 +143,7 @@ describe SimpleDeploy::Stack do
     end
 
     it "should destroy if the stack is not protected" do
+      @stack.stub(:exists?).and_return(true)
       @entry_mock.should_receive(:delete_attributes)
 
       SimpleDeploy::StackReader.should_receive(:new).
@@ -158,6 +159,7 @@ describe SimpleDeploy::Stack do
     end
 
     it "should not destroy if the stack is protected" do
+      @stack.stub(:exists?).and_return(true)
       @entry_mock.should_receive(:delete_attributes).never
 
       SimpleDeploy::StackReader.should_receive(:new).
@@ -170,6 +172,7 @@ describe SimpleDeploy::Stack do
     end
 
     it "should destroy if protection is undefined" do
+      @stack.stub(:exists?).and_return(true)
       @entry_mock.should_receive(:delete_attributes)
 
       SimpleDeploy::StackReader.should_receive(:new).
@@ -182,6 +185,13 @@ describe SimpleDeploy::Stack do
       @stack_destroyer_mock.should_receive(:destroy).and_return(true)
 
       @stack.destroy.should be_true
+    end
+
+    it "should not destroy if stack does not exist" do
+      @stack.stub(:exists?).and_return(false)
+      @entry_mock.should_receive(:delete_attributes).never
+      @stack_destroyer_mock.should_receive(:destroy).never
+      @stack.destroy.should_not be_true
     end
   end
 
