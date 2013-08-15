@@ -25,14 +25,16 @@ module SimpleDeploy
 
         begin
           @task.execute
-          status = true
           @logger.info "Command executed against instances successfully."
         rescue ::Capistrano::CommandError => error
           @logger.error "Error running execute statement: #{error}"
+          status = false
         rescue ::Capistrano::ConnectionError => error
           @logger.error "Error connecting to instances: #{error}"
+          status = false
         rescue ::Capistrano::Error => error
           @logger.error "Error: #{error}"
+          status = false
         end
 
         status
