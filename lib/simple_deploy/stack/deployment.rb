@@ -28,12 +28,10 @@ module SimpleDeploy
           status.set_deployment_in_progress
 
           @logger.info 'Starting deployment.'
-          returnval = executer.execute :sudo    => true,
-                                       :command => deploy_command
+          return_val = executer.execute :sudo    => true,
+                                        :command => deploy_command
 
-          unless returnval
-            return false
-          end
+          return false unless return_val
 
           @logger.info 'Deployment complete.'
 

@@ -25,6 +25,7 @@ module SimpleDeploy
 
         begin
           @task.execute
+          status = true
           @logger.info "Command executed against instances successfully."
         rescue ::Capistrano::CommandError => error
           @logger.error "Error running execute statement: #{error}"
