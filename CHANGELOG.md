@@ -1,6 +1,7 @@
 ## HEAD:
 
 * Fixed issue 176 where multiple deploys did not exit if first deploy failed
+* Fixed find_xml_file error when a blank exception is thrown from cloudformation.
 
 ## v0.7.5 (07/02/13):
 
