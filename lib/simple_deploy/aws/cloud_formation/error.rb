@@ -11,7 +11,6 @@ module SimpleDeploy
         end
 
         def process
-          @logger.info @exception.response.body
           message = XmlSimple.xml_in @exception.response.body
           message['Error'].first['Message'].each do |msg|
             case msg
