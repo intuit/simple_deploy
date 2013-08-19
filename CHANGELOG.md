@@ -1,3 +1,7 @@
+## HEAD:
+
+* Fixed issue 176 where multiple deploys did not exit if first deploy failed
+
 ## v0.7.5 (07/02/13):
 
 * Fixed bug with forced deployment in 0.7.4
