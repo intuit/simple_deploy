@@ -110,7 +110,7 @@ describe SimpleDeploy::Stack::Deployment do
         before do
           @attributes['app_encrypted'] = 'true'
           @execute_mock.should_receive(:execute).
-                        with( {:sudo=>true, :command=>"env CHEF_REPO_URL=s3://cookbooks_bp-test-us-west-1/cookbooks_d/cookbooks.tar.gz APP_URL=s3://app_bp-test-us-west-1/app_d/app.tar.gz.gpg PRIMARY_HOST=10.1.2.3 /tmp/script"} )
+                        with( {:sudo=>true, :command=>"env CHEF_REPO_URL=s3://cookbooks_bp-test-us-west-1/cookbooks_d/cookbooks.tar.gz APP_URL=s3://app_bp-test-us-west-1/app_d/app.tar.gz.gpg PRIMARY_HOST=10.1.2.3 /tmp/script"} ).and_return(true)
         end
 
         it "should deploy if the stack is clear to deploy" do
@@ -137,7 +137,7 @@ describe SimpleDeploy::Stack::Deployment do
       context "when unencrypted" do
         before do
           @execute_mock.should_receive(:execute).
-                        with( {:sudo=>true, :command=>"env CHEF_REPO_URL=s3://cookbooks_bp-test-us-west-1/cookbooks_d/cookbooks.tar.gz APP_URL=s3://app_bp-test-us-west-1/app_d/app.tar.gz PRIMARY_HOST=10.1.2.3 /tmp/script"} )
+                        with( {:sudo=>true, :command=>"env CHEF_REPO_URL=s3://cookbooks_bp-test-us-west-1/cookbooks_d/cookbooks.tar.gz APP_URL=s3://app_bp-test-us-west-1/app_d/app.tar.gz PRIMARY_HOST=10.1.2.3 /tmp/script"} ).and_return(true)
         end
 
         it "should deploy if the stack is clear to deploy" do
