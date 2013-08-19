@@ -11,7 +11,7 @@ module SimpleDeploy
         end
 
         def process
-          @logger.debug "Exception passed to #{@exception.response.body}"
+          @logger.debug "Received Exception from CloudFormation #{@exception.response.body}"
           raise Exceptions::CloudFormationError.new "Unknown Exception from Cloud Formation" if @exception.response.body == ''
           message = XmlSimple.xml_in @exception.response.body
           message['Error'].first['Message'].each do |msg|
