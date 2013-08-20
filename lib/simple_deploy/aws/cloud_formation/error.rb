@@ -34,7 +34,7 @@ module SimpleDeploy
               raise Exceptions::CloudFormationError.new "Cloudformation returned blank xml"
             end
           else
-            @logger.info "Unknown exception from cloudformation #{@exception.inspect}"
+            @logger.error "Unknown exception from cloudformation #{@exception.inspect}"
             raise Exceptions::CloudFormationError.new "Unknown exception from cloudformation"
           end
         end
