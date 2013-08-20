@@ -27,6 +27,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "capistrano", "= 2.13.5"
   s.add_runtime_dependency "esbit", "~> 0.0.4"
   s.add_runtime_dependency "trollop", "= 2.0"
-  s.add_runtime_dependency "fog", "= 1.15.0"
+  s.add_runtime_dependency "fog", "= 1.10.0"
   s.add_runtime_dependency "xml-simple", "= 1.1.2"
 end
