@@ -13,7 +13,7 @@ module SimpleDeploy
         def process
           @logger.debug "Object type = #{@exception.class}"
           if @exception.respond_to?(:response)
-            unless @exception.response.body == ''
+            unless @exception.response.body.empty?
               message = XmlSimple.xml_in @exception.response.body
               message['Error'].first['Message'].each do |msg|
                 case msg
