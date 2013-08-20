@@ -11,20 +11,25 @@ module SimpleDeploy
         end
 
         def process
-          @logger.debug "Received Exception from CloudFormation #{@exception.response.body}"
-          raise Exceptions::CloudFormationError.new "Unknown Exception from Cloud Formation" if @exception.response.body == ''
-          message = XmlSimple.xml_in @exception.response.body
-          message['Error'].first['Message'].each do |msg|
-            case msg
-            when 'No updates are to be performed.'
-              @logger.info msg
-            when /^Stack:(.*) does not exist$/
-              @logger.error msg
-              raise Exceptions::UnknownStack.new msg
-            else
-              @logger.error msg
-              raise Exceptions::CloudFormationError.new msg
+          @logger.debug "Object type = #{@exception.class}"
+          if @exception.respond_to?(:response)
+            message = XmlSimple.xml_in @exception.response.body
+            message['Error'].first['Message'].each do |msg|
+              case msg
+              when 'No updates are to be performed.'
+                @logger.info msg
+              when /Template requires parameter(.*)/
+                @logger.info msg
+              when /^Stack:(.*) does not exist$/
+                @logger.error msg
+                raise Exceptions::UnknownStack.new msg
+              else
+                @logger.error msg
+                raise Exceptions::CloudFormationError.new msg
+              end
             end
+          else
+            @logger.info "An unhandled exception was thrown #{@exception.inspect}"
           end
         end
       end
