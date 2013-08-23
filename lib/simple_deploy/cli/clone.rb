@@ -52,8 +52,8 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
         cloned_attributes = filter_attributes source_stack.attributes
 
         input_attributes = mapper.map_outputs_from_stacks :stacks   => @opts[:input_stack],
-                                                         :template => template_file_path,
-                                                        :clone => true
+                                                          :template => template_file_path,
+                                                          :clone => true
 
         new_overrides = merge_attributes input_attributes, override_attributes
         new_attributes = merge_attributes cloned_attributes, new_overrides
