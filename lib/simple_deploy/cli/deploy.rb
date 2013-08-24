@@ -86,11 +86,11 @@ EOS
             if result
               notifier.send_deployment_complete_message unless @opts[:quiet]
             else
-              logger.error "Deployment to #{name} did not complete succesfully."
+              logger.error "Deployment to #{name} did not complete successfully."
               exit 1
             end
           else
-            logger.error "Update of #{name} did not complete succesfully."
+            logger.error "Update of #{name} did not complete successfully."
             exit 1
           end
 
