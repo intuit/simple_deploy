@@ -15,8 +15,10 @@ module SimpleDeploy
 
         merge_stacks_outputs
 
-        pluralize_keys
-        prune_unused_parameters
+        unless @clone
+          pluralize_keys
+          prune_unused_parameters
+        end
 
         @results.each_pair do |key, value|
           @logger.info "Mapping output '#{key}' to input parameter with value '#{value}'."

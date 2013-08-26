@@ -38,6 +38,9 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
         SimpleDeploy.create_config @opts[:environment]
         SimpleDeploy.logger @opts[:log_level]
 
+        override_attributes = parse_attributes :attributes => @opts[:attributes]
+        cloned_attributes = filter_attributes source_stack.attributes
+
         template_file = Tempfile.new("#{@opts[:new_name]}_template.json")
         template_file_path = template_file.path
 
@@ -47,18 +50,19 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
           template_file.write source_stack.template
         end
 
-        override_attributes = parse_attributes :attributes => @opts[:attributes]
+        if @opts[:input_stack]
+          input_attributes = mapper.map_outputs_from_stacks :stacks => @opts[:input_stack],
+                                                            :clone  => true
+          new_overrides = merge_attributes input_attributes, override_attributes
+          new_overrides += add_attributes input_attributes, override_attributes
+        else
+          new_overrides = override_attributes
+        end
 
-        cloned_attributes = filter_attributes source_stack.attributes
-
-        input_attributes = mapper.map_outputs_from_stacks :stacks   => @opts[:input_stack],
-                                                          :template => template_file_path
-
-        new_overrides = merge_attributes input_attributes, override_attributes
         new_attributes = merge_attributes cloned_attributes, new_overrides
         new_attributes += add_attributes cloned_attributes, new_overrides
-        
         rescue_exceptions_and_exit do
+
           new_stack.create :attributes => new_attributes,
                            :template   => template_file_path
         end
