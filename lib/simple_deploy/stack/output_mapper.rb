@@ -10,15 +10,12 @@ module SimpleDeploy
       def map_outputs_from_stacks(args)
         @stacks   = args[:stacks]
         @template = args[:template]
-        @clone = !!args[:clone]
         @results  = {}
 
         merge_stacks_outputs
 
-        unless @clone
-          pluralize_keys
-          prune_unused_parameters
-        end
+        pluralize_keys
+        prune_unused_parameters
 
         @results.each_pair do |key, value|
           @logger.info "Mapping output '#{key}' to input parameter with value '#{value}'."
