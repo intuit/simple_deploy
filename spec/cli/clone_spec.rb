@@ -188,7 +188,7 @@ describe SimpleDeploy::CLI::Clone do
       end
 
       it 'should create the new stack using existing input stack, but cmd line args win' do
-        @options = { :environment => 'my_env',
+        options = { :environment => 'my_env',
                      :input_stack => 'input_stack',
                      :template    => 'brand_new_template.json',
                      :log_level   => 'debug',
@@ -204,9 +204,9 @@ describe SimpleDeploy::CLI::Clone do
         SimpleDeploy::Stack::OutputMapper.stub :new => input_stub
 
         subject.should_receive(:valid_options?).
-                with(:provided => @options,
+                with(:provided => options,
                      :required => [:environment, :source_name, :new_name])
-        Trollop.stub(:options).and_return(@options)
+        Trollop.stub(:options).and_return(options)
 
         @new_stack_mock.stub(:template).and_return('foo' => 'bah')
         @new_stack_mock.should_receive(:create) do |options|
