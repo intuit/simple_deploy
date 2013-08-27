@@ -197,11 +197,11 @@ describe SimpleDeploy::CLI::Clone do
                      :attributes  => ['chef_repo_bucket_prefix=updated-intu-lc',
                                       'chef_repo_domain=updated_community_chef_repo',
                                       'SolrClientTrafficContainer=solr-client-traffic-container', 
-                                      'InputStackOutputs=cmdline_value']}
+                                      'InputStackOutputs=cmdline_value'] }
 
-        @input_attributes = [{'InputStackOutputs' => 'inputvalue'}, {'OutputValue' => 'outputs'}]
-        @input_stub = stub 'input', :map_outputs_from_stacks => @input_attributes
-        SimpleDeploy::Stack::OutputMapper.stub :new => @input_stub
+        input_attributes = [{'InputStackOutputs' => 'inputvalue'}, {'OutputValue' => 'outputs'}]
+        input_stub = stub 'input', :map_outputs_from_stacks => input_attributes
+        SimpleDeploy::Stack::OutputMapper.stub :new => input_stub
 
         subject.should_receive(:valid_options?).
                 with(:provided => @options,
