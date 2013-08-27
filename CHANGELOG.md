@@ -1,11 +1,5 @@
 ## HEAD:
 
-## v0.8.0 (08/26/2013):
-
-* Updated to use Ruby 2.0.0
-
-##
-
 * Fixed issue 176 where multiple deploys did not exit if first deploy failed
 
 ## v0.7.5 (07/02/13):
