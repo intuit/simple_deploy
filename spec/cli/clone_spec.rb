@@ -186,6 +186,46 @@ describe SimpleDeploy::CLI::Clone do
 
         subject.clone
       end
+
+      it 'should create the new stack using existing input stack, but cmd line args win' do
+        options = { :environment  => 'my_env',
+                     :input_stack => 'input_stack',
+                     :template    => 'brand_new_template.json',
+                     :log_level   => 'debug',
+                     :source_name => 'source_stack',
+                     :new_name    => 'new_stack',
+                     :attributes  => ['chef_repo_bucket_prefix=updated-intu-lc',
+                                      'chef_repo_domain=updated_community_chef_repo',
+                                      'SolrClientTrafficContainer=solr-client-traffic-container', 
+                                      'InputStackOutputs=cmdline_value'] }
+
+        input_attributes = [{'InputStackOutputs' => 'inputvalue'}, {'OutputValue' => 'outputs'}]
+        input_stub = stub 'input', :map_outputs_from_stacks => input_attributes
+        SimpleDeploy::Stack::OutputMapper.stub :new => input_stub
+
+        subject.should_receive(:valid_options?).
+                with(:provided => options,
+                     :required => [:environment, :source_name, :new_name])
+        Trollop.stub(:options).and_return(options)
+
+        @new_stack_mock.stub(:template).and_return('foo' => 'bah')
+        @new_stack_mock.should_receive(:create) do |options|
+          options[:attributes].should == [{ 'AmiId' => 'ami-7b6a4e3e' },
+                                          { 'AppEnv' => 'pod-2-cd-1' },
+                                          { 'MaximumAppInstances' => 1 },
+                                          { 'MinimumAppInstances' => 1 },
+                                          { 'chef_repo_bucket_prefix' => 'updated-intu-lc' },
+                                          { 'chef_repo_domain' => 'updated_community_chef_repo' },
+                                          { 'InputStackOutputs' => 'cmdline_value' },
+                                          { 'OutputValue' => 'outputs'},
+                                          { 'SolrClientTrafficContainer' => 'solr-client-traffic-container' }]
+                                          
+          options[:template].should match /brand_new_template.json/
+        end
+
+        subject.clone
+      end
+
     end
   end
 end

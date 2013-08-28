@@ -15,7 +15,6 @@ module SimpleDeploy
         merge_stacks_outputs
 
         pluralize_keys
-
         prune_unused_parameters
 
         @results.each_pair do |key, value|

@@ -19,6 +19,10 @@ simple_deploy clone -s SOURCE_STACK_NAME -n NEW_STACK_NAME -e ENVIRONMENT -a ATT
 EOS
           opt :help, "Display Help"
           opt :environment, "Set the target environment", :type => :string
+          opt :input_stack, "Read outputs from given stack(s) and map them \
+to parameter inputs in the new stack. These will be passed to inputs with \
+matching or pluralized names. Can be specified multiple times.", :type  => :string, 
+                                                                 :multi => true
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
           opt :source_name, "Stack name for the stack to clone", :type => :string
@@ -35,10 +39,7 @@ EOS
         SimpleDeploy.logger @opts[:log_level]
 
         override_attributes = parse_attributes :attributes => @opts[:attributes]
-
         cloned_attributes = filter_attributes source_stack.attributes
-        new_attributes = merge_attributes cloned_attributes, override_attributes
-        new_attributes += add_attributes cloned_attributes, override_attributes
 
         template_file = Tempfile.new("#{@opts[:new_name]}_template.json")
         template_file_path = template_file.path
@@ -48,6 +49,18 @@ EOS
         else
           template_file.write source_stack.template
         end
+
+        if @opts[:input_stack]
+          input_attributes = mapper.map_outputs_from_stacks :stacks => @opts[:input_stack],
+                                                            :template => template_file_path
+          new_overrides = merge_attributes input_attributes, override_attributes
+          new_overrides += add_attributes input_attributes, override_attributes
+        else
+          new_overrides = override_attributes
+        end
+
+        new_attributes = merge_attributes cloned_attributes, new_overrides
+        new_attributes += add_attributes cloned_attributes, new_overrides
 
         rescue_exceptions_and_exit do
           new_stack.create :attributes => new_attributes,
@@ -81,6 +94,10 @@ EOS
           clone = cloned_attributes.find { |c| c.has_key? key }
           clone ? nil : override
         end.compact
+      end
+
+      def mapper
+        @om ||= Stack::OutputMapper.new :environment => @opts[:environment]
       end
 
       def source_stack
