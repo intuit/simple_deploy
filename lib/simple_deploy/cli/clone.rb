@@ -30,7 +30,7 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
           opt :attributes, "= separated attribute and it's value", :type  => :string,
                                                                    :multi => true
           opt :template, "Path to a new template file", :type => :string
-       end
+        end
 
         valid_options? :provided => @opts,
                        :required => [:environment, :source_name, :new_name]

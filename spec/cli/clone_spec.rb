@@ -188,7 +188,7 @@ describe SimpleDeploy::CLI::Clone do
       end
 
       it 'should create the new stack using existing input stack, but cmd line args win' do
-        options = { :environment => 'my_env',
+        options = { :environment  => 'my_env',
                      :input_stack => 'input_stack',
                      :template    => 'brand_new_template.json',
                      :log_level   => 'debug',
