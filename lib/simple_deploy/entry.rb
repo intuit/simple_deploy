@@ -45,23 +45,23 @@ module SimpleDeploy
       delete_attributes = {}
       current_attributes.each_pair do |key,value|
         @logger.debug "Setting attribute #{key}=#{value}" 
-        if value.to_s == 'nil'
-          current_attributes.delete(key)
-          delete_attributes.merge!(key=>nil)
+        if value == 'nil'
+          current_attributes.delete key
+          delete_attributes.merge! key=>nil
         end
       end
 
       unless delete_attributes.empty?
         @logger.info "Removing attributes set to nil #{delete_attributes.keys}"
-        sdb_connect.delete_items('stacks',
+        sdb_connect.delete_items 'stacks',
                                   name,
-                                  delete_attributes)
+                                  delete_attributes 
       end
  
-      sdb_connect.put_attributes('stacks', 
+      sdb_connect.put_attributes 'stacks', 
                                   name, 
                                   current_attributes, 
-                                 :replace => current_attributes.keys )
+                                 :replace => current_attributes.keys  
 
       @logger.debug "Save to SimpleDB successful."
     end
