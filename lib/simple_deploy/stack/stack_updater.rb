@@ -51,6 +51,9 @@ module SimpleDeploy
       h = {}
       entry_attributes = @entry.attributes
       template_parameters.each do |p|
+        if entry_attributes[p] == 'nil'
+          next
+        end
         h[p] = entry_attributes[p] if entry_attributes[p]
       end
       h
