@@ -44,7 +44,7 @@ module SimpleDeploy
       current_attributes = attributes
       delete_attributes = {}
       current_attributes.each_pair do |key,value|
-        @logger.debug "Setting attribute #{key}= THIS #{value} #{value.class}"
+        @logger.debug "Setting attribute #{key}=#{value}" 
         if value.to_s == 'nil'
           current_attributes.delete(key)
           delete_attributes.merge!(key=>nil)
