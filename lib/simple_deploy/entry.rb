@@ -29,7 +29,7 @@ module SimpleDeploy
 
     def set_attributes(a)
       a.each do |attribute| 
-        if attribute.keys == nil
+        if attribute.keys.nil?
           @logger.info "Deleting entry #{attribute}"
         else
           @custom_attributes.merge! attribute 
