@@ -14,16 +14,24 @@ describe SimpleDeploy::AWS::CloudFormation::Error do
     @exception_stub2 = stub 'Excon::Response'
     @exception_stub2.stub(:response).and_return(@exception_stub2)
     @exception_stub2.stub(:body).and_return('<opt><Error><Message>Oops.</Message></Error></opt>')
-
     @exception_stub3 = stub 'Excon::Response'
     @exception_stub3.stub(:response).and_return(@exception_stub3)
     @exception_stub3.stub(:body).and_return('<opt><Error><Message>Stack:test does not exist</Message></Error></opt>')
+
+    @exception_stub4 = stub 'Excon::Response'
+    @exception_stub4.stub(:response).and_return(@exception_stub4)
+    @exception_stub4.stub(:body).and_return('')
   end
 
   describe 'process' do
     it 'should process no update messages' do
       error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub1
       expect { error.process }.to_not raise_error SimpleDeploy::Exceptions::CloudFormationError
+    end
+
+    it 'should raise an error if the exception is blank' do
+      error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub4
+      expect { error.process }.to raise_error SimpleDeploy::Exceptions::CloudFormationError
     end
 
     it 'should re-raise unkonwn errors as SimpleDeploy::CloudFormationError' do
