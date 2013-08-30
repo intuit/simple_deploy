@@ -53,6 +53,7 @@ module SimpleDeploy
         stack_updater.update_stack attributes
         @logger.info "Update complete for #{@name}."
 
+        @entry.cleanup
         @entry.save
         true
       else

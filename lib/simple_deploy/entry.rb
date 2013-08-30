@@ -42,10 +42,21 @@ module SimpleDeploy
                                 'CreatedAt' => Time.now.utc.to_s
 
       current_attributes = attributes
+      sdb_connect.put_attributes 'stacks', 
+                                  name, 
+                                  current_attributes, 
+                                 :replace => current_attributes.keys  
+
+      @logger.debug "Save to SimpleDB successful."
+    end
+
+    def cleanup
+      current_attributes = attributes
       delete_attributes = {}
       current_attributes.each_pair do |key,value|
         @logger.debug "Setting attribute #{key}=#{value}" 
         if value == 'nil'
+          @logger.debug "Removing nil attribute #{key}=#{value}"
           current_attributes.delete key
           delete_attributes.merge! key=>nil
         end
@@ -57,15 +68,8 @@ module SimpleDeploy
                                   name,
                                   delete_attributes 
       end
- 
-      sdb_connect.put_attributes 'stacks', 
-                                  name, 
-                                  current_attributes, 
-                                 :replace => current_attributes.keys  
-
-      @logger.debug "Save to SimpleDB successful."
     end
-
+ 
     def delete_attributes
       sdb_connect.delete('stacks', name)
       @logger.info "Delete from SimpleDB successful."

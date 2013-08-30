@@ -85,5 +85,13 @@ describe SimpleDeploy::AWS::SimpleDB do
 
       @db.delete('domain1', 'item1').body['RequestId'].should == 'rid'
     end
+  end  
+  
+  describe 'delete_items' do
+    it 'should delete the specific attributes passed associated with domain and key' do
+      @db_mock.should_receive(:delete_attributes).with('domain1', 'item1', {'value'=>nil}).and_return(@response_stub)
+
+      @db.delete_items('domain1', 'item1', {'value'=>nil}).body['RequestId'].should == 'rid'
+    end
   end
 end
