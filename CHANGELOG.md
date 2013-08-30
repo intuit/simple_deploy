@@ -1,5 +1,7 @@
 ## HEAD:
 
+* Added feature for issue 169 to remove values which are set to nil
+* Added feature for issue 191 to read in input stack for clone command
 * Fixed issue 176 where multiple deploys did not exit if first deploy failed
 * Fixed find_xml_file error when a blank exception is thrown from cloudformation.
 
