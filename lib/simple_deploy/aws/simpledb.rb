@@ -47,6 +47,10 @@ module SimpleDeploy
         @connect.delete_attributes domain, key
       end
 
+      def delete_items(domain, key, attributes)
+        @connect.delete_attributes domain, key, attributes
+      end
+
     end
   end
 end

@@ -75,6 +75,7 @@ describe SimpleDeploy::Stack do
       @stack.stub(:deployment).and_return(deployment_stub)
 
       @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
+      @entry_mock.should_receive(:cleanup).and_return(true)
       @entry_mock.should_receive(:save).and_return(true)
 
       SimpleDeploy::StackUpdater.should_receive(:new).
@@ -109,6 +110,7 @@ describe SimpleDeploy::Stack do
       @stack.stub(:sleep).and_return(false)
 
       @entry_mock.should_receive(:set_attributes).with(@expected_attributes)
+      @entry_mock.should_receive(:cleanup).and_return(true)
       @entry_mock.should_receive(:save).and_return(true)
 
       SimpleDeploy::StackUpdater.should_receive(:new).
