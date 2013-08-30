@@ -38,7 +38,7 @@ describe SimpleDeploy::StackUpdater do
   end
 
   it "should update the stack when parameters change and stack is stable" do
-    attributes = { "param1" => "value1", "param3" => "value3" }
+    attributes = { "param1" => "value1", "param3" => "value3" , "paramremove" => "nil" }
     entry_mock = mock 'entry mock'
     status_mock = mock 'status mock'
     cloud_formation_mock = mock 'cloud formation mock'
@@ -63,7 +63,7 @@ describe SimpleDeploy::StackUpdater do
   end
 
   it "should update the stack when only the template body changes and stack is stable" do
-    attributes = { "param1" => "value1", "param3" => "value3" }
+    attributes = { "param1" => "value1", "param3" => "value3" , "paramremove" => "nil" }
     entry_mock = mock 'entry mock'
     status_mock = mock 'status mock'
     cloud_formation_mock = mock 'cloud formation mock'
