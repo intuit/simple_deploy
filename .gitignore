@@ -5,3 +5,4 @@ pkg/*
 coverage
 *.swp
 .idea/*
+.DS_Store
