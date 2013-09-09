@@ -73,6 +73,32 @@ describe SimpleDeploy::Entry do
       @entry.save
     end
 
+    it "should remove attributes set to nil" do
+      Timecop.travel Time.utc(2012, 10, 22, 13, 30)
+
+      @simple_db_mock.should_receive(:select).
+                      with("select * from stacks where itemName() = 'test-stack-us-west-1'").
+                      and_return('test-stack-us-west-1' => { 'key1' => ['value1'], 
+                                                             'key2' => ['nil'],
+                                                             'key3' => ['nil']})
+      @simple_db_mock.should_receive(:delete_items).
+                      with("stacks",
+                           "test-stack-us-west-1",
+                           {'key2' => nil, 'key3' => nil})
+
+      @simple_db_mock.should_receive(:put_attributes).
+                      with("stacks", 
+                           "test-stack-us-west-1", 
+                           { "key"       => "value",
+                             "key1"      => "value1",
+                             "Name"      => "test-stack-us-west-1",
+                             "CreatedAt" => "2012-10-22 13:30:00 UTC" }, 
+                           { :replace => ["key1", "key", "Name", "CreatedAt"] } )
+      @entry.set_attributes(['key' => 'value'])
+      
+      @entry.save
+    end
+
     it "should merge custom attributes" do
       @simple_db_mock.should_receive(:select).
                       with("select * from stacks where itemName() = 'test-stack-us-west-1'").
