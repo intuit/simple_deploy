@@ -38,32 +38,22 @@ module SimpleDeploy
       @custom_attributes.merge! 'Name' => name,
                                 'CreatedAt' => Time.now.utc.to_s
 
-      current_attributes = attributes
-      nil_attributes = {}
-
-      current_attributes.each_pair do |key,value|
-        @logger.debug "Setting attribute #{key}=#{value}"
+      current_attributes = attributes.reject do |key,value|
         if value == 'nil'
-          current_attributes.delete(key)
-          nil_attributes.merge!(key=>nil)
+          @logger.info "Removing attribute set to nil '#{key}'."
+          sdb_connect.delete_items 'stacks', name, key => nil
+          true
         end
       end
 
-      if nil_attributes.empty?
-        @logger.debug "Nothing to cleanup"
-      else
-        @logger.info "Removing attributes set to nil #{nil_attributes.keys}"
-        sdb_connect.delete_items 'stacks',
-                                 name,
-                                 nil_attributes
-      end
+      current_attributes.each_pair {|k,v| @logger.debug "Setting attribute #{k}=#{v}"}
 
       sdb_connect.put_attributes 'stacks',
-                                  name, 
-                                  current_attributes, 
-                                 :replace => current_attributes.keys  
+                                  name,
+                                  current_attributes,
+                                 :replace => current_attributes.keys
 
-      @logger.debug "Save to SimpleDB successful."
+      @logger.debug "Save to SimpleDB successful." 
     end
  
     def delete_attributes

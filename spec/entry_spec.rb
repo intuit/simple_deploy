@@ -79,10 +79,17 @@ describe SimpleDeploy::Entry do
       @simple_db_mock.should_receive(:select).
                       with("select * from stacks where itemName() = 'test-stack-us-west-1'").
                       and_return('test-stack-us-west-1' => { 'key1' => ['value1'] }) 
+      
       @simple_db_mock.should_receive(:delete_items).
                       with("stacks",
                            "test-stack-us-west-1",
-                           {'key2' => nil, 'key3' => nil})
+                           {'key2' => nil})
+
+      @simple_db_mock.should_receive(:delete_items).
+                      with("stacks",
+                           "test-stack-us-west-1",
+                           {'key3' => nil})
+
 
       @simple_db_mock.should_receive(:put_attributes).
                       with("stacks", 
