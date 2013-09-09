@@ -35,7 +35,7 @@ module SimpleDeploy
     end
 
     def save
-      @custom_attributes.merge! 'Name' => name,
+      @custom_attributes.merge! 'Name'      => name,
                                 'CreatedAt' => Time.now.utc.to_s
 
       current_attributes = attributes.reject do |key,value|
