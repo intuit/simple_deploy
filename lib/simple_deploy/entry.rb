@@ -8,6 +8,7 @@ module SimpleDeploy
       @config = SimpleDeploy.config
       @logger = SimpleDeploy.logger
       @custom_attributes = {}
+      @nil_attributes = {}
       @name = region_specific_name args[:name]
       create_domain
     end
@@ -29,13 +30,7 @@ module SimpleDeploy
 
     def set_attributes(a)
       a.each do |attribute|
-        attribute.map do |key, value|
-          if value == 'nil'
-            @logger.info "Deleting entry #{key} = #{value}"
-          else
-            @custom_attributes.merge! attribute
-          end
-        end
+        @custom_attributes.merge! attribute
       end
     end
 
@@ -44,32 +39,31 @@ module SimpleDeploy
                                 'CreatedAt' => Time.now.utc.to_s
 
       current_attributes = attributes
-      sdb_connect.put_attributes 'stacks', 
+      nil_attributes = {}
+
+      current_attributes.each_pair do |key,value|
+        @logger.debug "Setting attribute #{key}=#{value}"
+        if value == 'nil'
+          current_attributes.delete(key)
+          nil_attributes.merge!(key=>nil)
+        end
+      end
+
+      if nil_attributes.empty?
+        @logger.debug "Nothing to cleanup"
+      else
+        @logger.info "Removing attributes set to nil #{nil_attributes.keys}"
+        sdb_connect.delete_items 'stacks',
+                                 name,
+                                 nil_attributes
+      end
+
+      sdb_connect.put_attributes 'stacks',
                                   name, 
                                   current_attributes, 
                                  :replace => current_attributes.keys  
 
       @logger.debug "Save to SimpleDB successful."
-    end
-
-    def cleanup
-      current_attributes = attributes
-      delete_attributes = {}
-      current_attributes.each_pair do |key,value|
-        @logger.debug "Setting attribute #{key}=#{value}" 
-        if value == 'nil'
-          @logger.debug "Removing nil attribute #{key}=#{value}"
-          current_attributes.delete key
-          delete_attributes.merge! key=>nil
-        end
-      end
-
-      unless delete_attributes.empty?
-        @logger.info "Removing attributes set to nil #{delete_attributes.keys}"
-        sdb_connect.delete_items 'stacks',
-                                  name,
-                                  delete_attributes 
-      end
     end
  
     def delete_attributes

@@ -52,6 +52,7 @@ module SimpleDeploy
       entry_attributes = @entry.attributes
       template_parameters.each do |p|
         if entry_attributes[p] == 'nil'
+          @logger.debug "Skipping this value"
           next
         end
         h[p] = entry_attributes[p] if entry_attributes[p]
