@@ -28,46 +28,31 @@ module SimpleDeploy
     end
 
     def set_attributes(a)
-      a.each do |attribute| 
-        if attribute.keys.nil?
-          @logger.info "Deleting entry #{attribute}"
-        else
-          @custom_attributes.merge! attribute 
-        end
+      a.each do |attribute|
+        @custom_attributes.merge! attribute
       end
     end
 
     def save
-      @custom_attributes.merge! 'Name' => name,
+      @custom_attributes.merge! 'Name'      => name,
                                 'CreatedAt' => Time.now.utc.to_s
 
-      current_attributes = attributes
-      sdb_connect.put_attributes 'stacks', 
-                                  name, 
-                                  current_attributes, 
-                                 :replace => current_attributes.keys  
-
-      @logger.debug "Save to SimpleDB successful."
-    end
-
-    def cleanup
-      current_attributes = attributes
-      delete_attributes = {}
-      current_attributes.each_pair do |key,value|
-        @logger.debug "Setting attribute #{key}=#{value}" 
+      current_attributes = attributes.reject do |key,value|
         if value == 'nil'
-          @logger.debug "Removing nil attribute #{key}=#{value}"
-          current_attributes.delete key
-          delete_attributes.merge! key=>nil
+          @logger.info "Removing attribute set to nil '#{key}'."
+          sdb_connect.delete_items 'stacks', name, key => nil
+          true
         end
       end
 
-      unless delete_attributes.empty?
-        @logger.info "Removing attributes set to nil #{delete_attributes.keys}"
-        sdb_connect.delete_items 'stacks',
+      current_attributes.each_pair {|k,v| @logger.debug "Setting attribute #{k}=#{v}"}
+
+      sdb_connect.put_attributes 'stacks',
                                   name,
-                                  delete_attributes 
-      end
+                                  current_attributes,
+                                 :replace => current_attributes.keys
+
+      @logger.debug "Save to SimpleDB successful." 
     end
  
     def delete_attributes

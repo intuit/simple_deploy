@@ -20,7 +20,8 @@ module SimpleDeploy
                 when 'No updates are to be performed.'
                   @logger.info msg
                 when /Template requires parameter(.*)/
-                  @logger.info msg
+                  @logger.error  msg
+                  raise Exceptions::CloudFormationError.new msg
                 when /^Stack:(.*) does not exist$/
                   @logger.error msg
                   raise Exceptions::UnknownStack.new msg
