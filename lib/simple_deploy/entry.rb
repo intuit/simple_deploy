@@ -8,7 +8,6 @@ module SimpleDeploy
       @config = SimpleDeploy.config
       @logger = SimpleDeploy.logger
       @custom_attributes = {}
-      @nil_attributes = {}
       @name = region_specific_name args[:name]
       create_domain
     end
