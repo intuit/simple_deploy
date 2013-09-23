@@ -37,7 +37,7 @@ module SimpleDeploy
         CLI::Destroy.new.destroy
       when 'deploy'
         CLI::Deploy.new.deploy
-      when 'environments'
+      when 'environments', 'envs'
         CLI::Environments.new.environments
       when 'events'
         CLI::Events.new.show
