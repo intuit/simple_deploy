@@ -7,20 +7,17 @@ describe SimpleDeploy::AWS::CloudFormation::Error do
   include_context 'double stubbed logger'
 
   before do
-    @exception_stub1 = stub 'Excon::Response'
-    @exception_stub1.stub(:response).and_return(@exception_stub1)
-    @exception_stub1.stub(:body).and_return('<opt><Error><Message>No updates are to be performed.</Message></Error></opt>')
+    @exception_stub1 = stub 'Fog::AWS::CloudFormation'
+    @exception_stub1.stub(:message).and_return("No updates are to be performed.")
 
-    @exception_stub2 = stub 'Excon::Response'
-    @exception_stub2.stub(:response).and_return(@exception_stub2)
-    @exception_stub2.stub(:body).and_return('<opt><Error><Message>Oops.</Message></Error></opt>')
-    @exception_stub3 = stub 'Excon::Response'
-    @exception_stub3.stub(:response).and_return(@exception_stub3)
-    @exception_stub3.stub(:body).and_return('<opt><Error><Message>Stack:test does not exist</Message></Error></opt>')
+    @exception_stub2 = stub 'Fog::AWS::CloudFormation'
+    @exception_stub2.stub(:message).and_return("Oops.")
 
-    @exception_stub4 = stub 'Excon::Response'
-    @exception_stub4.stub(:response).and_return(@exception_stub4)
-    @exception_stub4.stub(:body).and_return('')
+    @exception_stub3 = stub 'Fog::AWS::CloudFormation'
+    @exception_stub3.stub(:message).and_return("Stack:test does not exist")
+
+    @exception_stub4 = stub 'Fog::AWS::CloudFormation::'
+    @exception_stub4.stub(:message).and_return('')
   end
 
   describe 'process' do
@@ -34,7 +31,7 @@ describe SimpleDeploy::AWS::CloudFormation::Error do
       expect { error.process }.to raise_error SimpleDeploy::Exceptions::CloudFormationError
     end
 
-    it 'should re-raise unkonwn errors as SimpleDeploy::CloudFormationError' do
+    it 'should re-raise unknown errors as SimpleDeploy::CloudFormationError' do
       error = SimpleDeploy::AWS::CloudFormation::Error.new :exception => @exception_stub2
 
       lambda { error.process }.should raise_error SimpleDeploy::Exceptions::CloudFormationError
