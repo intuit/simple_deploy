@@ -12,27 +12,19 @@ module SimpleDeploy
 
         def process
           @logger.debug "Object type = #{@exception.class}"
-          if @exception.respond_to?(:response)
-            unless @exception.response.body.empty?
-              message = XmlSimple.xml_in @exception.response.body
-              message['Error'].first['Message'].each do |msg|
-                case msg
-                when 'No updates are to be performed.'
-                  @logger.info msg
-                when /Template requires parameter(.*)/
-                  @logger.error  msg
-                  raise Exceptions::CloudFormationError.new msg
-                when /^Stack:(.*) does not exist$/
-                  @logger.error msg
-                  raise Exceptions::UnknownStack.new msg
-                else
-                  @logger.error msg
-                  raise Exceptions::CloudFormationError.new msg
-                end
-              end
+          unless @exception.message.empty?
+            case @exception.message 
+            when 'No updates are to be performed.'
+              @logger.info @exception.message 
+            when /Template requires parameter(.*)/
+              @logger.error @exception.message 
+              raise Exceptions::CloudFormationError.new  @exception.message
+            when /^Stack:(.*) does not exist$/
+              @logger.error @exception.message
+              raise Exceptions::UnknownStack.new @exception.message
             else
-              @logger.error "CloudFormation returned blank xml EXCEPTION => #{@exception.response.body}" 
-              raise Exceptions::CloudFormationError.new "Cloudformation returned blank xml"
+              @logger.error @exception.message
+              raise Exceptions::CloudFormationError.new @exception.message
             end
           else
             @logger.error "Unknown exception from cloudformation #{@exception.inspect}"
