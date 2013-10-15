@@ -1,3 +1,3 @@
 module SimpleDeploy
-  VERSION = "0.7.6.beta.4"
+  VERSION = "0.7.6.beta.5"
 end
