@@ -11,20 +11,17 @@ module SimpleDeploy
         end
 
         def process
-          @logger.debug "Object type = #{@exception.class}"
-          unless @exception.message.empty?
-            case @exception.message 
+          message = @exception.message
+          unless message.empty?
+            case message 
             when 'No updates are to be performed.'
-              @logger.info @exception.message 
-            when /Template requires parameter(.*)/
-              @logger.error @exception.message 
-              raise Exceptions::CloudFormationError.new  @exception.message
+              @logger.info message 
             when /^Stack:(.*) does not exist$/
-              @logger.error @exception.message
-              raise Exceptions::UnknownStack.new @exception.message
+              @logger.error message
+              raise Exceptions::UnknownStack.new message
             else
-              @logger.error @exception.message
-              raise Exceptions::CloudFormationError.new @exception.message
+              @logger.error message
+              raise Exceptions::CloudFormationError.new message
             end
           else
             @logger.error "Unknown exception from cloudformation #{@exception.inspect}"
