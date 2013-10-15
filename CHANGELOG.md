@@ -1,5 +1,6 @@
 ## HEAD:
 
+* Updated to latest fog 1.15
 * Added feature for issue 169 to remove values which are set to nil
 * Added feature for issue 191 to read in input stack for clone command
 * Fixed issue 176 where multiple deploys did not exit if first deploy failed
