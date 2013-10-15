@@ -1,5 +1,3 @@
-require 'xmlsimple'
-
 module SimpleDeploy
   class AWS
     class CloudFormation
