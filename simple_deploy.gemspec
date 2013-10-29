@@ -28,4 +28,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "esbit", "~> 0.0.4"
   s.add_runtime_dependency "trollop", "= 2.0"
   s.add_runtime_dependency "fog", "= 1.15.0"
+  s.add_runtime_dependency "excon", "= 0.25.3"
 end
