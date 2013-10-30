@@ -1,5 +1,7 @@
 ## HEAD:
 
+## v0.7.6 (10/30/13):
+
 * Updated to bind to excon 0.25.3
 * Updated to latest fog 1.15
 * Added feature for issue 169 to remove values which are set to nil
