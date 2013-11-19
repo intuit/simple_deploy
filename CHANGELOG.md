@@ -1,5 +1,9 @@
 ## HEAD:
 
+* Update to fog 1.18
+* Update to excon 0.28
+* Added additional dependencies ucf ucf_ext
+
 ## v0.7.6 (10/30/13):
 
 * Updated to bind to excon 0.25.3
