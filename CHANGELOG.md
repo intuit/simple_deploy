@@ -1,8 +1,9 @@
 ## HEAD:
 
+## v0.7.7 (12/6/13):
+
 * Update to fog 1.18
 * Update to excon 0.28
-* Added additional dependencies ucf ucf_ext
 
 ## v0.7.6 (10/30/13):
 

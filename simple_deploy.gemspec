@@ -29,6 +29,4 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency "trollop", "= 2.0"
   s.add_runtime_dependency "fog", "= 1.18.0"
   s.add_runtime_dependency "excon", "= 0.28.0"
-  s.add_runtime_dependency "unf", "= 0.1.3"
-  s.add_runtime_dependency "unf_ext", "= 0.0.6"
 end
