@@ -1,5 +1,9 @@
 ## HEAD:
 
+## v0.7.8 (12/11/13):
+
+* Added runtime dependency for unf and unf_ext for fog
+
 ## v0.7.7 (12/6/13):
 
 * Update to fog 1.18
