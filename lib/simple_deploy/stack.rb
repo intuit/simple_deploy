@@ -21,6 +21,7 @@ module SimpleDeploy
       @logger = SimpleDeploy.logger
 
       @use_internal_ips = !!args[:internal]
+      @use_external_ips = !!args[:external]
       @entry = Entry.new :name => @name
     end
 
@@ -120,13 +121,9 @@ module SimpleDeploy
     end
 
     def instances
-      stack_reader.instances.map do |instance| 
+      stack_reader.instances.map do |instance|
         instance['instancesSet'].map do |info|
-          if info['vpcId'] || @use_internal_ips
-            info['privateIpAddress']
-          else
-            info['ipAddress']
-          end
+          determine_ip_address(info)
         end
       end.flatten.compact
     end
@@ -208,6 +205,18 @@ module SimpleDeploy
                                             :instances   => instances,
                                             :ssh_user    => ssh_user,
                                             :ssh_key     => ssh_key
+    end
+
+    def determine_ip_address(info)
+      if info['vpcId']
+        address = @use_external_ips ? info['ipAddress'] : info['privateIpAddress']
+        unless address
+          @logger.warn "Instance '#{info['instanceId']}' does not have an external address, skipping."
+        end
+        address
+      else
+        @use_internal_ips ? info['privateIpAddress'] : info['ipAddress']
+      end
     end
 
     def ssh_key

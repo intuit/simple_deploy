@@ -201,11 +201,15 @@ describe SimpleDeploy::Stack do
 
       @instances = [
         { 'instancesSet' => [{ 'ipAddress' => '50.40.30.20',
-                               'privateIpAddress' => '10.1.2.3' }] }
+                               'privateIpAddress' => '10.1.2.3' }]}
+      ]
+      @private_instances = [
+        { 'instancesSet' => [{ 'ipAddress' => nil,
+                               'privateIpAddress' => '10.3.2.1' }]}
       ]
     end
 
-    it 'should use the private IP when vpc' do
+    it 'should use the private IP when vpc and not internal or external' do
       @instances.first['instancesSet'].first['vpcId'] = 'my-vpc'
 
       SimpleDeploy::StackReader.should_receive(:new).
@@ -214,6 +218,15 @@ describe SimpleDeploy::Stack do
       @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
       @stack.instances.should == ['10.1.2.3']
+    end
+
+    it 'should use the public IP when not vpc and not internal or external' do
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack').
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:instances).and_return(@instances)
+
+      @stack.instances.should == ['50.40.30.20']
     end
 
     it 'should use the private IP when internal' do
@@ -229,13 +242,32 @@ describe SimpleDeploy::Stack do
       stack.instances.should == ['10.1.2.3']
     end
 
-    it 'should use the public IP when not vpc and not internal' do
+    it 'should use the public IP when external' do
+      @instances.first['instancesSet'].first['vpcId'] = 'my-vpc'
+      stack = SimpleDeploy::Stack.new :name        => 'test-stack',
+                                      :environment => 'test-env',
+                                      :external    => true
+
       SimpleDeploy::StackReader.should_receive(:new).
                                  with(:name   => 'test-stack').
                                  and_return @stack_reader_mock
       @stack_reader_mock.should_receive(:instances).and_return(@instances)
 
-      @stack.instances.should == ['50.40.30.20']
+      stack.instances.should == ['50.40.30.20']
+    end
+
+    it 'should not include the instance when external and no public IP' do
+      @instances.first['instancesSet'].first['vpcId'] = 'my-vpc'
+      stack = SimpleDeploy::Stack.new :name        => 'test-stack',
+                                      :environment => 'test-env',
+                                      :external    => true
+
+      SimpleDeploy::StackReader.should_receive(:new).
+                                 with(:name   => 'test-stack').
+                                 and_return @stack_reader_mock
+      @stack_reader_mock.should_receive(:instances).and_return(@private_instances)
+
+      stack.instances.should == []
     end
 
     it 'should handle instanceSets with multiple intances' do

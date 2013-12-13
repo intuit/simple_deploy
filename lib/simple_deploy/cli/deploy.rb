@@ -30,10 +30,11 @@ export SIMPLE_DEPLOY_SSH_USER=fred
 export SIMPLE_DEPLOY_SSH_KEY=$HOME/.ssh/id_dsa
 simple_deploy deploy -n STACK_NAME -n STACK_NAME -e ENVIRONMENT
 
-Using Internal IP for SSH:
+Using Internal / External IP for SSH:
 
-Simple deploy defaults to using the public IP when ssh'ng to stacks. This option instructs it
-to use the private IP, which is needed when ssh'ng from one stack to another.
+simple_deploy defaults to using the public IP when ssh'ng to stacks in classic, or the private IP when in a VPC.
+
+The internal or external flag forces simple_deploy to use the given IP address.
 
 simple_deploy deploy -n STACK_NAME -n STACK_NAME -e ENVIRONMENT -i
 
@@ -48,6 +49,7 @@ EOS
           opt :name, "Stack name(s) of stack to deploy", :type => :string,
                                                          :multi => true
           opt :quiet, "Quiet, do not send notifications"
+          opt :external, "Use external IP for ssh commands"
           opt :internal, "Use internal IP for ssh commands"
         end
 
@@ -65,6 +67,7 @@ EOS
 
          stack = Stack.new :name        => name,
                            :environment => @opts[:environment],
+                           :external    => @opts[:external],
                            :internal    => @opts[:internal]
 
           proceed = true
