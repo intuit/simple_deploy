@@ -1,4 +1,4 @@
-## HEAD:
+## v0.8.0 (12/13/13):
 
 * Added flag to specify external ips
 
