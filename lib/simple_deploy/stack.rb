@@ -208,15 +208,15 @@ module SimpleDeploy
     end
 
     def determine_ip_address(info)
-      if @use_external_ips
-        address = info['ipAddress']
+      if info['vpcId']
+        address = @use_external_ips ? info['ipAddress'] : info['privateIpAddress']
         unless address
           @logger.warn "Instance '#{info['instanceId']}' does not have an external address, skipping."
         end
-        return address
+        address
+      else
+        @use_internal_ips ? info['privateIpAddress'] : info['ipAddress']
       end
-      return info['privateIpAddress'] if @use_internal_ips
-      info['vpcId'] ? info ['privateIpAddress'] : info['ipAddress']
     end
 
     def ssh_key
