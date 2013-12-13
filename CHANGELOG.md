@@ -1,5 +1,7 @@
 ## HEAD:
 
+* Added flag to specify external ips
+
 ## v0.7.8 (12/11/13):
 
 * Added runtime dependency for unf and unf_ext for fog
