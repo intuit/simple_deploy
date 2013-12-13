@@ -15,12 +15,13 @@ Execute command on given stack(s).
 
 simple_deploy execute -n STACK_NAME -n STACK_NAME -e ENVIRONMENT -c "COMMAND"
 
-Using Internal IP for SSH:
+Using Internal / External IP for SSH:
 
-Simple deploy defaults to using the public IP when ssh'ng to stacks. This option instructs it
-to use the private IP, which is needed when ssh'ng from one stack to another.
+simple_deploy defaults to using the public IP when ssh'ng to stacks in classic, or the private IP when in a VPC.
 
-simple_deploy deploy -n STACK_NAME -n STACK_NAME -e ENVIRONMENT -i
+The internal or external flag forces simple_deploy to use the given IP address.
+
+simple_deploy execute -n STACK_NAME -n STACK_NAME -e ENVIRONMENT -i
 
 EOS
           opt :help, "Display Help"
@@ -28,6 +29,7 @@ EOS
                                                                    :multi => true
           opt :command, "Command to execute.", :type => :string
           opt :environment, "Set the target environment", :type => :string
+          opt :external, "Use external IP for ssh commands"
           opt :internal, "Use internal IP for ssh commands"
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
@@ -48,6 +50,7 @@ EOS
 
           stack = Stack.new :name        => name,
                             :environment => @opts[:environment],
+                            :external    => @opts[:external],
                             :internal    => @opts[:internal]
 
           begin

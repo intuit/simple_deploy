@@ -46,6 +46,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :log_level   => 'debug',
                   :name        => ['my_stack'],
                   :force       => true,
+                  :external    => false,
                   :internal    => false,
                   :attributes  => [] }
 
@@ -75,6 +76,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :log_level   => 'debug',
                   :name        => ['my_stack'],
                   :force       => true,
+                  :external    => false,
                   :internal    => false,
                   :attributes  => ['foo=bah'] }
 
@@ -102,6 +104,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :log_level   => 'debug',
                   :name        => ['my_stack'],
                   :force       => true,
+                  :external    => false,
                   :internal    => false,
                   :attributes  => ['foo=bah'] }
 
@@ -131,6 +134,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :log_level   => 'debug',
                   :name        => ['my_stack'],
                   :force       => true,
+                  :external    => false,
                   :internal    => false,
                   :attributes  => [] }
 
