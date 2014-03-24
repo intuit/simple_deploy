@@ -49,7 +49,7 @@ describe SimpleDeploy::AWS::InstanceReader do
       before do
         stack_resource_results = [{'StackName' => 'stack',
                                    'ResourceType' => 'AWS::AutoScaling::AutoScalingGroup',
-                                   'PhysicalResourceId' => 'asg1'}]
+                                   'PhysicalResourceId' => 'asg1', 'PhysicalResourceId' => 'asg2'}]
 
         @cloud_formation_mock.should_receive(:stack_resources).
                               with('stack').
@@ -62,7 +62,7 @@ describe SimpleDeploy::AWS::InstanceReader do
       context "with no running instances" do
         it "should return empty array" do
           @auto_scaling_groups_mock.should_receive(:describe_auto_scaling_groups).
-                                    with('AutoScalingGroupNames' => ['asg1']).
+                                    with('AutoScalingGroupNames' => ['asg1','asg2']).
                                     and_return(@empty_response)
 
           instance_reader = SimpleDeploy::AWS::InstanceReader.new
@@ -73,7 +73,7 @@ describe SimpleDeploy::AWS::InstanceReader do
       context "with running instances" do
         it "should return the reservation set for each running instance" do
           @auto_scaling_groups_mock.should_receive(:describe_auto_scaling_groups).
-                                    with('AutoScalingGroupNames' => ['asg1']).
+                                    with('AutoScalingGroupNames' => ['asg1','asg2']).
                                     and_return(@list_response)
 
           Fog::Compute::AWS.stub(:new).
