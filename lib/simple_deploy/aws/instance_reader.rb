@@ -5,43 +5,37 @@ module SimpleDeploy
         @config  = SimpleDeploy.config
       end
 
-      def list_stack_instances(stack_name) 
+      def list_stack_instances(stack_name)
 
         asg_ids = auto_scaling_group_id(stack_name)
 
         return [] unless asg_ids
-        
-        asg_instances = asg_ids.map do |asg_id|
-          list_instances asg_id
-        end
+
+        asg_instances = asg_ids.map { |asg_id| list_instances asg_id }.flatten
 
         return [] unless asg_instances.any?
 
-        asg_instances.map do |asg_instance|
-          describe_instances asg_instance
-        end
-        #describe_instances asg_instances
+        describe_instances asg_instances
       end
 
       private
 
-      def list_instances(asg_ids)
-        @asg ||= Fog::AWS::AutoScaling.new :aws_access_key_id => @config.access_key,
+      def list_instances(asg_id)
+        @asg ||= Fog::AWS::AutoScaling.new :aws_access_key_id     => @config.access_key,
                                            :aws_secret_access_key => @config.secret_key,
-                                           :region => @config.region
+                                           :region                => @config.region
 
-        body = @asg.describe_auto_scaling_groups('AutoScalingGroupNames' => [asg_ids]).body
+        body = @asg.describe_auto_scaling_groups('AutoScalingGroupNames' => [asg_id]).body
         result = body['DescribeAutoScalingGroupsResult']['AutoScalingGroups'].last
         return [] unless result
 
         result['Instances'].map { |info| info['InstanceId'] }
-
       end
 
       def describe_instances(instances)
-        @ec2 ||= Fog::Compute::AWS.new :aws_access_key_id => @config.access_key,
+        @ec2 ||= Fog::Compute::AWS.new :aws_access_key_id     => @config.access_key,
                                        :aws_secret_access_key => @config.secret_key,
-                                       :region => @config.region
+                                       :region                => @config.region
 
         @ec2.describe_instances('instance-state-name' => 'running',
                                 'instance-id' => instances).body['reservationSet']
@@ -60,8 +54,7 @@ module SimpleDeploy
         asgs = cf_stack_resources.select do |r|
           r['ResourceType'] == 'AWS::AutoScaling::AutoScalingGroup'
         end
-        asgs.any? ? asgs.map {|asg| asg['PhysicalResourceId'] } : false 
-
+        asgs.any? ? asgs.map {|asg| asg['PhysicalResourceId'] } : false
       end
 
     end
