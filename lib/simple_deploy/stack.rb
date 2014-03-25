@@ -123,7 +123,7 @@ module SimpleDeploy
     def instances
       stack_reader.instances.map do |instance|
         instance['instancesSet'].map do |info|
-          determine_ip_address(info)
+          determine_ip_address(info)  
         end
       end.flatten.compact
     end

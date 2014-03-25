@@ -45,11 +45,14 @@ describe SimpleDeploy::AWS::InstanceReader do
       end
     end
 
-    context "with an ASG" do
+    context "with an ASGs" do
       before do
-        stack_resource_results = [{'StackName' => 'stack',
-                                   'ResourceType' => 'AWS::AutoScaling::AutoScalingGroup',
-                                   'PhysicalResourceId' => 'asg1'}]
+        stack_resource_results = []
+        @asgs = ['asg1', 'asg2'].each do |asg|
+          stack_resource_results << { 'StackName'          => 'stack',
+                                      'ResourceType'       => 'AWS::AutoScaling::AutoScalingGroup',
+                                      'PhysicalResourceId' => asg }
+        end
 
         @cloud_formation_mock.should_receive(:stack_resources).
                               with('stack').
@@ -61,9 +64,11 @@ describe SimpleDeploy::AWS::InstanceReader do
 
       context "with no running instances" do
         it "should return empty array" do
-          @auto_scaling_groups_mock.should_receive(:describe_auto_scaling_groups).
-                                    with('AutoScalingGroupNames' => ['asg1']).
-                                    and_return(@empty_response)
+          @asgs.each do |asg|
+            @auto_scaling_groups_mock.should_receive(:describe_auto_scaling_groups).
+                                      with('AutoScalingGroupNames' => [asg]).
+                                      and_return(@empty_response)
+          end
 
           instance_reader = SimpleDeploy::AWS::InstanceReader.new
           instance_reader.list_stack_instances('stack').should == []
@@ -75,6 +80,9 @@ describe SimpleDeploy::AWS::InstanceReader do
           @auto_scaling_groups_mock.should_receive(:describe_auto_scaling_groups).
                                     with('AutoScalingGroupNames' => ['asg1']).
                                     and_return(@list_response)
+          @auto_scaling_groups_mock.should_receive(:describe_auto_scaling_groups).
+                                    with('AutoScalingGroupNames' => ['asg2']).
+                                    and_return(@empty_response)
 
           Fog::Compute::AWS.stub(:new).
                             and_return @ec2_mock

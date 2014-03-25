@@ -6,10 +6,13 @@ module SimpleDeploy
       end
 
       def list_stack_instances(stack_name)
-        asg_id = auto_scaling_group_id(stack_name)
-        return [] unless asg_id
 
-        asg_instances = list_instances asg_id
+        asg_ids = auto_scaling_group_id(stack_name)
+
+        return [] unless asg_ids
+
+        asg_instances = asg_ids.map { |asg_id| list_instances asg_id }.flatten
+
         return [] unless asg_instances.any?
 
         describe_instances asg_instances
@@ -18,9 +21,9 @@ module SimpleDeploy
       private
 
       def list_instances(asg_id)
-        @asg ||= Fog::AWS::AutoScaling.new :aws_access_key_id => @config.access_key,
+        @asg ||= Fog::AWS::AutoScaling.new :aws_access_key_id     => @config.access_key,
                                            :aws_secret_access_key => @config.secret_key,
-                                           :region => @config.region
+                                           :region                => @config.region
 
         body = @asg.describe_auto_scaling_groups('AutoScalingGroupNames' => [asg_id]).body
         result = body['DescribeAutoScalingGroupsResult']['AutoScalingGroups'].last
@@ -30,9 +33,9 @@ module SimpleDeploy
       end
 
       def describe_instances(instances)
-        @ec2 ||= Fog::Compute::AWS.new :aws_access_key_id => @config.access_key,
+        @ec2 ||= Fog::Compute::AWS.new :aws_access_key_id     => @config.access_key,
                                        :aws_secret_access_key => @config.secret_key,
-                                       :region => @config.region
+                                       :region                => @config.region
 
         @ec2.describe_instances('instance-state-name' => 'running',
                                 'instance-id' => instances).body['reservationSet']
@@ -51,7 +54,7 @@ module SimpleDeploy
         asgs = cf_stack_resources.select do |r|
           r['ResourceType'] == 'AWS::AutoScaling::AutoScalingGroup'
         end
-        asgs.any? ? asgs.first['PhysicalResourceId'] : false
+        asgs.any? ? asgs.map {|asg| asg['PhysicalResourceId'] } : false
       end
 
     end
