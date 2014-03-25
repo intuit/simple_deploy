@@ -1,3 +1,10 @@
+## HEAD:
+
+## v0.8.1 (03/25/14):
+
+* Update fog to 1.21
+* Instances and Deploy support for multi ASGs in stack
+
 ## v0.8.0 (12/13/13):
 
 * Added flag to specify external ips
