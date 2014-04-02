@@ -1,4 +1,7 @@
-## HEAD:
+## v0.8.2 (04/02/14):
+
+* Support instances in nested stacks (thanks @liwenbing)
+* Support instances created by instance resource (thanks @liwenbing)
 
 ## v0.8.1 (03/25/14):
 
