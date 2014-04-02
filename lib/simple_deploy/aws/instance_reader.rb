@@ -20,7 +20,7 @@ module SimpleDeploy
         #EC2 instance
         stack_instances = instance_names(stack_name)
 
-        instances << (describe_instances (asg_instances + stack_instances)) if (asg_instances + stack_instances).any?
+        instances += (describe_instances (asg_instances + stack_instances)) if (asg_instances + stack_instances).any?
 
         instances
       end
