@@ -7,15 +7,22 @@ module SimpleDeploy
 
       def list_stack_instances(stack_name)
 
+        instances = []
+       
+        #Nested stack
+        nested_stacks = nested_stacks_names(stack_name)
+        instances = nested_stacks.map {|stack| list_stack_instances stack }.flatten if nested_stacks.any?
+
+        #Auto Scaling Group
         asg_ids = auto_scaling_group_id(stack_name)
-
-        return [] unless asg_ids
-
         asg_instances = asg_ids.map { |asg_id| list_instances asg_id }.flatten
 
-        return [] unless asg_instances.any?
+        #EC2 instance
+        stack_instances = instance_names(stack_name)
 
-        describe_instances asg_instances
+        instances += (describe_instances (asg_instances + stack_instances)) if (asg_instances + stack_instances).any?
+
+        instances
       end
 
       private
@@ -54,7 +61,23 @@ module SimpleDeploy
         asgs = cf_stack_resources.select do |r|
           r['ResourceType'] == 'AWS::AutoScaling::AutoScalingGroup'
         end
-        asgs.any? ? asgs.map {|asg| asg['PhysicalResourceId'] } : false
+        asgs.any? ? asgs.map {|asg| asg['PhysicalResourceId'] } : []
+      end
+
+      def nested_stacks_names(stack_name)
+        cf_stack_resources = cloud_formation.stack_resources stack_name
+        asgs = cf_stack_resources.select do |r|
+          r['ResourceType'] == 'AWS::CloudFormation::Stack'
+        end
+        asgs.any? ? asgs.map {|asg| asg['PhysicalResourceId'] } : []
+      end
+
+      def instance_names(stack_name)
+        cf_stack_resources = cloud_formation.stack_resources stack_name
+        asgs = cf_stack_resources.select do |r|
+          r['ResourceType'] == 'AWS::EC2::Instance'
+        end
+        asgs.any? ? asgs.map {|asg| asg['PhysicalResourceId'] } : []
       end
 
     end

@@ -49,7 +49,7 @@ EOS
         if instances.nil? || instances.empty?
           logger.info "Stack '#{@opts[:name]}' does not have any instances."
         else
-          puts stack.instances
+          puts instances
         end
       end
 
