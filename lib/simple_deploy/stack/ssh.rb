@@ -58,7 +58,7 @@ module SimpleDeploy
         pty     = args[:pty]
 
         if pty
-          @logger.info "Setting pty to true."
+          @logger.debug "Setting pty to true."
           @task.variables[:default_run_options] = { :pty => true }
         end
 
