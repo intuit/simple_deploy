@@ -1,6 +1,8 @@
 ## HEAD
 
-* Adding support for ptys to execute
+## v0.9.0 (04/24/14):
+
+* Adding support for pty to execute
 
 ## v0.8.2 (04/02/14):
 
