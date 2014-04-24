@@ -1,5 +1,7 @@
 ## HEAD
 
+* Pinning to fog-core 1.21.1
+
 ## v0.9.0 (04/24/14):
 
 * Adding support for pty to execute
