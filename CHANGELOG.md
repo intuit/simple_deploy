@@ -1,3 +1,7 @@
+## HEAD
+
+* Adding support for ptys to execute
+
 ## v0.8.2 (04/02/14):
 
 * Support instances in nested stacks (thanks @liwenbing)

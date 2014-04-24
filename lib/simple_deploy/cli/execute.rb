@@ -35,6 +35,7 @@ EOS
                                                                   :default => 'info'
           opt :name, "Stack name(s) of stack to deploy", :type => :string,
                                                          :multi => true
+          opt :pty, "Set pty to true when executing commands."
           opt :sudo, "Execute command with sudo"
         end
 
@@ -55,7 +56,8 @@ EOS
 
           begin
             unless stack.execute :command => @opts[:command],
-                                 :sudo    => @opts[:sudo]
+                                 :sudo    => @opts[:sudo],
+                                 :pty     => @opts[:pty]
               exit 1
             end
           rescue SimpleDeploy::Exceptions::NoInstances

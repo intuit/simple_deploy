@@ -55,10 +55,15 @@ module SimpleDeploy
       def set_execute_command(args)
         command = args[:command]
         sudo    = args[:sudo]
+        pty     = args[:pty]
+
+        if pty
+          @logger.debug "Setting pty to true."
+          @task.variables[:default_run_options] = { :pty => true }
+        end
 
         @logger.info "Setting command: '#{command}'."
         if sudo
-          @task.variables[:default_run_options] = {:pty => true}
           @task.load :string => "task :execute do
           sudo '#{command}'
           end"
