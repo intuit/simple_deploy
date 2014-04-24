@@ -14,7 +14,6 @@ describe SimpleDeploy::Stack::Execute do
                 :stack       => @stack_stub,
                 :name        => @name }
 
-
     SimpleDeploy::Stack::SSH.should_receive(:new).
                              with(options).
                              and_return @ssh_mock

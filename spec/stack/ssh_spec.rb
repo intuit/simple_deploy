@@ -16,6 +16,7 @@ describe SimpleDeploy::Stack::SSH do
                  :ssh_user    => 'user',
                  :ssh_key     => 'key',
                  :stack       => @stack_stub,
+                 :pty         => true,
                  :name        => 'test-stack' }
     @task_logger_mock = mock 'task_logger'
     @ssh_options = Hash.new
@@ -99,7 +100,8 @@ describe SimpleDeploy::Stack::SSH do
           @task_mock.should_receive(:load).with({ :string=>"task :execute do\n          sudo 'uname'\n          end" })
           @task_mock.should_receive(:execute).and_return true
 
-          @ssh.execute(:sudo    => true,
+          @ssh.execute(:pty     => false,
+                       :sudo    => true,
                        :command => 'uname').should be_true
         end
 
@@ -107,8 +109,29 @@ describe SimpleDeploy::Stack::SSH do
           @task_mock.should_receive(:load).with({ :string=>"task :execute do\n          run 'uname'\n          end" })
           @task_mock.should_receive(:execute).and_return true
 
-          @ssh.execute(:sudo    => false,
+          @ssh.execute(:pty     => false,
+                       :sudo    => false,
                        :command => 'uname').should be_true
+        end
+
+        it "should set the task variables" do
+          @task_mock.should_receive(:load).with({ :string=>"task :execute do\n          run 'uname'\n          end" })
+          @task_mock.should_receive(:execute).and_return true
+
+          @ssh.execute(:pty     => false,
+                       :sudo    => false,
+                       :command => 'uname')
+          expect(@task_mock.variables).to eq ({ :ssh_options => { :keys => "key", :paranoid => false } })
+        end
+
+        it "should set the pty to true" do
+          @task_mock.should_receive(:load).with({ :string=>"task :execute do\n          sudo 'uname'\n          end" })
+          @task_mock.should_receive(:execute).and_return true
+
+          @ssh.execute(:pty     => true,
+                       :sudo    => true,
+                       :command => 'uname')
+          expect(@task_mock.variables[:default_run_options]).to eq ({ :pty => true })
         end
 
         it "sets the ssh options" do

@@ -4,13 +4,8 @@ module SimpleDeploy
   class Stack
     class Execute
       def initialize(args)
-        @config      = SimpleDeploy.config
-        @instances   = args[:instances]
-        @environment = args[:environment]
-        @ssh_user    = args[:ssh_user]
-        @ssh_key     = args[:ssh_key]
-        @stack       = args[:stack]
-        @name        = args[:name]
+        @config = SimpleDeploy.config
+        @args   = args
       end
 
       def execute(args)
@@ -20,13 +15,7 @@ module SimpleDeploy
       private
 
       def ssh
-        options = { :instances   => @instances,
-                    :environment => @environment,
-                    :ssh_user    => @ssh_user,
-                    :ssh_key     => @ssh_key,
-                    :stack       => @stack,
-                    :name        => @name }
-        @ssh ||= SimpleDeploy::Stack::SSH.new options
+        @ssh ||= SimpleDeploy::Stack::SSH.new @args
       end
 
     end
