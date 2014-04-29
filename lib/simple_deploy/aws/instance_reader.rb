@@ -67,7 +67,7 @@ module SimpleDeploy
       def nested_stacks_names(stack_name)
         cf_stack_resources = cloud_formation.stack_resources stack_name
         asgs = cf_stack_resources.select do |r|
-          r['ResourceType'] == 'AWS::CloudFormation::Stack'
+          r['ResourceType'] == 'AWS::CloudFormation::Stack' && cloud_formation.stack_status(r['PhysicalResourceId']) != 'DELETE_COMPLETE'
         end
         asgs.any? ? asgs.map {|asg| asg['PhysicalResourceId'] } : []
       end
