@@ -1,5 +1,9 @@
 ## HEAD
 
+## v0.9.2 (04/29/14):
+
+* Skip nested stack if status is deleted (thanks @liwenbing)
+
 ## v0.9.1 (04/24/14):
 
 * Pinning to fog-core 1.21.1
