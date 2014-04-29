@@ -107,6 +107,9 @@ describe SimpleDeploy::AWS::InstanceReader do
       before do
         stack_resource_results = []
         @nested_stacks = ['nested_stack1', 'nested_stack2'].each do |nested_stack|
+          @cloud_formation_mock.should_receive(:stack_status).
+                              with(nested_stack).
+                              and_return 'CREATE_COMPLETE'
           stack_resource_results << { 'StackName'          => 'stack',
                                       'ResourceType'       => 'AWS::CloudFormation::Stack',
                                       'PhysicalResourceId' => nested_stack }
