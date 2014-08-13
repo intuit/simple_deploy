@@ -5,10 +5,8 @@ module SimpleDeploy
     class SimpleDB
 
       def initialize
-        c = SimpleDeploy.config
-        @connect = Fog::AWS::SimpleDB.new :aws_access_key_id     => c.access_key,
-                                          :aws_secret_access_key => c.secret_key,
-                                          :region                => c.region
+        @config = SimpleDeploy.config
+        set_connection
       end
 
       def domains
@@ -31,7 +29,7 @@ module SimpleDeploy
         options = { 'ConsistentRead' => true }
         data = {}
         next_token = nil
-        
+
         while true
           options.merge! 'NextToken' => next_token
           chunk = @connect.select(query, options).body
@@ -49,6 +47,22 @@ module SimpleDeploy
 
       def delete_items(domain, key, attributes)
         @connect.delete_attributes domain, key, attributes
+      end
+
+      private
+
+      def set_connection
+        args = {
+          aws_access_key_id: @config.access_key,
+          aws_secret_access_key: @config.secret_key,
+          region: @config.region
+        }
+
+        if @config.temporary_credentials?
+          args.merge!({ aws_session_token: @config.session_token })
+        end
+
+        @connect = Fog::AWS::SimpleDB.new args
       end
 
     end
