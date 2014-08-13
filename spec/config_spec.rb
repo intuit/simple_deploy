@@ -130,6 +130,19 @@ describe SimpleDeploy::Configuration do
       @config.deploy_script.should == '/opt/intu/admin/bin/configure.sh'
     end
 
+    describe 'temporary_credentials?' do
+      it 'is true when they are' do
+        @config.temporary_credentials?.should be_true
+      end
+
+      describe 'when there is not a security token' do
+        it 'is false when they are not' do
+          config_data['environments']['test_env']['security_token'] = nil
+          @config = @the_module.configure 'test_env', config: config_data
+          @config.temporary_credentials?.should be_false
+        end
+      end
+    end
   end
 
   describe 'showing raw configuration for all instances' do

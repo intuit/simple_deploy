@@ -6,7 +6,7 @@ describe SimpleDeploy::AWS::InstanceReader do
   describe 'temporary credentials' do
     include_context 'double stubbed config', :access_key => 'key',
                                              :secret_key => 'XXX',
-                                             :session_token => 'the token',
+                                             :security_token => 'the token',
                                              :temporary_credentials? => true,
                                              :region     => 'us-west-1'
 
@@ -27,7 +27,7 @@ describe SimpleDeploy::AWS::InstanceReader do
   describe 'with long lived credentials' do
     include_context 'double stubbed config', :access_key => 'key',
                                              :secret_key => 'XXX',
-                                             :session_token => nil,
+                                             :security_token => nil,
                                              :temporary_credentials? => false,
                                              :region     => 'us-west-1'
 

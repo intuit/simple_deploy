@@ -28,19 +28,19 @@ describe SimpleDeploy::AWS::Helpers do
         @obj.config = @config
       end
 
-      it 'does not include session token' do
+      it 'does not include security token' do
         @obj.connection_args.should eq @args
       end
     end
 
     describe 'with temporary credentials' do
       before do
-        @config.stub session_token: 'token'
+        @config.stub security_token: 'token'
         @config.stub temporary_credentials?: true
         @obj.config = @config
       end
 
-      it 'includes session session token' do
+      it 'includes security security token' do
         args = @args.merge({aws_session_token: 'token'})
         @obj.connection_args.should eq args
       end

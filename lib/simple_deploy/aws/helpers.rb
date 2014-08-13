@@ -10,7 +10,7 @@ module SimpleDeploy
         }.tap do |a|
 
           if @config.temporary_credentials?
-            a.merge!({ aws_session_token: @config.session_token })
+            a.merge!({ aws_session_token: @config.security_token })
           end
         end
       end
