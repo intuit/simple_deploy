@@ -12,10 +12,10 @@ describe SimpleDeploy::AWS::InstanceReader do
 
     it 'creates a connection with the temporary credentials' do
       args = {
-        aws_access_key_id: 'key',
+        aws_access_key_id:     'key',
         aws_secret_access_key: 'XXX',
-        aws_session_token: 'the token',
-        region: 'us-west-1'
+        aws_session_token:     'the token',
+        region:                'us-west-1'
       }
       Fog::AWS::AutoScaling.should_receive(:new).with(args)
       Fog::Compute::AWS.should_receive(:new).with(args)
@@ -31,12 +31,18 @@ describe SimpleDeploy::AWS::InstanceReader do
                                              :temporary_credentials? => false,
                                              :region     => 'us-west-1'
 
+    before do
+      @auto_scaling_groups_mock = mock 'auto scaling'
+      @cloud_formation_mock     = mock 'cloud formation'
+      @ec2_mock                 = mock 'ec2'
+      Fog::AWS::AutoScaling.stub(:new).and_return @auto_scaling_groups_mock
+      Fog::Compute::AWS.stub(:new).and_return @ec2_mock
+      SimpleDeploy::AWS::CloudFormation.stub(:new).
+                                        and_return @cloud_formation_mock
+    end
+
     describe "list_stack_instances" do
       before do
-        @cloud_formation_mock          = mock 'cloud formation'
-        @auto_scaling_groups_mock      = mock 'auto scaling'
-        @ec2_mock                      = mock 'ec2'
-
         instances = ['first',{ 'Instances' => [{ 'InstanceId' => 'i-000001' },
                                                { 'InstanceId' => 'i-000002' }] }]
         body =  { 'DescribeAutoScalingGroupsResult' => { 'AutoScalingGroups' => instances } }
@@ -52,9 +58,6 @@ describe SimpleDeploy::AWS::InstanceReader do
                               {'instanceId' => 'i-123456'},
                               {'privateIpAddress' => '192.168.1.1'}]}]
         }
-
-        SimpleDeploy::AWS::CloudFormation.stub(:new).
-                                          and_return @cloud_formation_mock
       end
 
       context "with no ASGs" do
@@ -84,8 +87,6 @@ describe SimpleDeploy::AWS::InstanceReader do
                                 exactly(3).times.
                                 with('stack').
                                 and_return stack_resource_results
-
-          Fog::AWS::AutoScaling.stub(:new).and_return @auto_scaling_groups_mock
         end
 
         context "with no running instances" do
@@ -109,8 +110,6 @@ describe SimpleDeploy::AWS::InstanceReader do
             @auto_scaling_groups_mock.should_receive(:describe_auto_scaling_groups).
                                       with('AutoScalingGroupNames' => ['asg2']).
                                       and_return(@empty_response)
-
-            Fog::Compute::AWS.stub(:new).and_return @ec2_mock
             @ec2_mock.should_receive(:describe_instances).
                       with('instance-state-name' => 'running',
                            'instance-id' => ['i-000001', 'i-000002']).
@@ -153,8 +152,6 @@ describe SimpleDeploy::AWS::InstanceReader do
                                 exactly(3).times.
                                 with('stack').
                                 and_return stack_resource_results
-
-          Fog::AWS::AutoScaling.stub(:new).and_return @auto_scaling_groups_mock
         end
 
         context "with running instances in nested stack and ASG and EC2 instances" do
@@ -195,8 +192,6 @@ describe SimpleDeploy::AWS::InstanceReader do
             @auto_scaling_groups_mock.should_receive(:describe_auto_scaling_groups).
                                       with('AutoScalingGroupNames' => ['asg2']).
                                       and_return(@empty_response)
-
-            Fog::Compute::AWS.stub(:new).and_return @ec2_mock
 
             @ec2_mock.should_receive(:describe_instances).
                       with('instance-state-name' => 'running',

@@ -4,9 +4,11 @@ module SimpleDeploy
   class AWS
     class SimpleDB
 
+      include Helpers
+
       def initialize
-        @config = SimpleDeploy.config
-        set_connection
+        @config  = SimpleDeploy.config
+        @connect = Fog::AWS::SimpleDB.new connection_args
       end
 
       def domains
@@ -47,22 +49,6 @@ module SimpleDeploy
 
       def delete_items(domain, key, attributes)
         @connect.delete_attributes domain, key, attributes
-      end
-
-      private
-
-      def set_connection
-        args = {
-          aws_access_key_id: @config.access_key,
-          aws_secret_access_key: @config.secret_key,
-          region: @config.region
-        }
-
-        if @config.temporary_credentials?
-          args.merge!({ aws_session_token: @config.session_token })
-        end
-
-        @connect = Fog::AWS::SimpleDB.new args
       end
 
     end

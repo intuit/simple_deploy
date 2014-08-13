@@ -1,9 +1,13 @@
 module SimpleDeploy
   class AWS
     class InstanceReader
+
+      include Helpers
+
       def initialize
-        @config  = SimpleDeploy.config
-        set_connection
+        @config      = SimpleDeploy.config
+        @asg_connect = Fog::AWS::AutoScaling.new connection_args
+        @ec2_connect = Fog::Compute::AWS.new connection_args
       end
 
       def list_stack_instances(stack_name)
@@ -71,21 +75,6 @@ module SimpleDeploy
           r['ResourceType'] == 'AWS::EC2::Instance'
         end
         asgs.any? ? asgs.map {|asg| asg['PhysicalResourceId'] } : []
-      end
-
-      def set_connection
-        args = {
-          aws_access_key_id: @config.access_key,
-          aws_secret_access_key: @config.secret_key,
-          region: @config.region
-        }
-
-        if @config.temporary_credentials?
-          args.merge!({ aws_session_token: @config.session_token })
-        end
-
-        @asg_connect ||= Fog::AWS::AutoScaling.new args
-        @ec2_connect ||= Fog::Compute::AWS.new args
       end
 
     end
