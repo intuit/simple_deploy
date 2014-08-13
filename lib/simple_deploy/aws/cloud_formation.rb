@@ -7,9 +7,7 @@ module SimpleDeploy
       def initialize
         @config = SimpleDeploy.config
         @logger = SimpleDeploy.logger
-        @connect = Fog::AWS::CloudFormation.new :aws_access_key_id     => @config.access_key,
-                                                :aws_secret_access_key => @config.secret_key,
-                                                :region                => @config.region
+        set_connection
       end
 
       def create(args)
@@ -69,6 +67,22 @@ module SimpleDeploy
         @connect.get_template(name).body['TemplateBody']
       rescue Exception => e
         Error.new(:exception => e).process
+      end
+
+      private
+
+      def set_connection
+        args = {
+          aws_access_key_id: @config.access_key,
+          aws_secret_access_key: @config.secret_key,
+          region: @config.region
+        }
+
+        if @config.temporary_credentials?
+          args.merge!({ aws_session_token: @config.session_token })
+        end
+
+        @connect = Fog::AWS::CloudFormation.new args
       end
 
     end
