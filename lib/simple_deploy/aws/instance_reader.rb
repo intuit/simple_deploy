@@ -3,12 +3,13 @@ module SimpleDeploy
     class InstanceReader
       def initialize
         @config  = SimpleDeploy.config
+        set_connection
       end
 
       def list_stack_instances(stack_name)
 
         instances = []
-       
+
         #Nested stack
         nested_stacks = nested_stacks_names(stack_name)
         instances = nested_stacks.map {|stack| list_stack_instances stack }.flatten if nested_stacks.any?
@@ -28,11 +29,7 @@ module SimpleDeploy
       private
 
       def list_instances(asg_id)
-        @asg ||= Fog::AWS::AutoScaling.new :aws_access_key_id     => @config.access_key,
-                                           :aws_secret_access_key => @config.secret_key,
-                                           :region                => @config.region
-
-        body = @asg.describe_auto_scaling_groups('AutoScalingGroupNames' => [asg_id]).body
+        body = @asg_connect.describe_auto_scaling_groups('AutoScalingGroupNames' => [asg_id]).body
         result = body['DescribeAutoScalingGroupsResult']['AutoScalingGroups'].last
         return [] unless result
 
@@ -40,12 +37,8 @@ module SimpleDeploy
       end
 
       def describe_instances(instances)
-        @ec2 ||= Fog::Compute::AWS.new :aws_access_key_id     => @config.access_key,
-                                       :aws_secret_access_key => @config.secret_key,
-                                       :region                => @config.region
-
-        @ec2.describe_instances('instance-state-name' => 'running',
-                                'instance-id' => instances).body['reservationSet']
+        @ec2_connect.describe_instances('instance-state-name' => 'running',
+                                        'instance-id' => instances).body['reservationSet']
       end
 
       def cloud_formation
@@ -78,6 +71,21 @@ module SimpleDeploy
           r['ResourceType'] == 'AWS::EC2::Instance'
         end
         asgs.any? ? asgs.map {|asg| asg['PhysicalResourceId'] } : []
+      end
+
+      def set_connection
+        args = {
+          aws_access_key_id: @config.access_key,
+          aws_secret_access_key: @config.secret_key,
+          region: @config.region
+        }
+
+        if @config.temporary_credentials?
+          args.merge!({ aws_session_token: @config.session_token })
+        end
+
+        @asg_connect ||= Fog::AWS::AutoScaling.new args
+        @ec2_connect ||= Fog::Compute::AWS.new args
       end
 
     end
