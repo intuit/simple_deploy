@@ -17,13 +17,12 @@ describe SimpleDeploy::CLI::Update do
                    :name        => ['my_stack1'],
                    :force       => true,
                    :attributes  => ['chef_repo_bucket_prefix=intu-lc'] }
-
+      @required = [:environment, :name, :read_from_env]
     end
 
     it "should pass force true" do
       subject.should_receive(:valid_options?).
-              with(:provided => @options,
-                   :required => [:environment, :name])
+              with(:provided => @options, :required => @required)
 
       Trollop.stub(:options).and_return(@options)
 
@@ -36,8 +35,7 @@ describe SimpleDeploy::CLI::Update do
       @options[:force] = false
 
       subject.should_receive(:valid_options?).
-              with(:provided => @options,
-                   :required => [:environment, :name])
+              with(:provided => @options, :required => @required)
 
       Trollop.stub(:options).and_return(@options)
 
@@ -50,8 +48,7 @@ describe SimpleDeploy::CLI::Update do
       @options[:template] = 'brand_new_template.json'
 
       subject.should_receive(:valid_options?).
-        with(:provided => @options,
-             :required => [:environment, :name])
+        with(:provided => @options, :required => @required)
 
       Trollop.stub(:options).and_return(@options)
 
