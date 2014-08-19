@@ -9,6 +9,8 @@ describe SimpleDeploy::CLI::Clone do
                                       :new_name    => 'new_stack',
                                       :new_env     => 'my_env'
 
+  before { @required = [:environment, :source_name, :new_name, :read_from_env] }
+
   describe 'clone' do
     context 'filter_attributes' do
       before do
@@ -146,8 +148,7 @@ describe SimpleDeploy::CLI::Clone do
 
       it 'should create the new stack using the filtered, merged and added attributes' do
         subject.should_receive(:valid_options?).
-                with(:provided => @options,
-                     :required => [:environment, :source_name, :new_name])
+                with(:provided => @options, :required => @required)
         Trollop.stub(:options).and_return(@options)
         @new_stack_mock.stub(:template).and_return('foo' => 'bah')
 
@@ -169,8 +170,7 @@ describe SimpleDeploy::CLI::Clone do
         @options[:template] = 'brand_new_template.json'
 
         subject.should_receive(:valid_options?).
-                with(:provided => @options,
-                     :required => [:environment, :source_name, :new_name])
+                with(:provided => @options, :required => @required)
         Trollop.stub(:options).and_return(@options)
 
         @new_stack_mock.should_receive(:create) do |options|
@@ -196,7 +196,7 @@ describe SimpleDeploy::CLI::Clone do
                      :new_name    => 'new_stack',
                      :attributes  => ['chef_repo_bucket_prefix=updated-intu-lc',
                                       'chef_repo_domain=updated_community_chef_repo',
-                                      'SolrClientTrafficContainer=solr-client-traffic-container', 
+                                      'SolrClientTrafficContainer=solr-client-traffic-container',
                                       'InputStackOutputs=cmdline_value'] }
 
         input_attributes = [{'InputStackOutputs' => 'inputvalue'}, {'OutputValue' => 'outputs'}]
@@ -204,8 +204,7 @@ describe SimpleDeploy::CLI::Clone do
         SimpleDeploy::Stack::OutputMapper.stub :new => input_stub
 
         subject.should_receive(:valid_options?).
-                with(:provided => options,
-                     :required => [:environment, :source_name, :new_name])
+                with(:provided => options, :required => @required)
         Trollop.stub(:options).and_return(options)
 
         @new_stack_mock.stub(:template).and_return('foo' => 'bah')
@@ -219,7 +218,7 @@ describe SimpleDeploy::CLI::Clone do
                                           { 'InputStackOutputs' => 'cmdline_value' },
                                           { 'OutputValue' => 'outputs'},
                                           { 'SolrClientTrafficContainer' => 'solr-client-traffic-container' }]
-                                          
+
           options[:template].should match /brand_new_template.json/
         end
 
