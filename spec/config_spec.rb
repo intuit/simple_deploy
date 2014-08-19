@@ -4,9 +4,10 @@ describe SimpleDeploy::Configuration do
   let(:config_data) do
     { 'environments' => {
         'test_env' => {
-          'secret_key' => 'secret',
-          'access_key' => 'access',
-          'region'     => 'us-west-1'
+          'access_key'     => 'access',
+          'secret_key'     => 'secret',
+          'security_token' => 'token',
+          'region'         => 'us-west-1'
       } },
       'notifications' => {
         'campfire' => {
@@ -57,9 +58,10 @@ describe SimpleDeploy::Configuration do
         ENV['AWS_SECURITY_TOKEN']    = 'env_token'
 
         @data = {
-          'access_key' => 'env_access',
-          'region'     => 'env_region',
-          'secret_key' => 'env_secret'
+          'access_key'     => 'env_access',
+          'region'         => 'env_region',
+          'secret_key'     => 'env_secret',
+          'security_token' => 'env_token'
         }
       end
 
@@ -100,6 +102,7 @@ describe SimpleDeploy::Configuration do
       env_config = @config.environment
       env_config['access_key'].should == 'access'
       env_config['secret_key'].should == 'secret'
+      env_config['security_token'].should == 'token'
       env_config['region'].should == 'us-west-1'
     end
 
@@ -113,6 +116,10 @@ describe SimpleDeploy::Configuration do
 
     it "should return the secret_key for the environment" do
       @config.secret_key.should == 'secret'
+    end
+
+    it "should return the security token for the environment" do
+      @config.security_token.should == 'token'
     end
 
     it "should return the region for the environment" do

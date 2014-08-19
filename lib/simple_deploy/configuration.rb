@@ -43,7 +43,8 @@ module SimpleDeploy
       env_config = {
         'access_key'     => ENV['AWS_ACCESS_KEY_ID'],
         'region'         => ENV['AWS_REGION'],
-        'secret_key'     => ENV['AWS_SECRET_ACCESS_KEY']
+        'secret_key'     => ENV['AWS_SECRET_ACCESS_KEY'],
+        'security_token' => ENV['AWS_SECURITY_TOKEN']
       }
 
       return env_config, {}
@@ -105,8 +106,16 @@ module SimpleDeploy
         @environment['secret_key']
       end
 
+      def security_token
+        @environment['security_token']
+      end
+
       def region
         @environment['region']
+      end
+
+      def temporary_credentials?
+        !!security_token
       end
 
       private
@@ -118,7 +127,6 @@ module SimpleDeploy
       def env_user
         env.load 'USER'
       end
-
 
     end
   end
