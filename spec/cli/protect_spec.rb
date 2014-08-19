@@ -1,4 +1,3 @@
-
 require 'spec_helper'
 require 'simple_deploy/cli'
 
@@ -12,15 +11,15 @@ describe SimpleDeploy::CLI::Protect do
                   :log_level   => 'debug',
                   :name        => ['my_stack1'],
                   :protection  => 'on' }
+      @required = [:environment, :name, :read_from_env]
     end
 
     context "single stack" do
       include_context 'received stack array', 'my_stack', 'my_env', 1
-      
+
       it "should enable protection" do
         subject.should_receive(:valid_options?).
-                with(:provided => @options,
-                     :required => [:environment, :name])
+                with(:provided => @options, :required => @required)
         Trollop.stub(:options).and_return(@options)
 
         @stack_mock1.stub(:attributes).and_return('protection' => 'on')
@@ -34,8 +33,7 @@ describe SimpleDeploy::CLI::Protect do
         @options[:protection]= 'off'
 
         subject.should_receive(:valid_options?).
-                with(:provided => @options,
-                     :required => [:environment, :name])
+                with(:provided => @options, :required => @required)
         Trollop.stub(:options).and_return(@options)
 
         @stack_mock1.stub(:attributes).and_return('protection' => 'off')
@@ -53,8 +51,7 @@ describe SimpleDeploy::CLI::Protect do
         @options[:name] = ['my_stack1', 'my_stack2']
 
         subject.should_receive(:valid_options?).
-                with(:provided => @options,
-                     :required => [:environment, :name])
+                with(:provided => @options, :required => @required)
         Trollop.stub(:options).and_return(@options)
 
         @stack_mock1.stub(:attributes).and_return('protection' => 'on')
@@ -72,8 +69,7 @@ describe SimpleDeploy::CLI::Protect do
         @options[:protection]= 'off'
 
         subject.should_receive(:valid_options?).
-                with(:provided => @options,
-                     :required => [:environment, :name])
+                with(:provided => @options, :required => @required)
         Trollop.stub(:options).and_return(@options)
 
         @stack_mock1.stub(:attributes).and_return('protection' => 'off')
@@ -87,5 +83,5 @@ describe SimpleDeploy::CLI::Protect do
       end
     end
 
-  end 
+  end
 end
