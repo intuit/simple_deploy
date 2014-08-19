@@ -21,13 +21,16 @@ EOS
           opt :environment, "Set the target environment", :type => :string
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
+          opt :read_from_env, "Read credentials and region from environment variables"
           opt :help, "Display Help"
         end
 
         valid_options? :provided => @opts,
-                       :required => [:environment]
+                       :required => [:environment, :read_from_env]
 
-        SimpleDeploy.create_config @opts[:environment]
+        config_arg = opts[:read_from_env] ? :read_from_env : @opts[:environment]
+        SimpleDeploy.create_config config_arg
+
         SimpleDeploy.logger @opts[:log_level]
 
         stacks = SimpleDeploy::StackLister.new.all.sort
