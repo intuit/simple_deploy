@@ -49,6 +49,33 @@ describe SimpleDeploy::Configuration do
       @config.notifications.should == config_data['notifications']
     end
 
+    describe 'when the environment is :read_from_env' do
+      before do
+        ENV['AWS_ACCESS_KEY_ID']     = 'env_access'
+        ENV['AWS_REGION']            = 'env_region'
+        ENV['AWS_SECRET_ACCESS_KEY'] = 'env_secret'
+        ENV['AWS_SECURITY_TOKEN']    = 'env_token'
+
+        @data = {
+          'access_key' => 'env_access',
+          'region'     => 'env_region',
+          'secret_key' => 'env_secret'
+        }
+      end
+
+      after do
+        %w(ACCESS_KEY_ID REGION SECRET_ACCESS_KEY SECURITY_TOKEN).each do |i|
+          ENV["AWS_#{i}"] = nil
+        end
+      end
+
+      it 'loads the config from env vars' do
+        @config = @the_module.configure :read_from_env
+        @config.environment.should eq(@data)
+        @config.notifications.should eq({})
+      end
+    end
+
   end
 
   describe "after creating a configuration" do

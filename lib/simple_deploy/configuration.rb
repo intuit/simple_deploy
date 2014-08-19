@@ -4,9 +4,13 @@ module SimpleDeploy
     extend self
 
     def configure(environment, custom_config = {})
-      raw_config = custom_config.fetch(:config) { load_config_file }
-      Config.new raw_config['environments'][environment],
-                 raw_config['notifications']
+      if custom_config.has_key?(:config)
+        env_config    = custom_config[:config]['environments'][environment]
+        notifications = custom_config[:config]['notifications']
+      else
+        env_config, notifications = load_appropriate_config(environment)
+      end
+      Config.new env_config, notifications
     end
 
     def environments(custom_config = {})
@@ -16,14 +20,33 @@ module SimpleDeploy
 
     private
 
-    def load_config_file
+    def load_appropriate_config(env)
+      if env == :read_from_env
+        load_config_from_env_vars
+      else
+        load_config_file env
+      end
+    end
+
+    def load_config_file(env)
       begin
-        YAML::load File.open(config_file)
+        config = YAML::load File.open(config_file)
+        return config['environments'][env], config['notifications']
       rescue Errno::ENOENT
         raise "#{config_file} not found"
       rescue ArgumentError, Psych::SyntaxError => e
         raise "#{config_file} is corrupt"
       end
+    end
+
+    def load_config_from_env_vars
+      env_config = {
+        'access_key'     => ENV['AWS_ACCESS_KEY_ID'],
+        'region'         => ENV['AWS_REGION'],
+        'secret_key'     => ENV['AWS_SECRET_ACCESS_KEY']
+      }
+
+      return env_config, {}
     end
 
     def config_file
