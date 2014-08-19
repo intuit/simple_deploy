@@ -24,19 +24,23 @@ module SimpleDeploy
       if env == :read_from_env
         load_config_from_env_vars
       else
-        load_config_file env
+        load_config_from_file env
       end
     end
 
-    def load_config_file(env)
+    def load_config_file
       begin
-        config = YAML::load File.open(config_file)
-        return config['environments'][env], config['notifications']
+        YAML::load File.open(config_file)
       rescue Errno::ENOENT
         raise "#{config_file} not found"
       rescue ArgumentError, Psych::SyntaxError => e
         raise "#{config_file} is corrupt"
       end
+    end
+
+    def load_config_from_file(env)
+      config = load_config_file
+      return config['environments'][env], config['notifications']
     end
 
     def load_config_from_env_vars

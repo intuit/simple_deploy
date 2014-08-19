@@ -20,7 +20,7 @@ module SimpleDeploy
         provided = args[:provided]
         required = args[:required]
 
-        if provided.has_key?(:environment) && provided[:read_from_env]
+        if provided[:environment] && provided[:read_from_env]
           SimpleDeploy.logger.error "You cannot specify both --environment and --read-from-env"
           exit 1
         end
@@ -42,7 +42,7 @@ module SimpleDeploy
 
         validate_credential_env_vars if provided.has_key?(:read_from_env)
 
-        if provided.has_key? :environment
+        if provided[:environment]
           unless SimpleDeploy.environments.keys.include? provided[:environment]
             SimpleDeploy.logger.error "Environment '#{provided[:environment]}' does not exist."
             exit 1
@@ -63,9 +63,9 @@ module SimpleDeploy
       private
 
       def credential_env_vars_exist?
-        !!(ENV['AWS_ACCESS_KEY_ID']) &&
-        !!(ENV['AWS_SECRET_ACCESS_KEY']) &&
-        !!(ENV['AWS_REGION'])
+        !!ENV['AWS_ACCESS_KEY_ID'] &&
+        !!ENV['AWS_SECRET_ACCESS_KEY'] &&
+        !!ENV['AWS_REGION']
       end
 
       def validate_credential_env_vars

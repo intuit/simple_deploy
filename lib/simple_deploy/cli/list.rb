@@ -28,7 +28,7 @@ EOS
         valid_options? :provided => @opts,
                        :required => [:environment, :read_from_env]
 
-        config_arg = opts[:read_from_env] ? :read_from_env : @opts[:environment]
+        config_arg = @opts[:read_from_env] ? :read_from_env : @opts[:environment]
         SimpleDeploy.create_config config_arg
 
         SimpleDeploy.logger @opts[:log_level]
