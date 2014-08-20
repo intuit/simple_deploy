@@ -4,12 +4,12 @@ module SimpleDeploy
   class AWS
     class CloudFormation
 
+      include Helpers
+
       def initialize
-        @config = SimpleDeploy.config
-        @logger = SimpleDeploy.logger
-        @connect = Fog::AWS::CloudFormation.new :aws_access_key_id     => @config.access_key,
-                                                :aws_secret_access_key => @config.secret_key,
-                                                :region                => @config.region
+        @config  = SimpleDeploy.config
+        @logger  = SimpleDeploy.logger
+        @connect = Fog::AWS::CloudFormation.new connection_args
       end
 
       def create(args)

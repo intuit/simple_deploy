@@ -4,9 +4,10 @@ describe SimpleDeploy::Configuration do
   let(:config_data) do
     { 'environments' => {
         'test_env' => {
-          'secret_key' => 'secret',
-          'access_key' => 'access',
-          'region'     => 'us-west-1'
+          'access_key'     => 'access',
+          'secret_key'     => 'secret',
+          'security_token' => 'token',
+          'region'         => 'us-west-1'
       } },
       'notifications' => {
         'campfire' => {
@@ -49,6 +50,34 @@ describe SimpleDeploy::Configuration do
       @config.notifications.should == config_data['notifications']
     end
 
+    describe 'when the environment is :read_from_env' do
+      before do
+        ENV['AWS_ACCESS_KEY_ID']     = 'env_access'
+        ENV['AWS_REGION']            = 'env_region'
+        ENV['AWS_SECRET_ACCESS_KEY'] = 'env_secret'
+        ENV['AWS_SECURITY_TOKEN']    = 'env_token'
+
+        @data = {
+          'access_key'     => 'env_access',
+          'region'         => 'env_region',
+          'secret_key'     => 'env_secret',
+          'security_token' => 'env_token'
+        }
+      end
+
+      after do
+        %w(ACCESS_KEY_ID REGION SECRET_ACCESS_KEY SECURITY_TOKEN).each do |i|
+          ENV["AWS_#{i}"] = nil
+        end
+      end
+
+      it 'loads the config from env vars' do
+        @config = @the_module.configure :read_from_env
+        @config.environment.should eq(@data)
+        @config.notifications.should eq({})
+      end
+    end
+
   end
 
   describe "after creating a configuration" do
@@ -73,6 +102,7 @@ describe SimpleDeploy::Configuration do
       env_config = @config.environment
       env_config['access_key'].should == 'access'
       env_config['secret_key'].should == 'secret'
+      env_config['security_token'].should == 'token'
       env_config['region'].should == 'us-west-1'
     end
 
@@ -88,6 +118,10 @@ describe SimpleDeploy::Configuration do
       @config.secret_key.should == 'secret'
     end
 
+    it "should return the security token for the environment" do
+      @config.security_token.should == 'token'
+    end
+
     it "should return the region for the environment" do
       @config.region.should == 'us-west-1'
     end
@@ -96,6 +130,19 @@ describe SimpleDeploy::Configuration do
       @config.deploy_script.should == '/opt/intu/admin/bin/configure.sh'
     end
 
+    describe 'temporary_credentials?' do
+      it 'is true when they are' do
+        @config.temporary_credentials?.should be_true
+      end
+
+      describe 'when there is not a security token' do
+        it 'is false when they are not' do
+          config_data['environments']['test_env']['security_token'] = nil
+          @config = @the_module.configure 'test_env', config: config_data
+          @config.temporary_credentials?.should be_false
+        end
+      end
+    end
   end
 
   describe 'showing raw configuration for all instances' do

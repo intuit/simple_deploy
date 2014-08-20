@@ -29,12 +29,14 @@ EOS
           opt :name, "Stack name to manage", :type => :string
           opt :external, "Return external IP for instances."
           opt :internal, "Return internal IP for instances."
+          opt :read_from_env, "Read credentials and region from environment variables"
         end
 
         valid_options? :provided => @opts,
-                       :required => [:environment, :name]
+                       :required => [:environment, :name, :read_from_env]
 
-        SimpleDeploy.create_config @opts[:environment]
+        config_arg = @opts[:read_from_env] ? :read_from_env : @opts[:environment]
+        SimpleDeploy.create_config config_arg
         logger = SimpleDeploy.logger @opts[:log_level]
 
         stack = Stack.new :name        => @opts[:name],

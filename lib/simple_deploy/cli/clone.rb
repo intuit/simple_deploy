@@ -21,7 +21,7 @@ EOS
           opt :environment, "Set the target environment", :type => :string
           opt :input_stack, "Read outputs from given stack(s) and map them \
 to parameter inputs in the new stack. These will be passed to inputs with \
-matching or pluralized names. Can be specified multiple times.", :type  => :string, 
+matching or pluralized names. Can be specified multiple times.", :type  => :string,
                                                                  :multi => true
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
@@ -30,12 +30,17 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
           opt :attributes, "= separated attribute and it's value", :type  => :string,
                                                                    :multi => true
           opt :template, "Path to a new template file", :type => :string
+          opt :read_from_env, "Read credentials and region from environment variables"
         end
 
         valid_options? :provided => @opts,
-                       :required => [:environment, :source_name, :new_name]
+                       :required => [:environment,
+                                     :source_name,
+                                     :new_name,
+                                     :read_from_env]
 
-        SimpleDeploy.create_config @opts[:environment]
+        config_arg = @opts[:read_from_env] ? :read_from_env : @opts[:environment]
+        SimpleDeploy.create_config config_arg
         SimpleDeploy.logger @opts[:log_level]
 
         override_attributes = parse_attributes :attributes => @opts[:attributes]

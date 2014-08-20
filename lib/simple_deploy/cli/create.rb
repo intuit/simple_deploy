@@ -28,13 +28,15 @@ matching or pluralized names. Can be specified multiple times.", :type  => :stri
           opt :log_level, "Log level:  debug, info, warn, error", :type    => :string,
                                                                   :default => 'info'
           opt :name, "Stack name(s) of stack to deploy", :type => :string
+          opt :read_from_env, "Read credentials and region from environment variables"
           opt :template, "Path to the template file", :type => :string
         end
 
         valid_options? :provided => @opts,
-                       :required => [:environment, :name, :template]
+                       :required => [:environment, :name, :read_from_env, :template]
 
-        SimpleDeploy.create_config @opts[:environment]
+        config_arg = @opts[:read_from_env] ? :read_from_env : @opts[:environment]
+        SimpleDeploy.create_config config_arg
         SimpleDeploy.logger @opts[:log_level]
         stack = Stack.new :name        => @opts[:name],
                           :environment => @opts[:environment]

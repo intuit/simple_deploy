@@ -24,12 +24,14 @@ EOS
                                                                   :default => 'info'
           opt :name, "Stack name(s) of stacks to protect", :type => :string,
                                                            :multi => true
+          opt :read_from_env, "Read credentials and region from environment variables"
         end
 
         valid_options? :provided => @opts,
-                       :required => [:environment, :name]
+                       :required => [:environment, :name, :read_from_env]
 
-        SimpleDeploy.create_config @opts[:environment]
+        config_arg = @opts[:read_from_env] ? :read_from_env : @opts[:environment]
+        SimpleDeploy.create_config config_arg
         SimpleDeploy.logger @opts[:log_level]
 
         @opts[:name].each do |name|

@@ -49,14 +49,16 @@ EOS
           opt :name, "Stack name(s) of stack to deploy", :type => :string,
                                                          :multi => true
           opt :quiet, "Quiet, do not send notifications"
+          opt :read_from_env, "Read credentials and region from environment variables"
           opt :external, "Use external IP for ssh commands"
           opt :internal, "Use internal IP for ssh commands"
         end
 
         valid_options? :provided => @opts,
-                       :required => [:environment, :name]
+                       :required => [:environment, :name, :read_from_env]
 
-        SimpleDeploy.create_config @opts[:environment]
+        config_arg = @opts[:read_from_env] ? :read_from_env : @opts[:environment]
+        SimpleDeploy.create_config config_arg
         logger = SimpleDeploy.logger @opts[:log_level]
 
         new_attributes = parse_attributes :attributes => @opts[:attributes]

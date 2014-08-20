@@ -4,11 +4,11 @@ module SimpleDeploy
   class AWS
     class SimpleDB
 
+      include Helpers
+
       def initialize
-        c = SimpleDeploy.config
-        @connect = Fog::AWS::SimpleDB.new :aws_access_key_id     => c.access_key,
-                                          :aws_secret_access_key => c.secret_key,
-                                          :region                => c.region
+        @config  = SimpleDeploy.config
+        @connect = Fog::AWS::SimpleDB.new connection_args
       end
 
       def domains
@@ -31,7 +31,7 @@ module SimpleDeploy
         options = { 'ConsistentRead' => true }
         data = {}
         next_token = nil
-        
+
         while true
           options.merge! 'NextToken' => next_token
           chunk = @connect.select(query, options).body

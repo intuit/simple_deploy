@@ -1,14 +1,19 @@
 module SimpleDeploy
   class AWS
     class InstanceReader
+
+      include Helpers
+
       def initialize
-        @config  = SimpleDeploy.config
+        @config      = SimpleDeploy.config
+        @asg_connect = Fog::AWS::AutoScaling.new connection_args
+        @ec2_connect = Fog::Compute::AWS.new connection_args
       end
 
       def list_stack_instances(stack_name)
 
         instances = []
-       
+
         #Nested stack
         nested_stacks = nested_stacks_names(stack_name)
         instances = nested_stacks.map {|stack| list_stack_instances stack }.flatten if nested_stacks.any?
@@ -28,11 +33,7 @@ module SimpleDeploy
       private
 
       def list_instances(asg_id)
-        @asg ||= Fog::AWS::AutoScaling.new :aws_access_key_id     => @config.access_key,
-                                           :aws_secret_access_key => @config.secret_key,
-                                           :region                => @config.region
-
-        body = @asg.describe_auto_scaling_groups('AutoScalingGroupNames' => [asg_id]).body
+        body = @asg_connect.describe_auto_scaling_groups('AutoScalingGroupNames' => [asg_id]).body
         result = body['DescribeAutoScalingGroupsResult']['AutoScalingGroups'].last
         return [] unless result
 
@@ -40,12 +41,8 @@ module SimpleDeploy
       end
 
       def describe_instances(instances)
-        @ec2 ||= Fog::Compute::AWS.new :aws_access_key_id     => @config.access_key,
-                                       :aws_secret_access_key => @config.secret_key,
-                                       :region                => @config.region
-
-        @ec2.describe_instances('instance-state-name' => 'running',
-                                'instance-id' => instances).body['reservationSet']
+        @ec2_connect.describe_instances('instance-state-name' => 'running',
+                                        'instance-id' => instances).body['reservationSet']
       end
 
       def cloud_formation

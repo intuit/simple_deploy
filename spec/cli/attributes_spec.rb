@@ -7,6 +7,26 @@ describe SimpleDeploy::CLI::Attributes do
   include_context 'double stubbed stack', :name        => 'my_stack',
                                           :environment => 'my_env'
 
+  describe 'with --read-from-env' do
+    before do
+      @options = { :environment   => nil,
+                   :log_level     => 'debug',
+                   :name          => 'my_stack',
+                   :read_from_env => true }
+      @stack_stub.stub(:attributes).and_return({ 'foo' => 'bar', 'baz' => 'blah' })
+    end
+
+    it 'should output the attributes' do
+      subject.should_receive(:valid_options?).
+              with(:provided => @options,
+                   :required => [:environment, :name, :read_from_env])
+      Trollop.stub(:options).and_return(@options)
+      subject.should_receive(:puts).with('foo: bar')
+      subject.should_receive(:puts).with('baz: blah')
+      subject.show
+    end
+  end
+
   describe 'show' do
     before do
       @options = { :environment => 'my_env',
@@ -18,7 +38,7 @@ describe SimpleDeploy::CLI::Attributes do
     it 'should output the attributes' do
       subject.should_receive(:valid_options?).
               with(:provided => @options,
-                   :required => [:environment, :name])
+                   :required => [:environment, :name, :read_from_env])
       Trollop.stub(:options).and_return(@options)
       subject.should_receive(:puts).with('foo: bar')
       subject.should_receive(:puts).with('baz: blah')
@@ -31,7 +51,7 @@ describe SimpleDeploy::CLI::Attributes do
         Trollop.stub(:options).and_return(@options)
         subject.should_receive(:valid_options?).
                 with(:provided => @options,
-                     :required => [:environment, :name])
+                     :required => [:environment, :name, :read_from_env])
       end
 
       it 'should output the attributes as command arguments' do

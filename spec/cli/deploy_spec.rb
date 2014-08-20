@@ -9,6 +9,8 @@ describe SimpleDeploy::CLI::Deploy do
                                    :environment => 'my_env',
                                    :internal    => false
 
+  before { @required = [:environment, :name, :read_from_env] }
+
   describe 'deploy' do
     before do
       @stack_mock.stub(:attributes).and_return({})
@@ -24,8 +26,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :attributes  => [] }
 
       subject.should_receive(:valid_options?).
-              with(:provided => options,
-                   :required => [:environment, :name])
+              with(:provided => options, :required => @required)
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -51,8 +52,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :attributes  => [] }
 
       subject.should_receive(:valid_options?).
-              with(:provided => options,
-                   :required => [:environment, :name])
+              with(:provided => options, :required => @required)
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -81,8 +81,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :attributes  => ['foo=bah'] }
 
       subject.should_receive(:valid_options?).
-              with(:provided => options,
-                   :required => [:environment, :name])
+              with(:provided => options, :required => @required)
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -109,8 +108,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :attributes  => ['foo=bah'] }
 
       subject.should_receive(:valid_options?).
-              with(:provided => options,
-                   :required => [:environment, :name])
+              with(:provided => options, :required => @required)
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
@@ -139,8 +137,7 @@ describe SimpleDeploy::CLI::Deploy do
                   :attributes  => [] }
 
       subject.should_receive(:valid_options?).
-              with(:provided => options,
-                   :required => [:environment, :name])
+              with(:provided => options, :required => @required)
       Trollop.stub(:options).and_return(options)
 
       SimpleDeploy::Notifier.should_receive(:new).
