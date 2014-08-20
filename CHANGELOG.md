@@ -1,5 +1,8 @@
 ## HEAD
 
+* Add support for setting configuration through env vars
+* Add support for temporary AWS credentials
+
 ## v0.9.2 (04/29/14):
 
 * Skip nested stack if status is deleted (thanks @liwenbing)
