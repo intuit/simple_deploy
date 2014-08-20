@@ -40,7 +40,7 @@ module SimpleDeploy
           end
         end
 
-        validate_credential_env_vars if provided.has_key?(:read_from_env)
+        validate_credential_env_vars if provided[:read_from_env]
 
         if provided[:environment]
           unless SimpleDeploy.environments.keys.include? provided[:environment]
