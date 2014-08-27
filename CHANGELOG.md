@@ -1,5 +1,7 @@
 ## HEAD
 
+## v0.10.0 (08/27/14):
+
 * Add support for setting configuration through env vars
 * Add support for temporary AWS credentials
 
