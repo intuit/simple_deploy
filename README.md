@@ -54,6 +54,9 @@ of the below tools which could be integrated into the above script.
 * [Capistrano](http://capistranorb.com/)
 * [GNU Parallel](http://www.gnu.org/software/parallel/)
 
+Overview
+--------
+
 Simple Deploy is an opinionated gem that helps manage and perform directed deployments to AWS Cloud Formation Stacks.
 
 Prerequisites
