@@ -1,7 +1,7 @@
 [![Build Status](https://secure.travis-ci.org/intuit/simple_deploy.png)](http://travis-ci.org/intuit/simple_deploy)
 
-!!! Simple Deploy is in maintenance mode. We will continue to provide support for bug
-fix requests, however new features will not be added !!!
+**Simple Deploy is in maintenance mode. We will continue to provide support for bug
+fix requests, however new features will not be added.**
  
 It has been a good run, but it has now come to an end. When Simple Deploy was started,
 the [AWS CLI](http://aws.amazon.com/cli/) had minimal Cloud Formation support; that
