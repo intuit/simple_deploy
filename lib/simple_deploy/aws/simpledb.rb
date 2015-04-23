@@ -1,4 +1,5 @@
 require 'fog'
+require 'retries'
 
 module SimpleDeploy
   class AWS
@@ -11,8 +12,17 @@ module SimpleDeploy
         @connect = Fog::AWS::SimpleDB.new connection_args
       end
 
+      def retry_options
+        {:max_retries => 3,
+         :rescue => Excon::Errors::ServiceUnavailable,
+         :base_sleep_seconds => 10,
+         :max_sleep_seconds => 60}
+      end
+
       def domains
-        @connect.list_domains.body['Domains']
+        with_retries(retry_options) do
+          @connect.list_domains.body['Domains']
+        end
       end
 
       def domain_exists?(domain)
@@ -20,11 +30,15 @@ module SimpleDeploy
       end
 
       def create_domain(domain)
-        @connect.create_domain(domain) unless domain_exists?(domain)
+        with_retries(retry_options) do
+          @connect.create_domain(domain) unless domain_exists?(domain)
+        end
       end
 
       def put_attributes(domain, key, attributes, options)
-        @connect.put_attributes domain, key, attributes, options
+        with_retries(retry_options) do
+          @connect.put_attributes domain, key, attributes, options
+        end
       end
 
       def select(query)
@@ -34,7 +48,9 @@ module SimpleDeploy
 
         while true
           options.merge! 'NextToken' => next_token
-          chunk = @connect.select(query, options).body
+          chunk = with_retries(retry_options) do
+            @connect.select(query, options).body
+          end
           data.merge! chunk['Items']
           next_token = chunk['NextToken']
           break unless next_token
@@ -44,11 +60,15 @@ module SimpleDeploy
       end
 
       def delete(domain, key)
-        @connect.delete_attributes domain, key
+        with_retries(retry_options) do
+          @connect.delete_attributes domain, key
+        end
       end
 
       def delete_items(domain, key, attributes)
-        @connect.delete_attributes domain, key, attributes
+        with_retries(retry_options) do
+          @connect.delete_attributes domain, key, attributes
+        end
       end
 
     end
