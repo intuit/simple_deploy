@@ -1,5 +1,8 @@
 ## HEAD
 
+## v0.10.2 (05/07/15)
+* Add support for sending notifications to Slack
+
 ## v0.10.0 (08/27/14):
 
 * Add support for setting configuration through env vars
