@@ -1,4 +1,5 @@
 require 'simple_deploy/notifier/campfire'
+require 'simple_deploy/notifier/slack'
 
 module SimpleDeploy
   class Notifier
@@ -36,6 +37,9 @@ module SimpleDeploy
           campfire = Notifier::Campfire.new :stack_name  => @stack_name,
                                             :environment => @environment
           campfire.send message
+        when 'slack'
+          slack = Notifier::Slack.new
+          slack.send message
         end
       end
     end
