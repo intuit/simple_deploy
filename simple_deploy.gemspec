@@ -5,8 +5,8 @@ require "simple_deploy/version"
 Gem::Specification.new do |s|
   s.name        = "simple_deploy"
   s.version     = SimpleDeploy::VERSION
-  s.authors     = ["Brett Weaver"]
-  s.email       = ["brett@weav.net"]
+  s.authors     = ["Intuit Open Source"]
+  s.email       = ["CTO-DevOpenSource@intuit.com"]
   s.homepage    = ""
   s.summary     = %q{Opinionated gem for AWS resource management.}
   s.description = %q{Opinionated gem for Managing AWS Cloud Formation stacks and deploying updates to Instances.}
